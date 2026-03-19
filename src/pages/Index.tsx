@@ -11,7 +11,6 @@ import ColorPalette from "@/components/ColorPalette";
 import HarmonyExplanation from "@/components/HarmonyExplanation";
 import StylePreferences, { type StyleType, type GenderType } from "@/components/StylePreferences";
 import { useSavedOutfits } from "@/hooks/useSavedOutfits";
-import { MOCK_OUTFITS } from "@/lib/mockOutfits";
 import type { Outfit } from "@/lib/outfitTypes";
 
 const Index = () => {
@@ -37,22 +36,43 @@ const Index = () => {
     setOutfitImageUrl(null);
   }, []);
 
-  const generateOutfit = useCallback(() => {
+  const generateOutfit = useCallback(async () => {
+    if (!uploadedImage) return;
     setIsGenerating(true);
     setOutfitImageUrl(null);
-    setTimeout(() => {
-      let style = selectedStyle;
-      if (style === "any") {
-        const styles: StyleType[] = ["streetwear", "old-money", "minimalist", "bohemian", "athleisure", "classic"];
-        style = styles[Math.floor(Math.random() * styles.length)];
+
+    try {
+      const style = selectedStyle === "any" ? "any" : selectedStyle;
+      const { data, error } = await supabase.functions.invoke("generate-outfit", {
+        body: {
+          imageBase64: uploadedImage,
+          style,
+          gender: selectedGender,
+        },
+      });
+
+      if (error) throw error;
+
+      if (data?.error) {
+        toast.error(data.error);
+        setIsGenerating(false);
+        return;
       }
-      setResolvedStyle(style);
-      const key = `${style}-${selectedGender}`;
-      const outfits = MOCK_OUTFITS[key] || MOCK_OUTFITS["classic-male"];
-      setCurrentOutfit(outfits[0]);
+
+      // Set the resolved style from the response
+      setResolvedStyle(style === "any" ? "mixed" : style);
+      setCurrentOutfit({
+        items: data.items,
+        palette: data.palette,
+        harmony: data.harmony,
+      });
+    } catch (e) {
+      console.error("Outfit generation failed:", e);
+      toast.error("Failed to generate outfit. Please try again.");
+    } finally {
       setIsGenerating(false);
-    }, 2000);
-  }, [selectedStyle, selectedGender]);
+    }
+  }, [uploadedImage, selectedStyle, selectedGender]);
 
   const generateOutfitImage = useCallback(async () => {
     if (!currentOutfit) return;
@@ -68,13 +88,13 @@ const Index = () => {
       if (error) throw error;
       if (data?.imageUrl) {
         setOutfitImageUrl(data.imageUrl);
-        toast.success("Outfit visualization generated!");
+        toast.success("Outfit sketch generated!");
       } else if (data?.error) {
         toast.error(data.error);
       }
     } catch (e) {
       console.error("Image generation failed:", e);
-      toast.error("Failed to generate outfit image");
+      toast.error("Failed to generate outfit sketch");
     } finally {
       setIsGeneratingImage(false);
     }
@@ -88,26 +108,12 @@ const Index = () => {
   }, [currentOutfit, resolvedStyle, selectedGender, outfitImageUrl, saveOutfit]);
 
   const handleSwapItem = useCallback(
-    (itemIndex: number) => {
-      if (!currentOutfit) return;
-      setIsGenerating(true);
-      setTimeout(() => {
-        const alternates = [
-          { color: "#9B59B6", colorName: "Plum", description: "Silk wrap blouse" },
-          { color: "#E67E22", colorName: "Rust", description: "Corduroy trousers" },
-          { color: "#1ABC9C", colorName: "Teal", description: "Suede ankle boots" },
-          { color: "#F39C12", colorName: "Amber", description: "Woven scarf" },
-        ];
-        const newItems = [...currentOutfit.items];
-        newItems[itemIndex] = {
-          ...newItems[itemIndex],
-          ...alternates[itemIndex],
-        };
-        setCurrentOutfit({ ...currentOutfit, items: newItems });
-        setIsGenerating(false);
-      }, 1200);
+    async (itemIndex: number) => {
+      if (!currentOutfit || !uploadedImage) return;
+      // For now just regenerate — each generation is unique via AI
+      toast.info("Regenerate the full outfit for a new look!");
     },
-    [currentOutfit]
+    [currentOutfit, uploadedImage]
   );
 
   return (
@@ -149,7 +155,7 @@ const Index = () => {
             Build your perfect outfit
           </h2>
           <p className="font-body text-muted-foreground mt-3 max-w-md mx-auto">
-            Upload any clothing piece, pick your style and gender, and we'll generate a complete color-coordinated outfit.
+            Upload any clothing piece, pick your style and gender, and AI will build a complete color-coordinated outfit around your item.
           </p>
         </motion.div>
 
@@ -192,8 +198,17 @@ const Index = () => {
                     disabled={isGenerating}
                     className="flex-1 flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-foreground text-primary-foreground font-display text-sm uppercase tracking-wider hover:opacity-90 transition-opacity disabled:opacity-50"
                   >
-                    <Sparkles className="w-4 h-4" />
-                    {currentOutfit ? "New Outfit" : "Generate Outfit"}
+                    {isGenerating ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
+                        Analyzing…
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-4 h-4" />
+                        {currentOutfit ? "New Outfit" : "Generate Outfit"}
+                      </>
+                    )}
                   </button>
                   {currentOutfit && (
                     <>
@@ -232,7 +247,7 @@ const Index = () => {
                     className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-accent/30 bg-accent/5 text-accent font-display text-sm uppercase tracking-wider hover:bg-accent/10 transition-colors disabled:opacity-50"
                   >
                     <ImageIcon className="w-4 h-4" />
-                    {isGeneratingImage ? "Generating visualization…" : outfitImageUrl ? "Regenerate Visualization" : "Visualize on Mannequin"}
+                    {isGeneratingImage ? "Sketching outfit…" : outfitImageUrl ? "Re-sketch Visualization" : "Sketch on Mannequin"}
                   </button>
                 </motion.div>
               )}
@@ -264,7 +279,7 @@ const Index = () => {
                   </h3>
                   {currentOutfit.items.map((item, i) => (
                     <OutfitCard
-                      key={`${item.label}-${item.colorName}`}
+                      key={`${item.label}-${item.colorName}-${i}`}
                       label={item.label}
                       color={item.color}
                       colorName={item.colorName}
@@ -274,7 +289,7 @@ const Index = () => {
                     />
                   ))}
                   <p className="text-xs text-muted-foreground font-body text-center pt-2">
-                    Hover over any item and click <RefreshCw className="w-3 h-3 inline" /> to swap it
+                    Click <RefreshCw className="w-3 h-3 inline" /> <strong>New Outfit</strong> to regenerate around your piece
                   </p>
                 </motion.div>
               )}
@@ -299,11 +314,11 @@ const Index = () => {
                   </li>
                   <li className="flex gap-3">
                     <span className="text-accent font-display font-bold">02</span>
-                    Choose your style and who the outfit is for
+                    AI identifies your piece and builds a full outfit around it
                   </li>
                   <li className="flex gap-3">
                     <span className="text-accent font-display font-bold">03</span>
-                    Generate, swap pieces, or regenerate the entire look
+                    Sketch the look, save favorites, or regenerate for new ideas
                   </li>
                 </ul>
               </motion.div>

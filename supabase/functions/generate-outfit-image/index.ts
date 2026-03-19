@@ -26,7 +26,7 @@ serve(async (req) => {
       .join(", ");
 
     const genderDesc = gender === "male" ? "male" : "female";
-    const prompt = `A fashion illustration of a ${genderDesc} mannequin wearing a complete ${style} outfit: ${itemDescriptions}. Clean white background, full body view, fashion sketch style with realistic colors, elegant minimal composition. No text.`;
+    const prompt = `A rough, loose fashion sketch of a ${genderDesc} mannequin wearing: ${itemDescriptions}. Quick gestural drawing style, watercolor-like washes of color suggesting the outfit, minimal detail, artistic and abstract. White background, full body pose. Focus on overall silhouette and color blocking rather than exact garment details. No text, no labels.`;
 
     console.log("Generating outfit image with prompt:", prompt);
 
