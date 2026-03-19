@@ -181,6 +181,106 @@ const ColorTheory = () => {
           </div>
         </motion.section>
 
+        {/* Skin Tone Section */}
+        <motion.section {...fadeUp} transition={{ duration: 0.5 }} className="space-y-6">
+          <div>
+            <h3 className="font-display text-xs uppercase tracking-[0.2em] text-muted-foreground mb-2">
+              Colors & Skin Tones
+            </h3>
+            <p className="font-body text-muted-foreground text-sm max-w-xl">
+              Your skin's undertone — warm, cool, or neutral — determines which colors make you glow versus wash you out. Here's how to identify your undertone and choose accordingly.
+            </p>
+          </div>
+
+          {/* How to Find Your Undertone */}
+          <div className="bg-card border border-border rounded-lg p-6">
+            <h4 className="font-display text-lg font-semibold text-foreground mb-3">
+              Finding Your Undertone
+            </h4>
+            <div className="space-y-3 font-body text-sm text-muted-foreground leading-relaxed">
+              <p><span className="font-display font-semibold text-foreground">Vein test:</span> Look at the veins on your inner wrist in natural light. Green veins = warm undertone. Blue/purple veins = cool undertone. Mix of both = neutral.</p>
+              <p><span className="font-display font-semibold text-foreground">Jewelry test:</span> Does gold or silver jewelry look better on you? Gold = warm. Silver = cool. Both = neutral.</p>
+              <p><span className="font-display font-semibold text-foreground">White paper test:</span> Hold a white sheet next to your face. If your skin looks yellowish, you're warm. Pinkish or bluish = cool. Neither = neutral.</p>
+            </div>
+          </div>
+
+          {/* Warm Undertone */}
+          <div className="bg-card border border-border rounded-lg p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <h4 className="font-display text-lg font-semibold text-foreground">Warm Undertones</h4>
+              <span className="text-[10px] font-body text-accent font-medium px-2 py-0.5 rounded-full bg-accent/10 uppercase tracking-wider">Yellow / Peachy / Golden</span>
+            </div>
+            <div className="flex gap-2 mb-4">
+              {["#C0392B", "#E67E22", "#F1C40F", "#5B7553", "#8B6F47"].map((c) => (
+                <div key={c} className="w-10 h-10 rounded-md border border-border" style={{ backgroundColor: c }} />
+              ))}
+            </div>
+            <p className="font-body text-sm text-muted-foreground leading-relaxed mb-2">
+              <span className="font-display font-semibold text-accent">Best colors:</span> Earth tones, warm reds, coral, peach, mustard, olive, warm browns, cream, camel, terracotta.
+            </p>
+            <p className="font-body text-sm text-muted-foreground leading-relaxed">
+              <span className="font-display font-semibold text-foreground/60">Avoid:</span> Icy blues, stark white, cool greys, and neon pink — these can make warm skin look sallow.
+            </p>
+          </div>
+
+          {/* Cool Undertone */}
+          <div className="bg-card border border-border rounded-lg p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <h4 className="font-display text-lg font-semibold text-foreground">Cool Undertones</h4>
+              <span className="text-[10px] font-body text-accent font-medium px-2 py-0.5 rounded-full bg-accent/10 uppercase tracking-wider">Pink / Red / Blue</span>
+            </div>
+            <div className="flex gap-2 mb-4">
+              {["#2980B9", "#8E44AD", "#1ABC9C", "#2C3E50", "#C0392B"].map((c) => (
+                <div key={c} className="w-10 h-10 rounded-md border border-border" style={{ backgroundColor: c }} />
+              ))}
+            </div>
+            <p className="font-body text-sm text-muted-foreground leading-relaxed mb-2">
+              <span className="font-display font-semibold text-accent">Best colors:</span> True blues, emerald green, lavender, plum, cool grey, navy, raspberry, icy pastels, bright white.
+            </p>
+            <p className="font-body text-sm text-muted-foreground leading-relaxed">
+              <span className="font-display font-semibold text-foreground/60">Avoid:</span> Orange, warm yellows, and earthy browns — these can make cool skin look ruddy or washed out.
+            </p>
+          </div>
+
+          {/* Neutral Undertone */}
+          <div className="bg-card border border-border rounded-lg p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <h4 className="font-display text-lg font-semibold text-foreground">Neutral Undertones</h4>
+              <span className="text-[10px] font-body text-accent font-medium px-2 py-0.5 rounded-full bg-accent/10 uppercase tracking-wider">Balanced</span>
+            </div>
+            <div className="flex gap-2 mb-4">
+              {["#2C3E50", "#D5C4A1", "#5B7553", "#9B59B6", "#E67E22"].map((c) => (
+                <div key={c} className="w-10 h-10 rounded-md border border-border" style={{ backgroundColor: c }} />
+              ))}
+            </div>
+            <p className="font-body text-sm text-muted-foreground leading-relaxed mb-2">
+              <span className="font-display font-semibold text-accent">Best colors:</span> You're lucky — most colors work. Jade green, dusty rose, soft navy, muted teal, blush, and medium-toned neutrals are especially flattering.
+            </p>
+            <p className="font-body text-sm text-muted-foreground leading-relaxed">
+              <span className="font-display font-semibold text-foreground/60">Tip:</span> Lean into muted, mid-tone colors rather than extremes. Overly saturated or overly pastel shades may overpower your balanced complexion.
+            </p>
+          </div>
+
+          {/* Deep / Dark Skin */}
+          <div className="bg-card border border-border rounded-lg p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <h4 className="font-display text-lg font-semibold text-foreground">Deep & Dark Skin Tones</h4>
+              <span className="text-[10px] font-body text-accent font-medium px-2 py-0.5 rounded-full bg-accent/10 uppercase tracking-wider">Rich & Vibrant</span>
+            </div>
+            <div className="flex gap-2 mb-4">
+              {["#F1C40F", "#ECF0F1", "#E74C3C", "#27AE60", "#8E44AD"].map((c) => (
+                <div key={c} className="w-10 h-10 rounded-md border border-border" style={{ backgroundColor: c }} />
+              ))}
+            </div>
+            <p className="font-body text-sm text-muted-foreground leading-relaxed mb-2">
+              <span className="font-display font-semibold text-accent">Best colors:</span> Bold, saturated colors shine — bright white, cobalt blue, emerald, royal purple, vibrant red, and rich gold. Deep skin provides beautiful contrast with strong colors.
+            </p>
+            <p className="font-body text-sm text-muted-foreground leading-relaxed">
+              <span className="font-display font-semibold text-foreground/60">Tip:</span> Don't shy away from color. Muted, washed-out tones can disappear against deeper skin. Go bold and saturated — it's your superpower.
+            </p>
+          </div>
+        </motion.section>
+
         <div className="text-center pb-10">
           <Link
             to="/fashion-guide"

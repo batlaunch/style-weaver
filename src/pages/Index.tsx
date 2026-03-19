@@ -6,6 +6,7 @@ import UploadZone from "@/components/UploadZone";
 import MannequinDisplay from "@/components/MannequinDisplay";
 import OutfitCard from "@/components/OutfitCard";
 import ColorPalette from "@/components/ColorPalette";
+import HarmonyExplanation from "@/components/HarmonyExplanation";
 import StylePreferences, { type StyleType, type GenderType } from "@/components/StylePreferences";
 
 // Style + gender aware mock outfits
@@ -273,6 +274,9 @@ const Index = () => {
             <Link to="/fashion-guide" className="font-display text-xs uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors">
               Fashion Guide
             </Link>
+            <Link to="/seasonal-guide" className="font-display text-xs uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors">
+              Seasons
+            </Link>
           </nav>
         </div>
       </header>
@@ -346,13 +350,16 @@ const Index = () => {
               )}
             </AnimatePresence>
 
-            {/* Color Palette */}
+            {/* Color Palette + Explanation */}
             <AnimatePresence>
               {currentOutfit && (
-                <ColorPalette
-                  colors={currentOutfit.palette}
-                  harmonyType={currentOutfit.harmony}
-                />
+                <>
+                  <ColorPalette
+                    colors={currentOutfit.palette}
+                    harmonyType={currentOutfit.harmony}
+                  />
+                  <HarmonyExplanation harmonyType={currentOutfit.harmony} />
+                </>
               )}
             </AnimatePresence>
 
