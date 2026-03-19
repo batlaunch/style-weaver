@@ -8,6 +8,7 @@ import ColorTheory from "./pages/ColorTheory.tsx";
 import FashionGuide from "./pages/FashionGuide.tsx";
 import SeasonalGuide from "./pages/SeasonalGuide.tsx";
 import Gallery from "./pages/Gallery.tsx";
+import StyleQuiz from "./pages/StyleQuiz.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
