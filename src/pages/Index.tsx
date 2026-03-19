@@ -204,7 +204,7 @@ const Index = () => {
     palette: { hex: string; name: string }[];
     harmony: string;
   } | null>(null);
-  const [selectedStyle, setSelectedStyle] = useState<StyleType>("classic");
+  const [selectedStyle, setSelectedStyle] = useState<StyleType>("any");
   const [selectedGender, setSelectedGender] = useState<GenderType>("male");
 
   const handleImageUpload = useCallback((_file: File, preview: string) => {
@@ -220,7 +220,12 @@ const Index = () => {
   const generateOutfit = useCallback(() => {
     setIsGenerating(true);
     setTimeout(() => {
-      const key = `${selectedStyle}-${selectedGender}`;
+      let style = selectedStyle;
+      if (style === "any") {
+        const styles: StyleType[] = ["streetwear", "old-money", "minimalist", "bohemian", "athleisure", "classic"];
+        style = styles[Math.floor(Math.random() * styles.length)];
+      }
+      const key = `${style}-${selectedGender}`;
       const outfits = MOCK_OUTFITS[key] || MOCK_OUTFITS["classic-male"];
       setCurrentOutfit(outfits[0]);
       setIsGenerating(false);
