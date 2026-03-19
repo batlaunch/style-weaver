@@ -8,6 +8,7 @@ import ColorTheory from "./pages/ColorTheory.tsx";
 import FashionGuide from "./pages/FashionGuide.tsx";
 import SeasonalGuide from "./pages/SeasonalGuide.tsx";
 import Gallery from "./pages/Gallery.tsx";
+import StyleQuiz from "./pages/StyleQuiz.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/fashion-guide" element={<FashionGuide />} />
           <Route path="/seasonal-guide" element={<SeasonalGuide />} />
           <Route path="/gallery" element={<Gallery />} />
+          <Route path="/style-quiz" element={<StyleQuiz />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

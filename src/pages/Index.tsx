@@ -146,6 +146,9 @@ const Index = () => {
             </h1>
           </div>
           <nav className="flex items-center gap-6">
+            <Link to="/style-quiz" className="font-display text-xs uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors">
+              Style Quiz
+            </Link>
             <Link to="/gallery" className="font-display text-xs uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors">
               Gallery
             </Link>
