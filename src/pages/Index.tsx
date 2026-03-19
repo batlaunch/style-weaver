@@ -347,13 +347,16 @@ const Index = () => {
               )}
             </AnimatePresence>
 
-            {/* Color Palette */}
+            {/* Color Palette + Explanation */}
             <AnimatePresence>
               {currentOutfit && (
-                <ColorPalette
-                  colors={currentOutfit.palette}
-                  harmonyType={currentOutfit.harmony}
-                />
+                <>
+                  <ColorPalette
+                    colors={currentOutfit.palette}
+                    harmonyType={currentOutfit.harmony}
+                  />
+                  <HarmonyExplanation harmonyType={currentOutfit.harmony} />
+                </>
               )}
             </AnimatePresence>
 
