@@ -4,9 +4,10 @@ import mannequinImg from "@/assets/mannequin.png";
 interface MannequinDisplayProps {
   isGenerating: boolean;
   hasOutfit: boolean;
+  outfitImageUrl?: string | null;
 }
 
-const MannequinDisplay = ({ isGenerating, hasOutfit }: MannequinDisplayProps) => {
+const MannequinDisplay = ({ isGenerating, hasOutfit, outfitImageUrl }: MannequinDisplayProps) => {
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -24,14 +25,25 @@ const MannequinDisplay = ({ isGenerating, hasOutfit }: MannequinDisplayProps) =>
           </div>
         </div>
       )}
-      <img
-        src={mannequinImg}
-        alt="Mannequin display"
-        className={`h-[380px] object-contain transition-opacity duration-500 ${
-          hasOutfit ? "opacity-30" : "opacity-60"
-        }`}
-      />
-      {!hasOutfit && !isGenerating && (
+
+      {/* AI generated outfit image */}
+      {outfitImageUrl ? (
+        <img
+          src={outfitImageUrl}
+          alt="AI-generated outfit visualization"
+          className="max-h-[400px] object-contain transition-opacity duration-500"
+        />
+      ) : (
+        <img
+          src={mannequinImg}
+          alt="Mannequin display"
+          className={`h-[380px] object-contain transition-opacity duration-500 ${
+            hasOutfit ? "opacity-30" : "opacity-60"
+          }`}
+        />
+      )}
+
+      {!hasOutfit && !isGenerating && !outfitImageUrl && (
         <div className="absolute bottom-6 left-0 right-0 text-center">
           <p className="font-display text-xs uppercase tracking-[0.2em] text-muted-foreground">
             Upload an item to begin
