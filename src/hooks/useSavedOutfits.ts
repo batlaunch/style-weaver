@@ -25,8 +25,8 @@ export function useSavedOutfits() {
           style: row.style,
           gender: row.gender,
           harmony: row.harmony,
-          items: row.items as SavedOutfit["items"],
-          palette: row.palette as SavedOutfit["palette"],
+          items: row.items as unknown as SavedOutfit["items"],
+          palette: row.palette as unknown as SavedOutfit["palette"],
           outfitImageUrl: row.outfit_image_url,
           createdAt: row.created_at,
         }))
