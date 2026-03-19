@@ -4,6 +4,7 @@ import { Sparkles, RefreshCw, Shirt, Heart, ImageIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { compressImage } from "@/lib/compressImage";
 import UploadZone from "@/components/UploadZone";
 import MannequinDisplay from "@/components/MannequinDisplay";
 import OutfitCard from "@/components/OutfitCard";
@@ -43,9 +44,11 @@ const Index = () => {
 
     try {
       const style = selectedStyle === "any" ? "any" : selectedStyle;
+      // Compress image to avoid hitting edge function size limits
+      const compressed = await compressImage(uploadedImage);
       const { data, error } = await supabase.functions.invoke("generate-outfit", {
         body: {
-          imageBase64: uploadedImage,
+          imageBase64: compressed,
           style,
           gender: selectedGender,
         },
