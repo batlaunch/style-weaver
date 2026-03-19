@@ -14,7 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      saved_outfits: {
+        Row: {
+          created_at: string
+          device_id: string
+          gender: string
+          harmony: string
+          id: string
+          items: Json
+          outfit_image_url: string | null
+          palette: Json
+          style: string
+        }
+        Insert: {
+          created_at?: string
+          device_id: string
+          gender: string
+          harmony: string
+          id?: string
+          items: Json
+          outfit_image_url?: string | null
+          palette: Json
+          style: string
+        }
+        Update: {
+          created_at?: string
+          device_id?: string
+          gender?: string
+          harmony?: string
+          id?: string
+          items?: Json
+          outfit_image_url?: string | null
+          palette?: Json
+          style?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
