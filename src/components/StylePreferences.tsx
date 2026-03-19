@@ -12,6 +12,7 @@ interface StylePreferencesProps {
 }
 
 const STYLES: { value: StyleType; label: string; emoji: string }[] = [
+  { value: "any", label: "Surprise Me", emoji: "🎲" },
   { value: "streetwear", label: "Streetwear", emoji: "🔥" },
   { value: "old-money", label: "Old Money", emoji: "🏛" },
   { value: "minimalist", label: "Minimalist", emoji: "◻️" },
