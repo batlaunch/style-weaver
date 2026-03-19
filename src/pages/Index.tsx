@@ -6,6 +6,7 @@ import UploadZone from "@/components/UploadZone";
 import MannequinDisplay from "@/components/MannequinDisplay";
 import OutfitCard from "@/components/OutfitCard";
 import ColorPalette from "@/components/ColorPalette";
+import HarmonyExplanation from "@/components/HarmonyExplanation";
 import StylePreferences, { type StyleType, type GenderType } from "@/components/StylePreferences";
 
 // Style + gender aware mock outfits
