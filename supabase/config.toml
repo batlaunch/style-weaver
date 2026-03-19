@@ -1,0 +1,4 @@
+project_id = "yibcvetoxzsrquberqwn"
+
+[functions.generate-outfit-image]
+verify_jwt = false

@@ -1,237 +1,91 @@
 import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, RefreshCw, Shirt } from "lucide-react";
+import { Sparkles, RefreshCw, Shirt, Heart, ImageIcon } from "lucide-react";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 import UploadZone from "@/components/UploadZone";
 import MannequinDisplay from "@/components/MannequinDisplay";
 import OutfitCard from "@/components/OutfitCard";
 import ColorPalette from "@/components/ColorPalette";
 import HarmonyExplanation from "@/components/HarmonyExplanation";
 import StylePreferences, { type StyleType, type GenderType } from "@/components/StylePreferences";
-
-// Style + gender aware mock outfits
-const MOCK_OUTFITS: Record<string, Array<{
-  items: { label: string; color: string; colorName: string; description: string }[];
-  palette: { hex: string; name: string }[];
-  harmony: string;
-}>> = {
-  "streetwear-male": [
-    {
-      items: [
-        { label: "Top", color: "#1C1C1C", colorName: "Black", description: "Oversized graphic hoodie" },
-        { label: "Bottom", color: "#4A4A4A", colorName: "Dark Grey", description: "Cargo joggers" },
-        { label: "Shoes", color: "#E8E8E8", colorName: "White", description: "Chunky high-top sneakers" },
-        { label: "Accessory", color: "#C0392B", colorName: "Red", description: "Snapback cap" },
-      ],
-      palette: [
-        { hex: "#1C1C1C", name: "Black" }, { hex: "#4A4A4A", name: "Grey" },
-        { hex: "#E8E8E8", name: "White" }, { hex: "#C0392B", name: "Red" }, { hex: "#2D2D2D", name: "Charcoal" },
-      ],
-      harmony: "Monochromatic",
-    },
-  ],
-  "streetwear-female": [
-    {
-      items: [
-        { label: "Top", color: "#E8D5B7", colorName: "Cream", description: "Cropped boxy tee" },
-        { label: "Bottom", color: "#5B7553", colorName: "Olive", description: "High-waisted cargo pants" },
-        { label: "Shoes", color: "#F5F5F5", colorName: "White", description: "Platform sneakers" },
-        { label: "Accessory", color: "#B8860B", colorName: "Gold", description: "Layered chain necklaces" },
-      ],
-      palette: [
-        { hex: "#E8D5B7", name: "Cream" }, { hex: "#5B7553", name: "Olive" },
-        { hex: "#F5F5F5", name: "White" }, { hex: "#B8860B", name: "Gold" }, { hex: "#3D4F38", name: "Forest" },
-      ],
-      harmony: "Analogous",
-    },
-  ],
-  "old-money-male": [
-    {
-      items: [
-        { label: "Top", color: "#2C3E50", colorName: "Navy", description: "Cable-knit V-neck sweater" },
-        { label: "Bottom", color: "#D5C4A1", colorName: "Khaki", description: "Pressed chinos" },
-        { label: "Shoes", color: "#784212", colorName: "Cognac", description: "Penny loafers" },
-        { label: "Accessory", color: "#1A3C34", colorName: "Hunter Green", description: "Silk cravat" },
-      ],
-      palette: [
-        { hex: "#2C3E50", name: "Navy" }, { hex: "#D5C4A1", name: "Khaki" },
-        { hex: "#784212", name: "Cognac" }, { hex: "#1A3C34", name: "Hunter" }, { hex: "#ECF0F1", name: "Ivory" },
-      ],
-      harmony: "Complementary",
-    },
-  ],
-  "old-money-female": [
-    {
-      items: [
-        { label: "Top", color: "#ECF0F1", colorName: "Ivory", description: "Cashmere turtleneck" },
-        { label: "Bottom", color: "#2C3E50", colorName: "Navy", description: "Pleated midi skirt" },
-        { label: "Shoes", color: "#D5C4A1", colorName: "Beige", description: "Ballet flats" },
-        { label: "Accessory", color: "#B8860B", colorName: "Gold", description: "Pearl stud earrings" },
-      ],
-      palette: [
-        { hex: "#ECF0F1", name: "Ivory" }, { hex: "#2C3E50", name: "Navy" },
-        { hex: "#D5C4A1", name: "Beige" }, { hex: "#B8860B", name: "Gold" }, { hex: "#8B7D6B", name: "Taupe" },
-      ],
-      harmony: "Analogous",
-    },
-  ],
-  "minimalist-male": [
-    {
-      items: [
-        { label: "Top", color: "#F5F5F5", colorName: "White", description: "Structured cotton tee" },
-        { label: "Bottom", color: "#1C1C1C", colorName: "Black", description: "Slim tapered trousers" },
-        { label: "Shoes", color: "#2D2D2D", colorName: "Charcoal", description: "Clean leather sneakers" },
-        { label: "Accessory", color: "#C0C0C0", colorName: "Silver", description: "Simple watch" },
-      ],
-      palette: [
-        { hex: "#F5F5F5", name: "White" }, { hex: "#1C1C1C", name: "Black" },
-        { hex: "#2D2D2D", name: "Charcoal" }, { hex: "#C0C0C0", name: "Silver" }, { hex: "#808080", name: "Grey" },
-      ],
-      harmony: "Monochromatic",
-    },
-  ],
-  "minimalist-female": [
-    {
-      items: [
-        { label: "Top", color: "#D5C4A1", colorName: "Sand", description: "Oversized linen shirt" },
-        { label: "Bottom", color: "#F5E6D3", colorName: "Cream", description: "Wide-leg trousers" },
-        { label: "Shoes", color: "#1C1C1C", colorName: "Black", description: "Pointed mules" },
-        { label: "Accessory", color: "#B8860B", colorName: "Gold", description: "Thin cuff bracelet" },
-      ],
-      palette: [
-        { hex: "#D5C4A1", name: "Sand" }, { hex: "#F5E6D3", name: "Cream" },
-        { hex: "#1C1C1C", name: "Black" }, { hex: "#B8860B", name: "Gold" }, { hex: "#8B7D6B", name: "Taupe" },
-      ],
-      harmony: "Monochromatic",
-    },
-  ],
-  "bohemian-male": [
-    {
-      items: [
-        { label: "Top", color: "#8B6F47", colorName: "Camel", description: "Loose woven henley" },
-        { label: "Bottom", color: "#5B7553", colorName: "Olive", description: "Relaxed linen pants" },
-        { label: "Shoes", color: "#6B4226", colorName: "Brown", description: "Worn leather sandals" },
-        { label: "Accessory", color: "#D4A574", colorName: "Tan", description: "Beaded bracelet stack" },
-      ],
-      palette: [
-        { hex: "#8B6F47", name: "Camel" }, { hex: "#5B7553", name: "Olive" },
-        { hex: "#6B4226", name: "Brown" }, { hex: "#D4A574", name: "Tan" }, { hex: "#3D4F38", name: "Forest" },
-      ],
-      harmony: "Analogous",
-    },
-  ],
-  "bohemian-female": [
-    {
-      items: [
-        { label: "Top", color: "#C0392B", colorName: "Terracotta", description: "Flowy peasant blouse" },
-        { label: "Bottom", color: "#F1C40F", colorName: "Mustard", description: "Tiered maxi skirt" },
-        { label: "Shoes", color: "#8B6F47", colorName: "Camel", description: "Strappy leather sandals" },
-        { label: "Accessory", color: "#1ABC9C", colorName: "Turquoise", description: "Statement earrings" },
-      ],
-      palette: [
-        { hex: "#C0392B", name: "Terracotta" }, { hex: "#F1C40F", name: "Mustard" },
-        { hex: "#8B6F47", name: "Camel" }, { hex: "#1ABC9C", name: "Turquoise" }, { hex: "#6B4226", name: "Umber" },
-      ],
-      harmony: "Triadic",
-    },
-  ],
-  "athleisure-male": [
-    {
-      items: [
-        { label: "Top", color: "#2C3E50", colorName: "Navy", description: "Zip-up track jacket" },
-        { label: "Bottom", color: "#34495E", colorName: "Slate", description: "Tapered joggers" },
-        { label: "Shoes", color: "#E8E8E8", colorName: "White", description: "Running sneakers" },
-        { label: "Accessory", color: "#1ABC9C", colorName: "Teal", description: "Sports watch" },
-      ],
-      palette: [
-        { hex: "#2C3E50", name: "Navy" }, { hex: "#34495E", name: "Slate" },
-        { hex: "#E8E8E8", name: "White" }, { hex: "#1ABC9C", name: "Teal" }, { hex: "#1A252F", name: "Midnight" },
-      ],
-      harmony: "Analogous",
-    },
-  ],
-  "athleisure-female": [
-    {
-      items: [
-        { label: "Top", color: "#9B59B6", colorName: "Lavender", description: "Fitted sports bra top" },
-        { label: "Bottom", color: "#1C1C1C", colorName: "Black", description: "High-waisted leggings" },
-        { label: "Shoes", color: "#F5F5F5", colorName: "White", description: "Knit running shoes" },
-        { label: "Accessory", color: "#E8D5B7", colorName: "Cream", description: "Crossbody belt bag" },
-      ],
-      palette: [
-        { hex: "#9B59B6", name: "Lavender" }, { hex: "#1C1C1C", name: "Black" },
-        { hex: "#F5F5F5", name: "White" }, { hex: "#E8D5B7", name: "Cream" }, { hex: "#7D3C98", name: "Purple" },
-      ],
-      harmony: "Complementary",
-    },
-  ],
-  "classic-male": [
-    {
-      items: [
-        { label: "Top", color: "#ECF0F1", colorName: "White", description: "Crisp Oxford shirt" },
-        { label: "Bottom", color: "#2C3E50", colorName: "Navy", description: "Tailored dress trousers" },
-        { label: "Shoes", color: "#784212", colorName: "Cognac", description: "Cap-toe Oxfords" },
-        { label: "Accessory", color: "#C0392B", colorName: "Burgundy", description: "Leather belt" },
-      ],
-      palette: [
-        { hex: "#ECF0F1", name: "White" }, { hex: "#2C3E50", name: "Navy" },
-        { hex: "#784212", name: "Cognac" }, { hex: "#C0392B", name: "Burgundy" }, { hex: "#1A252F", name: "Midnight" },
-      ],
-      harmony: "Complementary",
-    },
-  ],
-  "classic-female": [
-    {
-      items: [
-        { label: "Top", color: "#2C3E50", colorName: "Navy", description: "Fitted blazer" },
-        { label: "Bottom", color: "#ECF0F1", colorName: "Ivory", description: "Pencil skirt" },
-        { label: "Shoes", color: "#1C1C1C", colorName: "Black", description: "Pointed-toe pumps" },
-        { label: "Accessory", color: "#B8860B", colorName: "Gold", description: "Structured handbag" },
-      ],
-      palette: [
-        { hex: "#2C3E50", name: "Navy" }, { hex: "#ECF0F1", name: "Ivory" },
-        { hex: "#1C1C1C", name: "Black" }, { hex: "#B8860B", name: "Gold" }, { hex: "#34495E", name: "Slate" },
-      ],
-      harmony: "Complementary",
-    },
-  ],
-};
+import { useSavedOutfits } from "@/hooks/useSavedOutfits";
+import { MOCK_OUTFITS } from "@/lib/mockOutfits";
+import type { Outfit } from "@/lib/outfitTypes";
 
 const Index = () => {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [currentOutfit, setCurrentOutfit] = useState<{
-    items: { label: string; color: string; colorName: string; description: string }[];
-    palette: { hex: string; name: string }[];
-    harmony: string;
-  } | null>(null);
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+  const [currentOutfit, setCurrentOutfit] = useState<Outfit | null>(null);
+  const [outfitImageUrl, setOutfitImageUrl] = useState<string | null>(null);
   const [selectedStyle, setSelectedStyle] = useState<StyleType>("any");
   const [selectedGender, setSelectedGender] = useState<GenderType>("male");
+  const [resolvedStyle, setResolvedStyle] = useState<string>("classic");
+  const { saveOutfit } = useSavedOutfits();
 
   const handleImageUpload = useCallback((_file: File, preview: string) => {
     setUploadedImage(preview);
     setCurrentOutfit(null);
+    setOutfitImageUrl(null);
   }, []);
 
   const handleClearImage = useCallback(() => {
     setUploadedImage(null);
     setCurrentOutfit(null);
+    setOutfitImageUrl(null);
   }, []);
 
   const generateOutfit = useCallback(() => {
     setIsGenerating(true);
+    setOutfitImageUrl(null);
     setTimeout(() => {
       let style = selectedStyle;
       if (style === "any") {
         const styles: StyleType[] = ["streetwear", "old-money", "minimalist", "bohemian", "athleisure", "classic"];
         style = styles[Math.floor(Math.random() * styles.length)];
       }
+      setResolvedStyle(style);
       const key = `${style}-${selectedGender}`;
       const outfits = MOCK_OUTFITS[key] || MOCK_OUTFITS["classic-male"];
       setCurrentOutfit(outfits[0]);
       setIsGenerating(false);
     }, 2000);
   }, [selectedStyle, selectedGender]);
+
+  const generateOutfitImage = useCallback(async () => {
+    if (!currentOutfit) return;
+    setIsGeneratingImage(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("generate-outfit-image", {
+        body: {
+          items: currentOutfit.items,
+          gender: selectedGender,
+          style: resolvedStyle,
+        },
+      });
+      if (error) throw error;
+      if (data?.imageUrl) {
+        setOutfitImageUrl(data.imageUrl);
+        toast.success("Outfit visualization generated!");
+      } else if (data?.error) {
+        toast.error(data.error);
+      }
+    } catch (e) {
+      console.error("Image generation failed:", e);
+      toast.error("Failed to generate outfit image");
+    } finally {
+      setIsGeneratingImage(false);
+    }
+  }, [currentOutfit, selectedGender, resolvedStyle]);
+
+  const handleSaveOutfit = useCallback(async () => {
+    if (!currentOutfit) return;
+    const ok = await saveOutfit(currentOutfit, resolvedStyle, selectedGender, outfitImageUrl || undefined);
+    if (ok) toast.success("Outfit saved to gallery!");
+    else toast.error("Failed to save outfit");
+  }, [currentOutfit, resolvedStyle, selectedGender, outfitImageUrl, saveOutfit]);
 
   const handleSwapItem = useCallback(
     (itemIndex: number) => {
@@ -268,6 +122,9 @@ const Index = () => {
             </h1>
           </div>
           <nav className="flex items-center gap-6">
+            <Link to="/gallery" className="font-display text-xs uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors">
+              Gallery
+            </Link>
             <Link to="/color-theory" className="font-display text-xs uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors">
               Color Theory
             </Link>
@@ -313,8 +170,9 @@ const Index = () => {
             />
 
             <MannequinDisplay
-              isGenerating={isGenerating}
+              isGenerating={isGenerating || isGeneratingImage}
               hasOutfit={!!currentOutfit}
+              outfitImageUrl={outfitImageUrl}
             />
           </div>
 
@@ -338,14 +196,44 @@ const Index = () => {
                     {currentOutfit ? "New Outfit" : "Generate Outfit"}
                   </button>
                   {currentOutfit && (
-                    <button
-                      onClick={generateOutfit}
-                      disabled={isGenerating}
-                      className="flex items-center justify-center gap-2 px-4 py-3.5 rounded-lg border border-border bg-card text-foreground font-display text-sm uppercase tracking-wider hover:bg-secondary transition-colors disabled:opacity-50"
-                    >
-                      <RefreshCw className="w-4 h-4" />
-                    </button>
+                    <>
+                      <button
+                        onClick={generateOutfit}
+                        disabled={isGenerating}
+                        className="flex items-center justify-center gap-2 px-4 py-3.5 rounded-lg border border-border bg-card text-foreground font-display text-sm uppercase tracking-wider hover:bg-secondary transition-colors disabled:opacity-50"
+                        title="Regenerate"
+                      >
+                        <RefreshCw className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={handleSaveOutfit}
+                        className="flex items-center justify-center gap-2 px-4 py-3.5 rounded-lg border border-border bg-card text-foreground font-display text-sm uppercase tracking-wider hover:bg-accent/10 hover:text-accent hover:border-accent/40 transition-colors"
+                        title="Save to gallery"
+                      >
+                        <Heart className="w-4 h-4" />
+                      </button>
+                    </>
                   )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Visualize Button */}
+            <AnimatePresence>
+              {currentOutfit && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                >
+                  <button
+                    onClick={generateOutfitImage}
+                    disabled={isGeneratingImage}
+                    className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-accent/30 bg-accent/5 text-accent font-display text-sm uppercase tracking-wider hover:bg-accent/10 transition-colors disabled:opacity-50"
+                  >
+                    <ImageIcon className="w-4 h-4" />
+                    {isGeneratingImage ? "Generating visualization…" : outfitImageUrl ? "Regenerate Visualization" : "Visualize on Mannequin"}
+                  </button>
                 </motion.div>
               )}
             </AnimatePresence>
