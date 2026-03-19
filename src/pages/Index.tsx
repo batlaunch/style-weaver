@@ -274,6 +274,9 @@ const Index = () => {
             <Link to="/fashion-guide" className="font-display text-xs uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors">
               Fashion Guide
             </Link>
+            <Link to="/seasonal-guide" className="font-display text-xs uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors">
+              Seasons
+            </Link>
           </nav>
         </div>
       </header>
