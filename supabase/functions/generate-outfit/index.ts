@@ -11,10 +11,16 @@ serve(async (req) => {
   }
 
   try {
-    const { imageBase64, style, gender } = await req.json();
+    const { imageBase64, style, gender, lockedItems } = await req.json();
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+
+    // Build locked items context if any
+    const hasLockedItems = lockedItems && lockedItems.length > 0;
+    const lockedContext = hasLockedItems
+      ? `\n\nIMPORTANT - LOCKED ITEMS: The following items are LOCKED and MUST be kept exactly as specified (same label, color, colorName, and description). Only regenerate the unlocked items around them:\n${lockedItems.map((item: any) => `- ${item.label}: ${item.colorName} ${item.description} (color: ${item.color})`).join("\n")}`
+      : "";
 
     const systemPrompt = `You are a fashion stylist AI. The user will show you a photo of a clothing item they own. Your job is to:
 1. Identify what the item is (e.g. "navy blue crew-neck sweater") and its dominant color
@@ -46,9 +52,13 @@ IMPORTANT RULES:
 - The other items complete the outfit around it
 - Always include exactly 4 items and 5 palette colors
 - palette should include the 5 most important colors in the outfit
-- Use realistic, wearable color hex codes`;
+- Use realistic, wearable color hex codes${lockedContext}`;
 
-    const userPrompt = `Here is a clothing item I own. Please build a complete ${style === "any" ? "stylish" : style} outfit for a ${gender} around this piece.${style === "any" ? " Pick whatever style you think works best with this piece." : ""}`;
+    const lockedNote = hasLockedItems
+      ? ` Keep these items exactly as they are: ${lockedItems.map((i: any) => `${i.label} (${i.colorName} ${i.description})`).join(", ")}. Only change the unlocked items.`
+      : "";
+
+    const userPrompt = `Here is a clothing item I own. Please build a complete ${style === "any" ? "stylish" : style} outfit for a ${gender} around this piece.${style === "any" ? " Pick whatever style you think works best with this piece." : ""}${lockedNote}`;
 
     const messages: any[] = [
       { role: "system", content: systemPrompt },
