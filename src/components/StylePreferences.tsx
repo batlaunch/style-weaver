@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { User, Users } from "lucide-react";
 
-export type StyleType = "streetwear" | "old-money" | "minimalist" | "bohemian" | "athleisure" | "classic";
+export type StyleType = "any" | "streetwear" | "old-money" | "minimalist" | "bohemian" | "athleisure" | "classic";
 export type GenderType = "male" | "female";
 
 interface StylePreferencesProps {
