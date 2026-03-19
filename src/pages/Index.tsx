@@ -220,7 +220,12 @@ const Index = () => {
   const generateOutfit = useCallback(() => {
     setIsGenerating(true);
     setTimeout(() => {
-      const key = `${selectedStyle}-${selectedGender}`;
+      let style = selectedStyle;
+      if (style === "any") {
+        const styles: StyleType[] = ["streetwear", "old-money", "minimalist", "bohemian", "athleisure", "classic"];
+        style = styles[Math.floor(Math.random() * styles.length)];
+      }
+      const key = `${style}-${selectedGender}`;
       const outfits = MOCK_OUTFITS[key] || MOCK_OUTFITS["classic-male"];
       setCurrentOutfit(outfits[0]);
       setIsGenerating(false);
