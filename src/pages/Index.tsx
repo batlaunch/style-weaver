@@ -44,9 +44,11 @@ const Index = () => {
 
     try {
       const style = selectedStyle === "any" ? "any" : selectedStyle;
+      // Compress image to avoid hitting edge function size limits
+      const compressed = await compressImage(uploadedImage);
       const { data, error } = await supabase.functions.invoke("generate-outfit", {
         body: {
-          imageBase64: uploadedImage,
+          imageBase64: compressed,
           style,
           gender: selectedGender,
         },
