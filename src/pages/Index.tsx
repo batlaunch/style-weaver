@@ -204,7 +204,7 @@ const Index = () => {
     palette: { hex: string; name: string }[];
     harmony: string;
   } | null>(null);
-  const [selectedStyle, setSelectedStyle] = useState<StyleType>("classic");
+  const [selectedStyle, setSelectedStyle] = useState<StyleType>("any");
   const [selectedGender, setSelectedGender] = useState<GenderType>("male");
 
   const handleImageUpload = useCallback((_file: File, preview: string) => {
