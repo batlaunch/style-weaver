@@ -121,9 +121,14 @@ const Index = () => {
               ATELIER
             </h1>
           </div>
-          <p className="font-body text-sm text-muted-foreground hidden sm:block">
-            AI-powered outfit styling with color theory
-          </p>
+          <nav className="flex items-center gap-6">
+            <Link to="/color-theory" className="font-display text-xs uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors">
+              Color Theory
+            </Link>
+            <Link to="/fashion-guide" className="font-display text-xs uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors">
+              Fashion Guide
+            </Link>
+          </nav>
         </div>
       </header>
 
