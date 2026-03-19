@@ -6,64 +6,206 @@ import UploadZone from "@/components/UploadZone";
 import MannequinDisplay from "@/components/MannequinDisplay";
 import OutfitCard from "@/components/OutfitCard";
 import ColorPalette from "@/components/ColorPalette";
+import StylePreferences, { type StyleType, type GenderType } from "@/components/StylePreferences";
 
-// Mock outfit data using color theory harmonies
-const MOCK_OUTFITS = [
-  {
-    items: [
-      { label: "Top", color: "#5B7553", colorName: "Sage Green", description: "Relaxed linen button-up" },
-      { label: "Bottom", color: "#F5E6D3", colorName: "Cream", description: "High-waisted wide-leg trousers" },
-      { label: "Shoes", color: "#8B6F47", colorName: "Camel", description: "Suede loafers" },
-      { label: "Accessory", color: "#D4A574", colorName: "Tan", description: "Woven leather belt" },
-    ],
-    palette: [
-      { hex: "#5B7553", name: "Sage" },
-      { hex: "#F5E6D3", name: "Cream" },
-      { hex: "#8B6F47", name: "Camel" },
-      { hex: "#D4A574", name: "Tan" },
-      { hex: "#3D4F38", name: "Forest" },
-    ],
-    harmony: "Analogous",
-  },
-  {
-    items: [
-      { label: "Top", color: "#2C3E50", colorName: "Navy", description: "Structured blazer" },
-      { label: "Bottom", color: "#ECF0F1", colorName: "Off-White", description: "Tailored slim chinos" },
-      { label: "Shoes", color: "#784212", colorName: "Cognac", description: "Oxford leather shoes" },
-      { label: "Accessory", color: "#C0392B", colorName: "Burgundy", description: "Silk pocket square" },
-    ],
-    palette: [
-      { hex: "#2C3E50", name: "Navy" },
-      { hex: "#ECF0F1", name: "Off-White" },
-      { hex: "#784212", name: "Cognac" },
-      { hex: "#C0392B", name: "Burgundy" },
-      { hex: "#1A252F", name: "Midnight" },
-    ],
-    harmony: "Complementary",
-  },
-  {
-    items: [
-      { label: "Top", color: "#D5C4A1", colorName: "Sand", description: "Cashmere turtleneck" },
-      { label: "Bottom", color: "#1C1C1C", colorName: "Charcoal", description: "Tapered wool trousers" },
-      { label: "Shoes", color: "#2D2D2D", colorName: "Black", description: "Minimalist sneakers" },
-      { label: "Accessory", color: "#B8860B", colorName: "Gold", description: "Thin chain necklace" },
-    ],
-    palette: [
-      { hex: "#D5C4A1", name: "Sand" },
-      { hex: "#1C1C1C", name: "Charcoal" },
-      { hex: "#2D2D2D", name: "Black" },
-      { hex: "#B8860B", name: "Gold" },
-      { hex: "#8B7D6B", name: "Taupe" },
-    ],
-    harmony: "Monochromatic",
-  },
-];
+// Style + gender aware mock outfits
+const MOCK_OUTFITS: Record<string, Array<{
+  items: { label: string; color: string; colorName: string; description: string }[];
+  palette: { hex: string; name: string }[];
+  harmony: string;
+}>> = {
+  "streetwear-male": [
+    {
+      items: [
+        { label: "Top", color: "#1C1C1C", colorName: "Black", description: "Oversized graphic hoodie" },
+        { label: "Bottom", color: "#4A4A4A", colorName: "Dark Grey", description: "Cargo joggers" },
+        { label: "Shoes", color: "#E8E8E8", colorName: "White", description: "Chunky high-top sneakers" },
+        { label: "Accessory", color: "#C0392B", colorName: "Red", description: "Snapback cap" },
+      ],
+      palette: [
+        { hex: "#1C1C1C", name: "Black" }, { hex: "#4A4A4A", name: "Grey" },
+        { hex: "#E8E8E8", name: "White" }, { hex: "#C0392B", name: "Red" }, { hex: "#2D2D2D", name: "Charcoal" },
+      ],
+      harmony: "Monochromatic",
+    },
+  ],
+  "streetwear-female": [
+    {
+      items: [
+        { label: "Top", color: "#E8D5B7", colorName: "Cream", description: "Cropped boxy tee" },
+        { label: "Bottom", color: "#5B7553", colorName: "Olive", description: "High-waisted cargo pants" },
+        { label: "Shoes", color: "#F5F5F5", colorName: "White", description: "Platform sneakers" },
+        { label: "Accessory", color: "#B8860B", colorName: "Gold", description: "Layered chain necklaces" },
+      ],
+      palette: [
+        { hex: "#E8D5B7", name: "Cream" }, { hex: "#5B7553", name: "Olive" },
+        { hex: "#F5F5F5", name: "White" }, { hex: "#B8860B", name: "Gold" }, { hex: "#3D4F38", name: "Forest" },
+      ],
+      harmony: "Analogous",
+    },
+  ],
+  "old-money-male": [
+    {
+      items: [
+        { label: "Top", color: "#2C3E50", colorName: "Navy", description: "Cable-knit V-neck sweater" },
+        { label: "Bottom", color: "#D5C4A1", colorName: "Khaki", description: "Pressed chinos" },
+        { label: "Shoes", color: "#784212", colorName: "Cognac", description: "Penny loafers" },
+        { label: "Accessory", color: "#1A3C34", colorName: "Hunter Green", description: "Silk cravat" },
+      ],
+      palette: [
+        { hex: "#2C3E50", name: "Navy" }, { hex: "#D5C4A1", name: "Khaki" },
+        { hex: "#784212", name: "Cognac" }, { hex: "#1A3C34", name: "Hunter" }, { hex: "#ECF0F1", name: "Ivory" },
+      ],
+      harmony: "Complementary",
+    },
+  ],
+  "old-money-female": [
+    {
+      items: [
+        { label: "Top", color: "#ECF0F1", colorName: "Ivory", description: "Cashmere turtleneck" },
+        { label: "Bottom", color: "#2C3E50", colorName: "Navy", description: "Pleated midi skirt" },
+        { label: "Shoes", color: "#D5C4A1", colorName: "Beige", description: "Ballet flats" },
+        { label: "Accessory", color: "#B8860B", colorName: "Gold", description: "Pearl stud earrings" },
+      ],
+      palette: [
+        { hex: "#ECF0F1", name: "Ivory" }, { hex: "#2C3E50", name: "Navy" },
+        { hex: "#D5C4A1", name: "Beige" }, { hex: "#B8860B", name: "Gold" }, { hex: "#8B7D6B", name: "Taupe" },
+      ],
+      harmony: "Analogous",
+    },
+  ],
+  "minimalist-male": [
+    {
+      items: [
+        { label: "Top", color: "#F5F5F5", colorName: "White", description: "Structured cotton tee" },
+        { label: "Bottom", color: "#1C1C1C", colorName: "Black", description: "Slim tapered trousers" },
+        { label: "Shoes", color: "#2D2D2D", colorName: "Charcoal", description: "Clean leather sneakers" },
+        { label: "Accessory", color: "#C0C0C0", colorName: "Silver", description: "Simple watch" },
+      ],
+      palette: [
+        { hex: "#F5F5F5", name: "White" }, { hex: "#1C1C1C", name: "Black" },
+        { hex: "#2D2D2D", name: "Charcoal" }, { hex: "#C0C0C0", name: "Silver" }, { hex: "#808080", name: "Grey" },
+      ],
+      harmony: "Monochromatic",
+    },
+  ],
+  "minimalist-female": [
+    {
+      items: [
+        { label: "Top", color: "#D5C4A1", colorName: "Sand", description: "Oversized linen shirt" },
+        { label: "Bottom", color: "#F5E6D3", colorName: "Cream", description: "Wide-leg trousers" },
+        { label: "Shoes", color: "#1C1C1C", colorName: "Black", description: "Pointed mules" },
+        { label: "Accessory", color: "#B8860B", colorName: "Gold", description: "Thin cuff bracelet" },
+      ],
+      palette: [
+        { hex: "#D5C4A1", name: "Sand" }, { hex: "#F5E6D3", name: "Cream" },
+        { hex: "#1C1C1C", name: "Black" }, { hex: "#B8860B", name: "Gold" }, { hex: "#8B7D6B", name: "Taupe" },
+      ],
+      harmony: "Monochromatic",
+    },
+  ],
+  "bohemian-male": [
+    {
+      items: [
+        { label: "Top", color: "#8B6F47", colorName: "Camel", description: "Loose woven henley" },
+        { label: "Bottom", color: "#5B7553", colorName: "Olive", description: "Relaxed linen pants" },
+        { label: "Shoes", color: "#6B4226", colorName: "Brown", description: "Worn leather sandals" },
+        { label: "Accessory", color: "#D4A574", colorName: "Tan", description: "Beaded bracelet stack" },
+      ],
+      palette: [
+        { hex: "#8B6F47", name: "Camel" }, { hex: "#5B7553", name: "Olive" },
+        { hex: "#6B4226", name: "Brown" }, { hex: "#D4A574", name: "Tan" }, { hex: "#3D4F38", name: "Forest" },
+      ],
+      harmony: "Analogous",
+    },
+  ],
+  "bohemian-female": [
+    {
+      items: [
+        { label: "Top", color: "#C0392B", colorName: "Terracotta", description: "Flowy peasant blouse" },
+        { label: "Bottom", color: "#F1C40F", colorName: "Mustard", description: "Tiered maxi skirt" },
+        { label: "Shoes", color: "#8B6F47", colorName: "Camel", description: "Strappy leather sandals" },
+        { label: "Accessory", color: "#1ABC9C", colorName: "Turquoise", description: "Statement earrings" },
+      ],
+      palette: [
+        { hex: "#C0392B", name: "Terracotta" }, { hex: "#F1C40F", name: "Mustard" },
+        { hex: "#8B6F47", name: "Camel" }, { hex: "#1ABC9C", name: "Turquoise" }, { hex: "#6B4226", name: "Umber" },
+      ],
+      harmony: "Triadic",
+    },
+  ],
+  "athleisure-male": [
+    {
+      items: [
+        { label: "Top", color: "#2C3E50", colorName: "Navy", description: "Zip-up track jacket" },
+        { label: "Bottom", color: "#34495E", colorName: "Slate", description: "Tapered joggers" },
+        { label: "Shoes", color: "#E8E8E8", colorName: "White", description: "Running sneakers" },
+        { label: "Accessory", color: "#1ABC9C", colorName: "Teal", description: "Sports watch" },
+      ],
+      palette: [
+        { hex: "#2C3E50", name: "Navy" }, { hex: "#34495E", name: "Slate" },
+        { hex: "#E8E8E8", name: "White" }, { hex: "#1ABC9C", name: "Teal" }, { hex: "#1A252F", name: "Midnight" },
+      ],
+      harmony: "Analogous",
+    },
+  ],
+  "athleisure-female": [
+    {
+      items: [
+        { label: "Top", color: "#9B59B6", colorName: "Lavender", description: "Fitted sports bra top" },
+        { label: "Bottom", color: "#1C1C1C", colorName: "Black", description: "High-waisted leggings" },
+        { label: "Shoes", color: "#F5F5F5", colorName: "White", description: "Knit running shoes" },
+        { label: "Accessory", color: "#E8D5B7", colorName: "Cream", description: "Crossbody belt bag" },
+      ],
+      palette: [
+        { hex: "#9B59B6", name: "Lavender" }, { hex: "#1C1C1C", name: "Black" },
+        { hex: "#F5F5F5", name: "White" }, { hex: "#E8D5B7", name: "Cream" }, { hex: "#7D3C98", name: "Purple" },
+      ],
+      harmony: "Complementary",
+    },
+  ],
+  "classic-male": [
+    {
+      items: [
+        { label: "Top", color: "#ECF0F1", colorName: "White", description: "Crisp Oxford shirt" },
+        { label: "Bottom", color: "#2C3E50", colorName: "Navy", description: "Tailored dress trousers" },
+        { label: "Shoes", color: "#784212", colorName: "Cognac", description: "Cap-toe Oxfords" },
+        { label: "Accessory", color: "#C0392B", colorName: "Burgundy", description: "Leather belt" },
+      ],
+      palette: [
+        { hex: "#ECF0F1", name: "White" }, { hex: "#2C3E50", name: "Navy" },
+        { hex: "#784212", name: "Cognac" }, { hex: "#C0392B", name: "Burgundy" }, { hex: "#1A252F", name: "Midnight" },
+      ],
+      harmony: "Complementary",
+    },
+  ],
+  "classic-female": [
+    {
+      items: [
+        { label: "Top", color: "#2C3E50", colorName: "Navy", description: "Fitted blazer" },
+        { label: "Bottom", color: "#ECF0F1", colorName: "Ivory", description: "Pencil skirt" },
+        { label: "Shoes", color: "#1C1C1C", colorName: "Black", description: "Pointed-toe pumps" },
+        { label: "Accessory", color: "#B8860B", colorName: "Gold", description: "Structured handbag" },
+      ],
+      palette: [
+        { hex: "#2C3E50", name: "Navy" }, { hex: "#ECF0F1", name: "Ivory" },
+        { hex: "#1C1C1C", name: "Black" }, { hex: "#B8860B", name: "Gold" }, { hex: "#34495E", name: "Slate" },
+      ],
+      harmony: "Complementary",
+    },
+  ],
+};
 
 const Index = () => {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [currentOutfit, setCurrentOutfit] = useState<typeof MOCK_OUTFITS[0] | null>(null);
-  const [outfitIndex, setOutfitIndex] = useState(0);
+  const [currentOutfit, setCurrentOutfit] = useState<{
+    items: { label: string; color: string; colorName: string; description: string }[];
+    palette: { hex: string; name: string }[];
+    harmony: string;
+  } | null>(null);
+  const [selectedStyle, setSelectedStyle] = useState<StyleType>("classic");
+  const [selectedGender, setSelectedGender] = useState<GenderType>("male");
 
   const handleImageUpload = useCallback((_file: File, preview: string) => {
     setUploadedImage(preview);
@@ -77,19 +219,17 @@ const Index = () => {
 
   const generateOutfit = useCallback(() => {
     setIsGenerating(true);
-    // Simulate AI generation
     setTimeout(() => {
-      const idx = outfitIndex % MOCK_OUTFITS.length;
-      setCurrentOutfit(MOCK_OUTFITS[idx]);
-      setOutfitIndex((prev) => prev + 1);
+      const key = `${selectedStyle}-${selectedGender}`;
+      const outfits = MOCK_OUTFITS[key] || MOCK_OUTFITS["classic-male"];
+      setCurrentOutfit(outfits[0]);
       setIsGenerating(false);
     }, 2000);
-  }, [outfitIndex]);
+  }, [selectedStyle, selectedGender]);
 
   const handleSwapItem = useCallback(
     (itemIndex: number) => {
       if (!currentOutfit) return;
-      // Simulate swapping a single item
       setIsGenerating(true);
       setTimeout(() => {
         const alternates = [
@@ -143,17 +283,24 @@ const Index = () => {
             Build your perfect outfit
           </h2>
           <p className="font-body text-muted-foreground mt-3 max-w-md mx-auto">
-            Upload any clothing piece and we'll generate a complete, color-coordinated outfit using color theory principles.
+            Upload any clothing piece, pick your style and gender, and we'll generate a complete color-coordinated outfit.
           </p>
         </motion.div>
 
         <div className="grid lg:grid-cols-2 gap-10">
-          {/* Left: Upload + Mannequin */}
+          {/* Left: Upload + Preferences + Mannequin */}
           <div className="space-y-6">
             <UploadZone
               onImageUpload={handleImageUpload}
               uploadedImage={uploadedImage}
               onClear={handleClearImage}
+            />
+
+            <StylePreferences
+              style={selectedStyle}
+              gender={selectedGender}
+              onStyleChange={setSelectedStyle}
+              onGenderChange={setSelectedGender}
             />
 
             <MannequinDisplay
@@ -252,11 +399,11 @@ const Index = () => {
                   </li>
                   <li className="flex gap-3">
                     <span className="text-accent font-display font-bold">02</span>
-                    We analyze its color and style to build a full outfit
+                    Choose your style and who the outfit is for
                   </li>
                   <li className="flex gap-3">
                     <span className="text-accent font-display font-bold">03</span>
-                    Swap individual pieces or regenerate the entire look
+                    Generate, swap pieces, or regenerate the entire look
                   </li>
                 </ul>
               </motion.div>
