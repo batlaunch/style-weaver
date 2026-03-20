@@ -90,7 +90,7 @@ const Index = () => {
     } finally {
       setIsGenerating(false);
     }
-  }, [uploadedImage, selectedStyle, selectedGender, currentOutfit, lockedIndices]);
+  }, [uploadedImage, selectedStyle, selectedGender, selectedSkinTone, currentOutfit, lockedIndices]);
 
   const generateOutfitImage = useCallback(async () => {
     if (!currentOutfit) return;
