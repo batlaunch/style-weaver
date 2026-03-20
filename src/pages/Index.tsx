@@ -22,6 +22,7 @@ const Index = () => {
   const [outfitImageUrl, setOutfitImageUrl] = useState<string | null>(null);
   const [selectedStyle, setSelectedStyle] = useState<StyleType>("any");
   const [selectedGender, setSelectedGender] = useState<GenderType>("male");
+  const [selectedSkinTone, setSelectedSkinTone] = useState<SkinTone>("medium");
   const [resolvedStyle, setResolvedStyle] = useState<string>("classic");
   const [lockedIndices, setLockedIndices] = useState<Set<number>>(new Set());
   const { saveOutfit } = useSavedOutfits();
