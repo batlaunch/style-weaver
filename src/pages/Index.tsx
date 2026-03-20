@@ -323,8 +323,17 @@ const Index = () => {
                       description={item.description}
                       index={i}
                       isLocked={lockedIndices.has(i)}
+                      altColors={item.altColors}
                       onSwap={() => {}}
                       onToggleLock={() => toggleLock(i)}
+                      onColorPick={(hex, name) => {
+                        setCurrentOutfit((prev) => {
+                          if (!prev) return prev;
+                          const newItems = [...prev.items];
+                          newItems[i] = { ...newItems[i], color: hex, colorName: name };
+                          return { ...prev, items: newItems };
+                        });
+                      }}
                     />
                   ))}
                   <p className="text-xs text-muted-foreground font-body text-center pt-2">
