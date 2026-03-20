@@ -11,7 +11,7 @@ serve(async (req) => {
   }
 
   try {
-    const { imageBase64, style, gender, lockedItems } = await req.json();
+    const { imageBase64, style, gender, skinTone, lockedItems } = await req.json();
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
@@ -22,10 +22,16 @@ serve(async (req) => {
       ? `\n\nIMPORTANT - LOCKED ITEMS: The following items are LOCKED and MUST be kept exactly as specified (same label, color, colorName, and description). Only regenerate the unlocked items around them:\n${lockedItems.map((item: any) => `- ${item.label}: ${item.colorName} ${item.description} (color: ${item.color})`).join("\n")}`
       : "";
 
+    const skinToneContext = skinTone
+      ? `\nThe user has a ${skinTone} skin tone. Choose colors that complement and flatter this skin tone. Avoid colors that wash out or clash with ${skinTone} skin.`
+      : "";
+
     const systemPrompt = `You are a fashion stylist AI. The user will show you a photo of a clothing item they own. Your job is to:
 1. Identify what the item is (e.g. "navy blue crew-neck sweater") and its dominant color
 2. Build a complete outfit around that piece, matching the requested style and gender
 3. Use color harmony theory (analogous, complementary, monochromatic, triadic, or split-complementary)
+4. For each item, provide 3-4 alternative color options that would also work within the same color harmony
+${skinToneContext}
 
 Return ONLY valid JSON with this exact structure (no markdown, no backticks):
 {
@@ -36,10 +42,17 @@ Return ONLY valid JSON with this exact structure (no markdown, no backticks):
     "description": "Brief description of the uploaded item"
   },
   "items": [
-    {"label": "Top", "color": "#hexcolor", "colorName": "Color Name", "description": "Brief description"},
-    {"label": "Bottom", "color": "#hexcolor", "colorName": "Color Name", "description": "Brief description"},
-    {"label": "Shoes", "color": "#hexcolor", "colorName": "Color Name", "description": "Brief description"},
-    {"label": "Accessory", "color": "#hexcolor", "colorName": "Color Name", "description": "Brief description"}
+    {
+      "label": "Top",
+      "color": "#hexcolor",
+      "colorName": "Color Name",
+      "description": "Brief description",
+      "altColors": [
+        {"hex": "#hexcolor", "name": "Color Name"},
+        {"hex": "#hexcolor", "name": "Color Name"},
+        {"hex": "#hexcolor", "name": "Color Name"}
+      ]
+    }
   ],
   "palette": [
     {"hex": "#hexcolor", "name": "Color Name"}
@@ -51,6 +64,8 @@ IMPORTANT RULES:
 - The "items" array MUST include the uploaded piece as one of the items (with its original description)
 - The other items complete the outfit around it
 - Always include exactly 4 items and 5 palette colors
+- Each item MUST have an "altColors" array with 3-4 alternative colors that fit the same harmony type
+- The altColors should include the current color as one option, plus 2-3 alternatives
 - palette should include the 5 most important colors in the outfit
 - Use realistic, wearable color hex codes${lockedContext}`;
 
