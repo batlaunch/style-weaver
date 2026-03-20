@@ -60,6 +60,7 @@ const Index = () => {
           imageBase64: compressed,
           style,
           gender: selectedGender,
+          skinTone: selectedSkinTone,
           lockedItems: lockedItems.length > 0 ? lockedItems : undefined,
         },
       });
