@@ -194,8 +194,10 @@ const Index = () => {
             <StylePreferences
               style={selectedStyle}
               gender={selectedGender}
+              skinTone={selectedSkinTone}
               onStyleChange={setSelectedStyle}
               onGenderChange={setSelectedGender}
+              onSkinToneChange={setSelectedSkinTone}
             />
 
             <MannequinDisplay
