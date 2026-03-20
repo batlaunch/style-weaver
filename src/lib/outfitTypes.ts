@@ -3,6 +3,7 @@ export interface OutfitItem {
   color: string;
   colorName: string;
   description: string;
+  altColors?: { hex: string; name: string }[];
 }
 
 export interface OutfitPaletteColor {

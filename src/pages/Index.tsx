@@ -10,7 +10,7 @@ import MannequinDisplay from "@/components/MannequinDisplay";
 import OutfitCard from "@/components/OutfitCard";
 import ColorPalette from "@/components/ColorPalette";
 import HarmonyExplanation from "@/components/HarmonyExplanation";
-import StylePreferences, { type StyleType, type GenderType } from "@/components/StylePreferences";
+import StylePreferences, { type StyleType, type GenderType, type SkinTone } from "@/components/StylePreferences";
 import { useSavedOutfits } from "@/hooks/useSavedOutfits";
 import type { Outfit } from "@/lib/outfitTypes";
 
@@ -22,6 +22,7 @@ const Index = () => {
   const [outfitImageUrl, setOutfitImageUrl] = useState<string | null>(null);
   const [selectedStyle, setSelectedStyle] = useState<StyleType>("any");
   const [selectedGender, setSelectedGender] = useState<GenderType>("male");
+  const [selectedSkinTone, setSelectedSkinTone] = useState<SkinTone>("medium");
   const [resolvedStyle, setResolvedStyle] = useState<string>("classic");
   const [lockedIndices, setLockedIndices] = useState<Set<number>>(new Set());
   const { saveOutfit } = useSavedOutfits();
@@ -59,6 +60,7 @@ const Index = () => {
           imageBase64: compressed,
           style,
           gender: selectedGender,
+          skinTone: selectedSkinTone,
           lockedItems: lockedItems.length > 0 ? lockedItems : undefined,
         },
       });
@@ -88,7 +90,7 @@ const Index = () => {
     } finally {
       setIsGenerating(false);
     }
-  }, [uploadedImage, selectedStyle, selectedGender, currentOutfit, lockedIndices]);
+  }, [uploadedImage, selectedStyle, selectedGender, selectedSkinTone, currentOutfit, lockedIndices]);
 
   const generateOutfitImage = useCallback(async () => {
     if (!currentOutfit) return;
@@ -192,8 +194,10 @@ const Index = () => {
             <StylePreferences
               style={selectedStyle}
               gender={selectedGender}
+              skinTone={selectedSkinTone}
               onStyleChange={setSelectedStyle}
               onGenderChange={setSelectedGender}
+              onSkinToneChange={setSelectedSkinTone}
             />
 
             <MannequinDisplay
@@ -319,8 +323,17 @@ const Index = () => {
                       description={item.description}
                       index={i}
                       isLocked={lockedIndices.has(i)}
+                      altColors={item.altColors}
                       onSwap={() => {}}
                       onToggleLock={() => toggleLock(i)}
+                      onColorPick={(hex, name) => {
+                        setCurrentOutfit((prev) => {
+                          if (!prev) return prev;
+                          const newItems = [...prev.items];
+                          newItems[i] = { ...newItems[i], color: hex, colorName: name };
+                          return { ...prev, items: newItems };
+                        });
+                      }}
                     />
                   ))}
                   <p className="text-xs text-muted-foreground font-body text-center pt-2">
