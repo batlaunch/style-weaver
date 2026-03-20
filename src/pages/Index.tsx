@@ -10,7 +10,7 @@ import MannequinDisplay from "@/components/MannequinDisplay";
 import OutfitCard from "@/components/OutfitCard";
 import ColorPalette from "@/components/ColorPalette";
 import HarmonyExplanation from "@/components/HarmonyExplanation";
-import StylePreferences, { type StyleType, type GenderType } from "@/components/StylePreferences";
+import StylePreferences, { type StyleType, type GenderType, type SkinTone } from "@/components/StylePreferences";
 import { useSavedOutfits } from "@/hooks/useSavedOutfits";
 import type { Outfit } from "@/lib/outfitTypes";
 
