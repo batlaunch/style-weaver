@@ -11,14 +11,17 @@ import {
 export type StyleType = "any" | "casual" | "smart-casual" | "business-casual" | "business-professional" | "cocktail" | "evening-formal" | "streetwear" | "minimalist" | "old-money" | "preppy" | "athleisure" | "vintage" | "utility" | "techwear" | "gorpcore" | "dark-academia" | "soft-boy" | "skater" | "rock-grunge" | "bohemian" | "classic" | "cottagecore" | "coquette" | "eclectic-grandpa";
 export type GenderType = "male" | "female";
 export type SkinTone = "fair" | "light" | "medium" | "olive" | "tan" | "brown" | "dark";
+export type SeasonType = "any" | "spring" | "summer" | "fall" | "winter";
 
 interface StylePreferencesProps {
   style: StyleType;
   gender: GenderType;
   skinTone: SkinTone;
+  season: SeasonType;
   onStyleChange: (style: StyleType) => void;
   onGenderChange: (gender: GenderType) => void;
   onSkinToneChange: (tone: SkinTone) => void;
+  onSeasonChange: (season: SeasonType) => void;
 }
 
 const MALE_STYLES: { value: StyleType; label: string; emoji: string }[] = [
@@ -77,7 +80,15 @@ const SKIN_TONES: { value: SkinTone; label: string; swatch: string }[] = [
   { value: "dark", label: "Dark", swatch: "#5C3A1E" },
 ];
 
-const StylePreferences = ({ style, gender, skinTone, onStyleChange, onGenderChange, onSkinToneChange }: StylePreferencesProps) => {
+const SEASONS: { value: SeasonType; label: string; emoji: string }[] = [
+  { value: "any", label: "Any Season", emoji: "🔄" },
+  { value: "spring", label: "Spring", emoji: "🌸" },
+  { value: "summer", label: "Summer", emoji: "☀️" },
+  { value: "fall", label: "Fall", emoji: "🍂" },
+  { value: "winter", label: "Winter", emoji: "❄️" },
+];
+
+const StylePreferences = ({ style, gender, skinTone, season, onStyleChange, onGenderChange, onSkinToneChange, onSeasonChange }: StylePreferencesProps) => {
   const styles = gender === "male" ? MALE_STYLES : FEMALE_STYLES;
   const currentStyle = styles.find((s) => s.value === style);
 
