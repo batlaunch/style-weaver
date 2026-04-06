@@ -81,7 +81,7 @@ const SKIN_TONES: { value: SkinTone; label: string; swatch: string }[] = [
 ];
 
 const SEASONS: { value: SeasonType; label: string; emoji: string }[] = [
-  { value: "any", label: "Any Season", emoji: "🔄" },
+  
   { value: "spring", label: "Spring", emoji: "🌸" },
   { value: "summer", label: "Summer", emoji: "☀️" },
   { value: "fall", label: "Fall", emoji: "🍂" },

@@ -25,7 +25,7 @@ const Index = () => {
   const [selectedSkinTone, setSelectedSkinTone] = useState<SkinTone>("medium");
   const [resolvedStyle, setResolvedStyle] = useState<string>("classic");
   const [lockedIndices, setLockedIndices] = useState<Set<number>>(new Set());
-  const [selectedSeason, setSelectedSeason] = useState<SeasonType>("any");
+  const [selectedSeason, setSelectedSeason] = useState<SeasonType>("spring");
   const { saveOutfit } = useSavedOutfits();
 
   const handleImageUpload = useCallback((_file: File, preview: string) => {
@@ -62,7 +62,7 @@ const Index = () => {
           style,
           gender: selectedGender,
           skinTone: selectedSkinTone,
-          season: selectedSeason === "any" ? undefined : selectedSeason,
+          season: selectedSeason,
           lockedItems: lockedItems.length > 0 ? lockedItems : undefined,
         },
       });
