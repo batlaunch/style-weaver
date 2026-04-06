@@ -11,14 +11,17 @@ import {
 export type StyleType = "any" | "casual" | "smart-casual" | "business-casual" | "business-professional" | "cocktail" | "evening-formal" | "streetwear" | "minimalist" | "old-money" | "preppy" | "athleisure" | "vintage" | "utility" | "techwear" | "gorpcore" | "dark-academia" | "soft-boy" | "skater" | "rock-grunge" | "bohemian" | "classic" | "cottagecore" | "coquette" | "eclectic-grandpa";
 export type GenderType = "male" | "female";
 export type SkinTone = "fair" | "light" | "medium" | "olive" | "tan" | "brown" | "dark";
+export type SeasonType = "any" | "spring" | "summer" | "fall" | "winter";
 
 interface StylePreferencesProps {
   style: StyleType;
   gender: GenderType;
   skinTone: SkinTone;
+  season: SeasonType;
   onStyleChange: (style: StyleType) => void;
   onGenderChange: (gender: GenderType) => void;
   onSkinToneChange: (tone: SkinTone) => void;
+  onSeasonChange: (season: SeasonType) => void;
 }
 
 const MALE_STYLES: { value: StyleType; label: string; emoji: string }[] = [
@@ -77,7 +80,15 @@ const SKIN_TONES: { value: SkinTone; label: string; swatch: string }[] = [
   { value: "dark", label: "Dark", swatch: "#5C3A1E" },
 ];
 
-const StylePreferences = ({ style, gender, skinTone, onStyleChange, onGenderChange, onSkinToneChange }: StylePreferencesProps) => {
+const SEASONS: { value: SeasonType; label: string; emoji: string }[] = [
+  { value: "any", label: "Any Season", emoji: "🔄" },
+  { value: "spring", label: "Spring", emoji: "🌸" },
+  { value: "summer", label: "Summer", emoji: "☀️" },
+  { value: "fall", label: "Fall", emoji: "🍂" },
+  { value: "winter", label: "Winter", emoji: "❄️" },
+];
+
+const StylePreferences = ({ style, gender, skinTone, season, onStyleChange, onGenderChange, onSkinToneChange, onSeasonChange }: StylePreferencesProps) => {
   const styles = gender === "male" ? MALE_STYLES : FEMALE_STYLES;
   const currentStyle = styles.find((s) => s.value === style);
 
@@ -183,6 +194,29 @@ const StylePreferences = ({ style, gender, skinTone, onStyleChange, onGenderChan
             ))}
           </SelectContent>
         </Select>
+      </div>
+
+      {/* Season Selection */}
+      <div>
+        <h3 className="font-display text-xs uppercase tracking-[0.2em] text-muted-foreground mb-3">
+          Season
+        </h3>
+        <div className="flex gap-2">
+          {SEASONS.map((s) => (
+            <button
+              key={s.value}
+              onClick={() => onSeasonChange(s.value)}
+              className={`flex-1 flex flex-col items-center gap-1 py-2.5 rounded-md font-body text-xs transition-all ${
+                season === s.value
+                  ? "bg-foreground text-primary-foreground"
+                  : "border border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
+              }`}
+            >
+              <span className="text-base">{s.emoji}</span>
+              <span className="text-[10px]">{s.label}</span>
+            </button>
+          ))}
+        </div>
       </div>
     </motion.div>
   );

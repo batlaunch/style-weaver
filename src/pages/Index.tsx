@@ -10,7 +10,7 @@ import MannequinDisplay from "@/components/MannequinDisplay";
 import OutfitCard from "@/components/OutfitCard";
 import ColorPalette from "@/components/ColorPalette";
 import HarmonyExplanation from "@/components/HarmonyExplanation";
-import StylePreferences, { type StyleType, type GenderType, type SkinTone } from "@/components/StylePreferences";
+import StylePreferences, { type StyleType, type GenderType, type SkinTone, type SeasonType } from "@/components/StylePreferences";
 import { useSavedOutfits } from "@/hooks/useSavedOutfits";
 import type { Outfit } from "@/lib/outfitTypes";
 
@@ -25,6 +25,7 @@ const Index = () => {
   const [selectedSkinTone, setSelectedSkinTone] = useState<SkinTone>("medium");
   const [resolvedStyle, setResolvedStyle] = useState<string>("classic");
   const [lockedIndices, setLockedIndices] = useState<Set<number>>(new Set());
+  const [selectedSeason, setSelectedSeason] = useState<SeasonType>("any");
   const { saveOutfit } = useSavedOutfits();
 
   const handleImageUpload = useCallback((_file: File, preview: string) => {
@@ -61,6 +62,7 @@ const Index = () => {
           style,
           gender: selectedGender,
           skinTone: selectedSkinTone,
+          season: selectedSeason === "any" ? undefined : selectedSeason,
           lockedItems: lockedItems.length > 0 ? lockedItems : undefined,
         },
       });
@@ -195,9 +197,11 @@ const Index = () => {
               style={selectedStyle}
               gender={selectedGender}
               skinTone={selectedSkinTone}
+              season={selectedSeason}
               onStyleChange={setSelectedStyle}
               onGenderChange={setSelectedGender}
               onSkinToneChange={setSelectedSkinTone}
+              onSeasonChange={setSelectedSeason}
             />
 
             <MannequinDisplay
