@@ -46,12 +46,25 @@ const MALE_STYLES: { value: StyleType; label: string; emoji: string }[] = [
 
 const FEMALE_STYLES: { value: StyleType; label: string; emoji: string }[] = [
   { value: "any", label: "Surprise Me", emoji: "🎲" },
+  { value: "casual", label: "Casual", emoji: "👕" },
+  { value: "smart-casual", label: "Smart Casual", emoji: "🧥" },
+  { value: "business-casual", label: "Business Casual", emoji: "👔" },
+  { value: "business-professional", label: "Business Professional", emoji: "💼" },
+  { value: "cocktail", label: "Cocktail / Semi-Formal", emoji: "🍸" },
+  { value: "evening-formal", label: "Evening Formal / Black Tie", emoji: "✨" },
   { value: "streetwear", label: "Streetwear", emoji: "🔥" },
-  { value: "old-money", label: "Old Money", emoji: "🏛" },
-  { value: "minimalist", label: "Minimalist", emoji: "◻️" },
-  { value: "bohemian", label: "Bohemian", emoji: "🌿" },
+  { value: "minimalist", label: "Minimalist / Clean Girl", emoji: "◻️" },
+  { value: "old-money", label: "Old Money / Quiet Luxury", emoji: "🏛" },
+  { value: "preppy", label: "Preppy", emoji: "🎀" },
+  { value: "bohemian", label: "Boho / Bohemian Chic", emoji: "🌿" },
   { value: "athleisure", label: "Athleisure", emoji: "⚡" },
-  { value: "classic", label: "Classic", emoji: "👔" },
+  { value: "vintage", label: "Vintage / Retro", emoji: "📻" },
+  { value: "cottagecore", label: "Cottagecore", emoji: "🌼" },
+  { value: "dark-academia", label: "Dark Academia", emoji: "📚" },
+  { value: "rock-grunge", label: "Grunge / Edgy", emoji: "🎸" },
+  { value: "coquette", label: "Coquette", emoji: "🎀" },
+  { value: "gorpcore", label: "Utility / Gorpcore", emoji: "🏔" },
+  { value: "eclectic-grandpa", label: "Eclectic Grandpa", emoji: "🧶" },
 ];
 
 const SKIN_TONES: { value: SkinTone; label: string; swatch: string }[] = [
