@@ -156,58 +156,33 @@ const StylePreferences = ({ style, gender, skinTone, onStyleChange, onGenderChan
         </div>
       </div>
 
-      {/* Style Selection - Dropdown for male, grid for female */}
+      {/* Style Selection - Dropdown */}
       <div>
         <h3 className="font-display text-xs uppercase tracking-[0.2em] text-muted-foreground mb-3">
           Style
         </h3>
-        {gender === "male" ? (
-          <Select value={style} onValueChange={(val) => onStyleChange(val as StyleType)}>
-            <SelectTrigger className="w-full bg-card border-border text-foreground font-body text-sm">
-              <SelectValue>
-                {currentStyle && (
-                  <span className="flex items-center gap-2">
-                    <span>{currentStyle.emoji}</span>
-                    {currentStyle.label}
-                  </span>
-                )}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent className="max-h-[300px]">
-              {styles.map((s) => (
-                <SelectItem key={s.value} value={s.value} className="font-body text-sm">
-                  <span className="flex items-center gap-2">
-                    <span>{s.emoji}</span>
-                    {s.label}
-                  </span>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        ) : (
-          <Select value={style} onValueChange={(val) => onStyleChange(val as StyleType)}>
-            <SelectTrigger className="w-full bg-card border-border text-foreground font-body text-sm">
-              <SelectValue>
-                {currentStyle && (
-                  <span className="flex items-center gap-2">
-                    <span>{currentStyle.emoji}</span>
-                    {currentStyle.label}
-                  </span>
-                )}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent className="max-h-[300px]">
-              {styles.map((s) => (
-                <SelectItem key={s.value} value={s.value} className="font-body text-sm">
-                  <span className="flex items-center gap-2">
-                    <span>{s.emoji}</span>
-                    {s.label}
-                  </span>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        )}
+        <Select value={style} onValueChange={(val) => onStyleChange(val as StyleType)}>
+          <SelectTrigger className="w-full bg-card border-border text-foreground font-body text-sm">
+            <SelectValue>
+              {currentStyle && (
+                <span className="flex items-center gap-2">
+                  <span>{currentStyle.emoji}</span>
+                  {currentStyle.label}
+                </span>
+              )}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent className="max-h-[300px]">
+            {styles.map((s) => (
+              <SelectItem key={s.value} value={s.value} className="font-body text-sm">
+                <span className="flex items-center gap-2">
+                  <span>{s.emoji}</span>
+                  {s.label}
+                </span>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
     </motion.div>
   );
