@@ -195,6 +195,29 @@ const StylePreferences = ({ style, gender, skinTone, season, onStyleChange, onGe
           </SelectContent>
         </Select>
       </div>
+
+      {/* Season Selection */}
+      <div>
+        <h3 className="font-display text-xs uppercase tracking-[0.2em] text-muted-foreground mb-3">
+          Season
+        </h3>
+        <div className="flex gap-2">
+          {SEASONS.map((s) => (
+            <button
+              key={s.value}
+              onClick={() => onSeasonChange(s.value)}
+              className={`flex-1 flex flex-col items-center gap-1 py-2.5 rounded-md font-body text-xs transition-all ${
+                season === s.value
+                  ? "bg-foreground text-primary-foreground"
+                  : "border border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
+              }`}
+            >
+              <span className="text-base">{s.emoji}</span>
+              <span className="text-[10px]">{s.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
     </motion.div>
   );
 };
