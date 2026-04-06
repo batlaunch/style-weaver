@@ -11,7 +11,7 @@ serve(async (req) => {
   }
 
   try {
-    const { imageBase64, style, gender, skinTone, lockedItems } = await req.json();
+    const { imageBase64, style, gender, skinTone, season, lockedItems } = await req.json();
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
@@ -26,12 +26,16 @@ serve(async (req) => {
       ? `\nThe user has a ${skinTone} skin tone. Choose colors that complement and flatter this skin tone. Avoid colors that wash out or clash with ${skinTone} skin.`
       : "";
 
+    const seasonContext = season
+      ? `\nThe outfit is for ${season}. Choose fabrics, layers, and colors appropriate for ${season} weather. For example: lighter fabrics and brighter colors for spring/summer, heavier layers and richer tones for fall/winter.`
+      : "";
+
     const systemPrompt = `You are a fashion stylist AI. The user will show you a photo of a clothing item they own. Your job is to:
 1. Identify what the item is (e.g. "navy blue crew-neck sweater") and its dominant color
 2. Build a complete outfit around that piece, matching the requested style and gender
 3. Use color harmony theory (analogous, complementary, monochromatic, triadic, or split-complementary)
 4. For each item, provide 3-4 alternative color options that would also work within the same color harmony
-${skinToneContext}
+${skinToneContext}${seasonContext}
 
 Return ONLY valid JSON with this exact structure (no markdown, no backticks):
 {
