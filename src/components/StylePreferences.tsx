@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { User, Users, ChevronDown } from "lucide-react";
+import { User, Users } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -8,7 +8,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export type StyleType = "any" | "casual" | "smart-casual" | "business-casual" | "business-professional" | "cocktail" | "streetwear" | "minimalist" | "old-money" | "athleisure" | "vintage" | "utility" | "techwear" | "gorpcore" | "dark-academia" | "soft-boy" | "skater" | "rock-grunge" | "bohemian" | "classic";
+export type StyleType = "any" | "casual" | "smart-casual" | "business-casual" | "business-professional" | "cocktail" | "evening-formal" | "streetwear" | "minimalist" | "old-money" | "preppy" | "athleisure" | "vintage" | "utility" | "techwear" | "gorpcore" | "dark-academia" | "soft-boy" | "skater" | "rock-grunge" | "bohemian" | "classic" | "cottagecore" | "coquette" | "eclectic-grandpa";
 export type GenderType = "male" | "female";
 export type SkinTone = "fair" | "light" | "medium" | "olive" | "tan" | "brown" | "dark";
 
