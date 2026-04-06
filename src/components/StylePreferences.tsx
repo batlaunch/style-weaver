@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { User, Users, ChevronDown } from "lucide-react";
+import { User, Users } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -8,7 +8,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export type StyleType = "any" | "casual" | "smart-casual" | "business-casual" | "business-professional" | "cocktail" | "streetwear" | "minimalist" | "old-money" | "athleisure" | "vintage" | "utility" | "techwear" | "gorpcore" | "dark-academia" | "soft-boy" | "skater" | "rock-grunge" | "bohemian" | "classic";
+export type StyleType = "any" | "casual" | "smart-casual" | "business-casual" | "business-professional" | "cocktail" | "evening-formal" | "streetwear" | "minimalist" | "old-money" | "preppy" | "athleisure" | "vintage" | "utility" | "techwear" | "gorpcore" | "dark-academia" | "soft-boy" | "skater" | "rock-grunge" | "bohemian" | "classic" | "cottagecore" | "coquette" | "eclectic-grandpa";
 export type GenderType = "male" | "female";
 export type SkinTone = "fair" | "light" | "medium" | "olive" | "tan" | "brown" | "dark";
 
@@ -46,12 +46,25 @@ const MALE_STYLES: { value: StyleType; label: string; emoji: string }[] = [
 
 const FEMALE_STYLES: { value: StyleType; label: string; emoji: string }[] = [
   { value: "any", label: "Surprise Me", emoji: "🎲" },
+  { value: "casual", label: "Casual", emoji: "👕" },
+  { value: "smart-casual", label: "Smart Casual", emoji: "🧥" },
+  { value: "business-casual", label: "Business Casual", emoji: "👔" },
+  { value: "business-professional", label: "Business Professional", emoji: "💼" },
+  { value: "cocktail", label: "Cocktail / Semi-Formal", emoji: "🍸" },
+  { value: "evening-formal", label: "Evening Formal / Black Tie", emoji: "✨" },
   { value: "streetwear", label: "Streetwear", emoji: "🔥" },
-  { value: "old-money", label: "Old Money", emoji: "🏛" },
-  { value: "minimalist", label: "Minimalist", emoji: "◻️" },
-  { value: "bohemian", label: "Bohemian", emoji: "🌿" },
+  { value: "minimalist", label: "Minimalist / Clean Girl", emoji: "◻️" },
+  { value: "old-money", label: "Old Money / Quiet Luxury", emoji: "🏛" },
+  { value: "preppy", label: "Preppy", emoji: "🎀" },
+  { value: "bohemian", label: "Boho / Bohemian Chic", emoji: "🌿" },
   { value: "athleisure", label: "Athleisure", emoji: "⚡" },
-  { value: "classic", label: "Classic", emoji: "👔" },
+  { value: "vintage", label: "Vintage / Retro", emoji: "📻" },
+  { value: "cottagecore", label: "Cottagecore", emoji: "🌼" },
+  { value: "dark-academia", label: "Dark Academia", emoji: "📚" },
+  { value: "rock-grunge", label: "Grunge / Edgy", emoji: "🎸" },
+  { value: "coquette", label: "Coquette", emoji: "🎀" },
+  { value: "gorpcore", label: "Utility / Gorpcore", emoji: "🏔" },
+  { value: "eclectic-grandpa", label: "Eclectic Grandpa", emoji: "🧶" },
 ];
 
 const SKIN_TONES: { value: SkinTone; label: string; swatch: string }[] = [
@@ -143,52 +156,33 @@ const StylePreferences = ({ style, gender, skinTone, onStyleChange, onGenderChan
         </div>
       </div>
 
-      {/* Style Selection - Dropdown for male, grid for female */}
+      {/* Style Selection - Dropdown */}
       <div>
         <h3 className="font-display text-xs uppercase tracking-[0.2em] text-muted-foreground mb-3">
           Style
         </h3>
-        {gender === "male" ? (
-          <Select value={style} onValueChange={(val) => onStyleChange(val as StyleType)}>
-            <SelectTrigger className="w-full bg-card border-border text-foreground font-body text-sm">
-              <SelectValue>
-                {currentStyle && (
-                  <span className="flex items-center gap-2">
-                    <span>{currentStyle.emoji}</span>
-                    {currentStyle.label}
-                  </span>
-                )}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent className="max-h-[300px]">
-              {styles.map((s) => (
-                <SelectItem key={s.value} value={s.value} className="font-body text-sm">
-                  <span className="flex items-center gap-2">
-                    <span>{s.emoji}</span>
-                    {s.label}
-                  </span>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        ) : (
-          <div className="grid grid-cols-3 gap-2">
+        <Select value={style} onValueChange={(val) => onStyleChange(val as StyleType)}>
+          <SelectTrigger className="w-full bg-card border-border text-foreground font-body text-sm">
+            <SelectValue>
+              {currentStyle && (
+                <span className="flex items-center gap-2">
+                  <span>{currentStyle.emoji}</span>
+                  {currentStyle.label}
+                </span>
+              )}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent className="max-h-[300px]">
             {styles.map((s) => (
-              <button
-                key={s.value}
-                onClick={() => onStyleChange(s.value)}
-                className={`flex items-center gap-2 px-3 py-2.5 rounded-md font-body text-xs transition-all ${
-                  style === s.value
-                    ? "bg-foreground text-primary-foreground"
-                    : "border border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
-                }`}
-              >
-                <span className="text-sm">{s.emoji}</span>
-                {s.label}
-              </button>
+              <SelectItem key={s.value} value={s.value} className="font-body text-sm">
+                <span className="flex items-center gap-2">
+                  <span>{s.emoji}</span>
+                  {s.label}
+                </span>
+              </SelectItem>
             ))}
-          </div>
-        )}
+          </SelectContent>
+        </Select>
       </div>
     </motion.div>
   );
