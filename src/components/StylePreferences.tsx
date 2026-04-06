@@ -185,22 +185,28 @@ const StylePreferences = ({ style, gender, skinTone, onStyleChange, onGenderChan
             </SelectContent>
           </Select>
         ) : (
-          <div className="grid grid-cols-3 gap-2">
-            {styles.map((s) => (
-              <button
-                key={s.value}
-                onClick={() => onStyleChange(s.value)}
-                className={`flex items-center gap-2 px-3 py-2.5 rounded-md font-body text-xs transition-all ${
-                  style === s.value
-                    ? "bg-foreground text-primary-foreground"
-                    : "border border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
-                }`}
-              >
-                <span className="text-sm">{s.emoji}</span>
-                {s.label}
-              </button>
-            ))}
-          </div>
+          <Select value={style} onValueChange={(val) => onStyleChange(val as StyleType)}>
+            <SelectTrigger className="w-full bg-card border-border text-foreground font-body text-sm">
+              <SelectValue>
+                {currentStyle && (
+                  <span className="flex items-center gap-2">
+                    <span>{currentStyle.emoji}</span>
+                    {currentStyle.label}
+                  </span>
+                )}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent className="max-h-[300px]">
+              {styles.map((s) => (
+                <SelectItem key={s.value} value={s.value} className="font-body text-sm">
+                  <span className="flex items-center gap-2">
+                    <span>{s.emoji}</span>
+                    {s.label}
+                  </span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         )}
       </div>
     </motion.div>
