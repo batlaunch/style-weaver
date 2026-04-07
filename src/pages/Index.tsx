@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, RefreshCw, Shirt, Heart, ImageIcon, Lock, Menu, X } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Sparkles, RefreshCw, Shirt, Heart, ImageIcon, Lock, Menu, X, LogIn, LogOut } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { compressImage } from "@/lib/compressImage";
