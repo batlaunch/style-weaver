@@ -1,20 +1,32 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { getDeviceId } from "@/lib/deviceId";
+import { useAuth } from "@/hooks/useAuth";
 import type { SavedOutfit, Outfit } from "@/lib/outfitTypes";
 
 export function useSavedOutfits() {
   const [savedOutfits, setSavedOutfits] = useState<SavedOutfit[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const deviceId = getDeviceId();
+  const { user } = useAuth();
 
   const fetchOutfits = useCallback(async () => {
     setIsLoading(true);
-    const { data, error } = await supabase
+
+    let query = supabase
       .from("saved_outfits")
       .select("*")
-      .eq("device_id", deviceId)
       .order("created_at", { ascending: false });
+
+    if (user) {
+      // Logged in: show user's outfits
+      query = query.eq("user_id", user.id);
+    } else {
+      // Anonymous: show device outfits
+      query = query.eq("device_id", deviceId).is("user_id", null);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       console.error("Error fetching outfits:", error);
@@ -33,7 +45,7 @@ export function useSavedOutfits() {
       );
     }
     setIsLoading(false);
-  }, [deviceId]);
+  }, [deviceId, user]);
 
   useEffect(() => {
     fetchOutfits();
@@ -49,6 +61,7 @@ export function useSavedOutfits() {
         items: outfit.items as any,
         palette: outfit.palette as any,
         outfit_image_url: outfitImageUrl || null,
+        user_id: user?.id || null,
       });
       if (error) {
         console.error("Error saving outfit:", error);
@@ -57,7 +70,7 @@ export function useSavedOutfits() {
       await fetchOutfits();
       return true;
     },
-    [deviceId, fetchOutfits]
+    [deviceId, user, fetchOutfits]
   );
 
   const deleteOutfit = useCallback(
