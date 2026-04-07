@@ -138,35 +138,71 @@ const Index = () => {
 
   const lockedCount = lockedIndices.size;
 
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const navLinks = [
+    { to: "/style-quiz", label: "Style Quiz" },
+    { to: "/gallery", label: "Gallery" },
+    { to: "/color-theory", label: "Color Theory" },
+    { to: "/fashion-guide", label: "Fashion Guide" },
+    { to: "/seasonal-guide", label: "Seasons" },
+  ];
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b border-border">
-        <div className="container max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
+      <header className="border-b border-border relative">
+        <div className="container max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Shirt className="w-5 h-5 text-accent" />
             <h1 className="font-display text-xl font-semibold tracking-tight text-foreground">
               ATELIER
             </h1>
           </div>
-          <nav className="flex items-center gap-6">
-            <Link to="/style-quiz" className="font-display text-xs uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors">
-              Style Quiz
-            </Link>
-            <Link to="/gallery" className="font-display text-xs uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors">
-              Gallery
-            </Link>
-            <Link to="/color-theory" className="font-display text-xs uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors">
-              Color Theory
-            </Link>
-            <Link to="/fashion-guide" className="font-display text-xs uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors">
-              Fashion Guide
-            </Link>
-            <Link to="/seasonal-guide" className="font-display text-xs uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors">
-              Seasons
-            </Link>
+
+          {/* Desktop nav */}
+          <nav className="hidden md:flex items-center gap-6">
+            {navLinks.map((link) => (
+              <Link key={link.to} to={link.to} className="font-display text-xs uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors">
+                {link.label}
+              </Link>
+            ))}
           </nav>
+
+          {/* Mobile hamburger */}
+          <button
+            className="md:hidden p-2 text-muted-foreground hover:text-foreground transition-colors"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
         </div>
+
+        {/* Mobile dropdown */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.nav
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden border-t border-border bg-background overflow-hidden"
+            >
+              <div className="container max-w-6xl mx-auto px-4 py-3 flex flex-col gap-3">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="font-display text-sm uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors py-1"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            </motion.nav>
+          )}
+        </AnimatePresence>
       </header>
 
       <main className="container max-w-6xl mx-auto px-6 py-10">
