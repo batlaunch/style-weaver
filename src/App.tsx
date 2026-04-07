@@ -3,34 +3,39 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index.tsx";
 import ColorTheory from "./pages/ColorTheory.tsx";
 import FashionGuide from "./pages/FashionGuide.tsx";
 import SeasonalGuide from "./pages/SeasonalGuide.tsx";
 import Gallery from "./pages/Gallery.tsx";
 import StyleQuiz from "./pages/StyleQuiz.tsx";
+import Auth from "./pages/Auth.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/color-theory" element={<ColorTheory />} />
-          <Route path="/fashion-guide" element={<FashionGuide />} />
-          <Route path="/seasonal-guide" element={<SeasonalGuide />} />
-          <Route path="/gallery" element={<Gallery />} />
-          <Route path="/style-quiz" element={<StyleQuiz />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/color-theory" element={<ColorTheory />} />
+            <Route path="/fashion-guide" element={<FashionGuide />} />
+            <Route path="/seasonal-guide" element={<SeasonalGuide />} />
+            <Route path="/gallery" element={<Gallery />} />
+            <Route path="/style-quiz" element={<StyleQuiz />} />
+            <Route path="/auth" element={<Auth />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 

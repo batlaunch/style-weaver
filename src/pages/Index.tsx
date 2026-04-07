@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, RefreshCw, Shirt, Heart, ImageIcon, Lock, Menu, X } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Sparkles, RefreshCw, Shirt, Heart, ImageIcon, Lock, Menu, X, LogIn, LogOut } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { compressImage } from "@/lib/compressImage";
@@ -12,6 +12,7 @@ import ColorPalette from "@/components/ColorPalette";
 import HarmonyExplanation from "@/components/HarmonyExplanation";
 import StylePreferences, { type StyleType, type GenderType, type SkinTone, type SeasonType } from "@/components/StylePreferences";
 import { useSavedOutfits } from "@/hooks/useSavedOutfits";
+import { useAuth } from "@/hooks/useAuth";
 import type { Outfit } from "@/lib/outfitTypes";
 
 const Index = () => {
@@ -27,6 +28,8 @@ const Index = () => {
   const [lockedIndices, setLockedIndices] = useState<Set<number>>(new Set());
   const [selectedSeason, setSelectedSeason] = useState<SeasonType>("spring");
   const { saveOutfit } = useSavedOutfits();
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
   const handleImageUpload = useCallback((_file: File, preview: string) => {
     setUploadedImage(preview);
@@ -167,6 +170,20 @@ const Index = () => {
                 {link.label}
               </Link>
             ))}
+            {user ? (
+              <button
+                onClick={() => { signOut(); toast.success("Signed out"); }}
+                className="flex items-center gap-1.5 font-display text-xs uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                Sign Out
+              </button>
+            ) : (
+              <Link to="/auth" className="flex items-center gap-1.5 font-display text-xs uppercase tracking-wider text-accent hover:text-foreground transition-colors">
+                <LogIn className="w-3.5 h-3.5" />
+                Sign In
+              </Link>
+            )}
           </nav>
 
           {/* Mobile hamburger */}
@@ -199,6 +216,24 @@ const Index = () => {
                     {link.label}
                   </Link>
                 ))}
+                {user ? (
+                  <button
+                    onClick={() => { signOut(); setMobileMenuOpen(false); toast.success("Signed out"); }}
+                    className="flex items-center gap-2 font-display text-sm uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors py-1 text-left"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Sign Out
+                  </button>
+                ) : (
+                  <Link
+                    to="/auth"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-2 font-display text-sm uppercase tracking-wider text-accent hover:text-foreground transition-colors py-1"
+                  >
+                    <LogIn className="w-4 h-4" />
+                    Sign In
+                  </Link>
+                )}
               </div>
             </motion.nav>
           )}
