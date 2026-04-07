@@ -170,6 +170,20 @@ const Index = () => {
                 {link.label}
               </Link>
             ))}
+            {user ? (
+              <button
+                onClick={() => { signOut(); toast.success("Signed out"); }}
+                className="flex items-center gap-1.5 font-display text-xs uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                Sign Out
+              </button>
+            ) : (
+              <Link to="/auth" className="flex items-center gap-1.5 font-display text-xs uppercase tracking-wider text-accent hover:text-foreground transition-colors">
+                <LogIn className="w-3.5 h-3.5" />
+                Sign In
+              </Link>
+            )}
           </nav>
 
           {/* Mobile hamburger */}
@@ -202,6 +216,24 @@ const Index = () => {
                     {link.label}
                   </Link>
                 ))}
+                {user ? (
+                  <button
+                    onClick={() => { signOut(); setMobileMenuOpen(false); toast.success("Signed out"); }}
+                    className="flex items-center gap-2 font-display text-sm uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors py-1 text-left"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Sign Out
+                  </button>
+                ) : (
+                  <Link
+                    to="/auth"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-2 font-display text-sm uppercase tracking-wider text-accent hover:text-foreground transition-colors py-1"
+                  >
+                    <LogIn className="w-4 h-4" />
+                    Sign In
+                  </Link>
+                )}
               </div>
             </motion.nav>
           )}
