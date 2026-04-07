@@ -12,6 +12,7 @@ import ColorPalette from "@/components/ColorPalette";
 import HarmonyExplanation from "@/components/HarmonyExplanation";
 import StylePreferences, { type StyleType, type GenderType, type SkinTone, type SeasonType } from "@/components/StylePreferences";
 import { useSavedOutfits } from "@/hooks/useSavedOutfits";
+import { useAuth } from "@/hooks/useAuth";
 import type { Outfit } from "@/lib/outfitTypes";
 
 const Index = () => {
