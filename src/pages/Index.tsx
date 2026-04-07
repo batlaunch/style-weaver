@@ -28,6 +28,8 @@ const Index = () => {
   const [lockedIndices, setLockedIndices] = useState<Set<number>>(new Set());
   const [selectedSeason, setSelectedSeason] = useState<SeasonType>("spring");
   const { saveOutfit } = useSavedOutfits();
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
   const handleImageUpload = useCallback((_file: File, preview: string) => {
     setUploadedImage(preview);
