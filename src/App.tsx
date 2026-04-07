@@ -11,6 +11,7 @@ import SeasonalGuide from "./pages/SeasonalGuide.tsx";
 import Gallery from "./pages/Gallery.tsx";
 import StyleQuiz from "./pages/StyleQuiz.tsx";
 import Auth from "./pages/Auth.tsx";
+import ResetPassword from "./pages/ResetPassword.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/style-quiz" element={<StyleQuiz />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
