@@ -159,7 +159,7 @@ const Index = () => {
           <div className="flex items-center gap-3">
             <Shirt className="w-5 h-5 text-accent" />
             <h1 className="font-display text-xl font-semibold tracking-tight text-foreground">
-              ATELIER
+              FITTED FASHION
             </h1>
           </div>
 
