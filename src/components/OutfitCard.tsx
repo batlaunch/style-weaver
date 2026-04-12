@@ -11,13 +11,13 @@ interface OutfitCardProps {
   isLocked: boolean;
   isRegenerating?: boolean;
   altColors?: { hex: string; name: string }[];
-  onSwap: () => void;
+  onSwap?: () => void;
   onToggleLock: () => void;
   onRegenerate: () => void;
   onColorPick?: (hex: string, name: string) => void;
 }
 
-const OutfitCard = ({ label, color, colorName, description, index, isLocked, isRegenerating, altColors, onSwap, onToggleLock, onRegenerate, onColorPick }: OutfitCardProps) => {
+const OutfitCard = ({ label, color, colorName, description, index, isLocked, isRegenerating, altColors, onToggleLock, onRegenerate, onColorPick }: OutfitCardProps) => {
   const [showColors, setShowColors] = useState(false);
 
   return (
