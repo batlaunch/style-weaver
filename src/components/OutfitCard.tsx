@@ -9,13 +9,15 @@ interface OutfitCardProps {
   description: string;
   index: number;
   isLocked: boolean;
+  isRegenerating?: boolean;
   altColors?: { hex: string; name: string }[];
   onSwap: () => void;
   onToggleLock: () => void;
+  onRegenerate: () => void;
   onColorPick?: (hex: string, name: string) => void;
 }
 
-const OutfitCard = ({ label, color, colorName, description, index, isLocked, altColors, onSwap, onToggleLock, onColorPick }: OutfitCardProps) => {
+const OutfitCard = ({ label, color, colorName, description, index, isLocked, isRegenerating, altColors, onSwap, onToggleLock, onRegenerate, onColorPick }: OutfitCardProps) => {
   const [showColors, setShowColors] = useState(false);
 
   return (
@@ -75,11 +77,12 @@ const OutfitCard = ({ label, color, colorName, description, index, isLocked, alt
           </button>
           {!isLocked && (
             <button
-              onClick={onSwap}
-              className="opacity-0 group-hover:opacity-100 transition-opacity p-2 rounded-md hover:bg-secondary text-muted-foreground hover:text-foreground"
-              title="Swap this item"
+              onClick={onRegenerate}
+              disabled={isRegenerating}
+              className="opacity-0 group-hover:opacity-100 transition-opacity p-2 rounded-md hover:bg-secondary text-muted-foreground hover:text-foreground disabled:opacity-50"
+              title="Regenerate this item"
             >
-              <RefreshCw className="w-4 h-4" />
+              <RefreshCw className={`w-4 h-4 ${isRegenerating ? "animate-spin" : ""}`} />
             </button>
           )}
         </div>
