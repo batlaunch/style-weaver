@@ -273,7 +273,7 @@ const Index = () => {
             Build your perfect outfit
           </h2>
           <p className="font-body text-muted-foreground mt-3 max-w-md mx-auto">
-            Upload any clothing piece, pick your style and gender, and AI will build a complete color-coordinated outfit around your item.
+            Upload any clothing piece, pick your style, and AI will build a complete color-coordinated outfit around your item.
           </p>
         </motion.div>
 
