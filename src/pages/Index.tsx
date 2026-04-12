@@ -25,6 +25,7 @@ const Index = () => {
   const [selectedGender, setSelectedGender] = useState<GenderType>("male");
   const [selectedSkinTone, setSelectedSkinTone] = useState<SkinTone>("medium");
   const [resolvedStyle, setResolvedStyle] = useState<string>("classic");
+  const [itemDescription, setItemDescription] = useState("");
   const [lockedIndices, setLockedIndices] = useState<Set<number>>(new Set());
   const [selectedSeason, setSelectedSeason] = useState<SeasonType>("spring");
   const { saveOutfit } = useSavedOutfits();
@@ -36,6 +37,7 @@ const Index = () => {
     setCurrentOutfit(null);
     setOutfitImageUrl(null);
     setLockedIndices(new Set());
+    setItemDescription("");
   }, []);
 
   const handleClearImage = useCallback(() => {
@@ -43,6 +45,7 @@ const Index = () => {
     setCurrentOutfit(null);
     setOutfitImageUrl(null);
     setLockedIndices(new Set());
+    setItemDescription("");
   }, []);
 
   const generateOutfit = useCallback(async () => {
@@ -66,6 +69,7 @@ const Index = () => {
           gender: selectedGender,
           skinTone: selectedSkinTone,
           season: selectedSeason,
+          itemDescription: itemDescription.trim() || undefined,
           lockedItems: lockedItems.length > 0 ? lockedItems : undefined,
         },
       });
@@ -262,6 +266,8 @@ const Index = () => {
               onImageUpload={handleImageUpload}
               uploadedImage={uploadedImage}
               onClear={handleClearImage}
+              itemDescription={itemDescription}
+              onItemDescriptionChange={setItemDescription}
             />
 
             <StylePreferences
