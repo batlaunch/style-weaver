@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, RefreshCw, Shirt, Heart, ImageIcon, Lock, Menu, X, LogIn, LogOut } from "lucide-react";
+import { Sparkles, RefreshCw, Shirt, Heart, ImageIcon, Menu, X, LogIn, LogOut } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -26,7 +26,6 @@ const Index = () => {
   const [selectedSkinTone, setSelectedSkinTone] = useState<SkinTone>("medium");
   const [resolvedStyle, setResolvedStyle] = useState<string>("classic");
   const [itemDescription, setItemDescription] = useState("");
-  const [lockedIndices, setLockedIndices] = useState<Set<number>>(new Set());
   const [selectedSeason, setSelectedSeason] = useState<SeasonType>("spring");
   const { saveOutfit } = useSavedOutfits();
   const { user, signOut } = useAuth();
@@ -36,7 +35,6 @@ const Index = () => {
     setUploadedImage(preview);
     setCurrentOutfit(null);
     setOutfitImageUrl(null);
-    setLockedIndices(new Set());
     setItemDescription("");
   }, []);
 
@@ -44,7 +42,6 @@ const Index = () => {
     setUploadedImage(null);
     setCurrentOutfit(null);
     setOutfitImageUrl(null);
-    setLockedIndices(new Set());
     setItemDescription("");
   }, []);
 
@@ -57,11 +54,6 @@ const Index = () => {
       const style = selectedStyle === "any" ? "any" : selectedStyle;
       const compressed = await compressImage(uploadedImage);
 
-      // Gather locked items to preserve
-      const lockedItems = currentOutfit
-        ? currentOutfit.items.filter((_, i) => lockedIndices.has(i))
-        : [];
-
       const { data, error } = await supabase.functions.invoke("generate-outfit", {
         body: {
           imageBase64: compressed,
@@ -70,7 +62,6 @@ const Index = () => {
           skinTone: selectedSkinTone,
           season: selectedSeason,
           itemDescription: itemDescription.trim() || undefined,
-          lockedItems: lockedItems.length > 0 ? lockedItems : undefined,
         },
       });
 
@@ -88,18 +79,13 @@ const Index = () => {
         palette: data.palette,
         harmony: data.harmony,
       });
-
-      // Keep locked indices that still make sense
-      if (lockedItems.length === 0) {
-        setLockedIndices(new Set());
-      }
     } catch (e) {
       console.error("Outfit generation failed:", e);
       toast.error("Failed to generate outfit. Please try again.");
     } finally {
       setIsGenerating(false);
     }
-  }, [uploadedImage, selectedStyle, selectedGender, selectedSkinTone, currentOutfit, lockedIndices, itemDescription]);
+  }, [uploadedImage, selectedStyle, selectedGender, selectedSkinTone, itemDescription]);
 
   const [regeneratingIndex, setRegeneratingIndex] = useState<number | null>(null);
 
@@ -176,17 +162,6 @@ const Index = () => {
     if (ok) toast.success("Outfit saved to gallery!");
     else toast.error("Failed to save outfit");
   }, [currentOutfit, resolvedStyle, selectedGender, outfitImageUrl, saveOutfit]);
-
-  const toggleLock = useCallback((index: number) => {
-    setLockedIndices((prev) => {
-      const next = new Set(prev);
-      if (next.has(index)) next.delete(index);
-      else next.add(index);
-      return next;
-    });
-  }, []);
-
-  const lockedCount = lockedIndices.size;
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -350,16 +325,12 @@ const Index = () => {
                     {isGenerating ? (
                       <>
                         <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
-                        {lockedCount > 0 ? "Regenerating unlocked…" : "Analyzing…"}
+                        Analyzing…
                       </>
                     ) : (
                       <>
                         <Sparkles className="w-4 h-4" />
-                        {currentOutfit
-                          ? lockedCount > 0
-                            ? `Regenerate ${4 - lockedCount} unlocked`
-                            : "New Outfit"
-                          : "Generate Outfit"}
+                        {currentOutfit ? "New Outfit" : "Generate Outfit"}
                       </>
                     )}
                   </button>
@@ -427,16 +398,10 @@ const Index = () => {
                   animate={{ opacity: 1 }}
                   className="space-y-3"
                 >
-                  <div className="flex items-center justify-between">
+                  <div>
                     <h3 className="font-display text-xs uppercase tracking-[0.2em] text-muted-foreground">
                       Outfit Breakdown
                     </h3>
-                    {lockedCount > 0 && (
-                      <span className="flex items-center gap-1 text-[10px] font-display uppercase tracking-wider text-accent">
-                        <Lock className="w-3 h-3" />
-                        {lockedCount} locked
-                      </span>
-                    )}
                   </div>
                   {currentOutfit.items.map((item, i) => (
                     <OutfitCard
@@ -446,11 +411,9 @@ const Index = () => {
                       colorName={item.colorName}
                       description={item.description}
                       index={i}
-                      isLocked={lockedIndices.has(i)}
+                      isLocked={false}
                       isRegenerating={regeneratingIndex === i}
                       altColors={item.altColors}
-                      onSwap={() => {}}
-                      onToggleLock={() => toggleLock(i)}
                       onRegenerate={() => regenerateSingleItem(i)}
                       onColorPick={(hex, name) => {
                         setCurrentOutfit((prev) => {
@@ -463,7 +426,7 @@ const Index = () => {
                     />
                   ))}
                   <p className="text-xs text-muted-foreground font-body text-center pt-2">
-                    <Lock className="w-3 h-3 inline" /> Lock pieces you love, then regenerate to swap only the unlocked ones
+                    Hover an item and click ↻ to regenerate just that piece
                   </p>
                 </motion.div>
               )}
