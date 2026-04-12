@@ -48,45 +48,46 @@ const UploadZone = ({ onImageUpload, uploadedImage, onClear, itemDescription, on
     >
       <AnimatePresence mode="wait">
         {uploadedImage ? (
-          <motion.div
-            key="preview"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className="relative rounded-lg overflow-hidden border border-border bg-card aspect-square max-w-xs mx-auto"
-          >
-            <img
-              src={uploadedImage}
-              alt="Uploaded clothing item"
-              className="w-full h-full object-cover"
-            />
-            <button
-              onClick={onClear}
-              className="absolute top-3 right-3 p-1.5 rounded-full bg-foreground/80 text-primary-foreground hover:bg-foreground transition-colors"
+          <div key="preview">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="relative rounded-lg overflow-hidden border border-border bg-card aspect-square max-w-xs mx-auto"
             >
-              <X className="w-4 h-4" />
-            </button>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 5 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mt-3"
-          >
-            <label className="block font-display text-xs uppercase tracking-wider text-muted-foreground mb-1.5">
-              Describe your item <span className="normal-case tracking-normal text-muted-foreground/60">(optional)</span>
-            </label>
-            <input
-              type="text"
-              value={itemDescription}
-              onChange={(e) => onItemDescriptionChange(e.target.value)}
-              placeholder="e.g. navy blue crew-neck sweater"
-              maxLength={150}
-              className="w-full px-3 py-2 rounded-lg border border-border bg-card text-foreground font-body text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all placeholder:text-muted-foreground/50"
-            />
-            <p className="text-[10px] text-muted-foreground/60 mt-1">
-              Help the AI if it doesn't recognize your item correctly
-            </p>
-          </motion.div>
+              <img
+                src={uploadedImage}
+                alt="Uploaded clothing item"
+                className="w-full h-full object-cover"
+              />
+              <button
+                onClick={onClear}
+                className="absolute top-3 right-3 p-1.5 rounded-full bg-foreground/80 text-primary-foreground hover:bg-foreground transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-3"
+            >
+              <label className="block font-display text-xs uppercase tracking-wider text-muted-foreground mb-1.5">
+                Describe your item <span className="normal-case tracking-normal text-muted-foreground/60">(optional)</span>
+              </label>
+              <input
+                type="text"
+                value={itemDescription}
+                onChange={(e) => onItemDescriptionChange(e.target.value)}
+                placeholder="e.g. navy blue crew-neck sweater"
+                maxLength={150}
+                className="w-full px-3 py-2 rounded-lg border border-border bg-card text-foreground font-body text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all placeholder:text-muted-foreground/50"
+              />
+              <p className="text-[10px] text-muted-foreground/60 mt-1">
+                Help the AI if it doesn't recognize your item correctly
+              </p>
+            </motion.div>
+          </div>
         ) : (
           <motion.label
             key="upload"
