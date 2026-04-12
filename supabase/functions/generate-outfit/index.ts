@@ -11,7 +11,7 @@ serve(async (req) => {
   }
 
   try {
-    const { imageBase64, style, gender, skinTone, season, itemDescription, lockedItems } = await req.json();
+    const { imageBase64, style, gender, skinTone, season, itemDescription, lockedItems, regenerateSlot } = await req.json();
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
@@ -77,8 +77,12 @@ IMPORTANT RULES:
       ? ` Keep these items exactly as they are: ${lockedItems.map((i: any) => `${i.label} (${i.colorName} ${i.description})`).join(", ")}. Only change the unlocked items.`
       : "";
 
+    const regenerateNote = regenerateSlot
+      ? ` I want you to ONLY regenerate the "${regenerateSlot}" slot with a completely different option. Keep all other items exactly as specified in the locked items.`
+      : "";
+
     const descriptionHint = itemDescription ? ` The user describes this item as: "${itemDescription}". Use this description to identify the item accurately.` : "";
-    const userPrompt = `Here is a clothing item I own.${descriptionHint} Please build a complete ${style === "any" ? "stylish" : style} outfit for a ${gender} around this piece.${style === "any" ? " Pick whatever style you think works best with this piece." : ""}${lockedNote}`;
+    const userPrompt = `Here is a clothing item I own.${descriptionHint} Please build a complete ${style === "any" ? "stylish" : style} outfit for a ${gender} around this piece.${style === "any" ? " Pick whatever style you think works best with this piece." : ""}${lockedNote}${regenerateNote}`;
 
     const messages: any[] = [
       { role: "system", content: systemPrompt },
