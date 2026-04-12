@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { RefreshCw, Lock, Unlock, ChevronDown } from "lucide-react";
+import { RefreshCw, ChevronDown } from "lucide-react";
 
 interface OutfitCardProps {
   label: string;
@@ -8,16 +8,14 @@ interface OutfitCardProps {
   colorName: string;
   description: string;
   index: number;
-  isLocked: boolean;
+  isLocked?: boolean;
   isRegenerating?: boolean;
   altColors?: { hex: string; name: string }[];
-  onSwap?: () => void;
-  onToggleLock: () => void;
   onRegenerate: () => void;
   onColorPick?: (hex: string, name: string) => void;
 }
 
-const OutfitCard = ({ label, color, colorName, description, index, isLocked, isRegenerating, altColors, onToggleLock, onRegenerate, onColorPick }: OutfitCardProps) => {
+const OutfitCard = ({ label, color, colorName, description, index, isLocked, isRegenerating, altColors, onRegenerate, onColorPick }: OutfitCardProps) => {
   const [showColors, setShowColors] = useState(false);
 
   return (
@@ -50,41 +48,21 @@ const OutfitCard = ({ label, color, colorName, description, index, isLocked, isR
           )}
         </button>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <p className="font-display text-sm font-medium text-foreground uppercase tracking-wider">
-              {label}
-            </p>
-            {isLocked && (
-              <span className="text-[9px] font-display uppercase tracking-wider px-1.5 py-0.5 rounded bg-accent/15 text-accent">
-                Locked
-              </span>
-            )}
-          </div>
+          <p className="font-display text-sm font-medium text-foreground uppercase tracking-wider">
+            {label}
+          </p>
           <p className="text-sm text-muted-foreground mt-0.5">{description}</p>
           <p className="text-xs text-accent font-medium mt-1">{colorName}</p>
         </div>
         <div className="flex flex-col gap-1">
           <button
-            onClick={onToggleLock}
-            className={`p-2 rounded-md transition-all ${
-              isLocked
-                ? "text-accent bg-accent/10 hover:bg-accent/20"
-                : "opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-foreground hover:bg-secondary"
-            }`}
-            title={isLocked ? "Unlock this item" : "Lock this item"}
+            onClick={onRegenerate}
+            disabled={isRegenerating}
+            className="opacity-0 group-hover:opacity-100 transition-opacity p-2 rounded-md hover:bg-secondary text-muted-foreground hover:text-foreground disabled:opacity-50"
+            title="Regenerate this item"
           >
-            {isLocked ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
+            <RefreshCw className={`w-4 h-4 ${isRegenerating ? "animate-spin" : ""}`} />
           </button>
-          {!isLocked && (
-            <button
-              onClick={onRegenerate}
-              disabled={isRegenerating}
-              className="opacity-0 group-hover:opacity-100 transition-opacity p-2 rounded-md hover:bg-secondary text-muted-foreground hover:text-foreground disabled:opacity-50"
-              title="Regenerate this item"
-            >
-              <RefreshCw className={`w-4 h-4 ${isRegenerating ? "animate-spin" : ""}`} />
-            </button>
-          )}
         </div>
       </div>
 
