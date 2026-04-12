@@ -99,7 +99,50 @@ const Index = () => {
     } finally {
       setIsGenerating(false);
     }
-  }, [uploadedImage, selectedStyle, selectedGender, selectedSkinTone, currentOutfit, lockedIndices]);
+  }, [uploadedImage, selectedStyle, selectedGender, selectedSkinTone, currentOutfit, lockedIndices, itemDescription]);
+
+  const [regeneratingIndex, setRegeneratingIndex] = useState<number | null>(null);
+
+  const regenerateSingleItem = useCallback(async (index: number) => {
+    if (!uploadedImage || !currentOutfit) return;
+    setRegeneratingIndex(index);
+    try {
+      const compressed = await compressImage(uploadedImage);
+      const keptItems = currentOutfit.items.filter((_, i) => i !== index);
+
+      const { data, error } = await supabase.functions.invoke("generate-outfit", {
+        body: {
+          imageBase64: compressed,
+          style: selectedStyle === "any" ? "any" : selectedStyle,
+          gender: selectedGender,
+          skinTone: selectedSkinTone,
+          season: selectedSeason,
+          itemDescription: itemDescription.trim() || undefined,
+          lockedItems: keptItems,
+          regenerateSlot: currentOutfit.items[index].label,
+        },
+      });
+
+      if (error) throw error;
+      if (data?.error) { toast.error(data.error); return; }
+
+      // Find the regenerated item (the one matching the slot label)
+      const newItem = data.items.find((it: any) => it.label === currentOutfit.items[index].label);
+      if (newItem) {
+        setCurrentOutfit((prev) => {
+          if (!prev) return prev;
+          const newItems = [...prev.items];
+          newItems[index] = newItem;
+          return { ...prev, items: newItems, palette: data.palette || prev.palette, harmony: data.harmony || prev.harmony };
+        });
+      }
+    } catch (e) {
+      console.error("Single item regeneration failed:", e);
+      toast.error("Failed to regenerate item");
+    } finally {
+      setRegeneratingIndex(null);
+    }
+  }, [uploadedImage, currentOutfit, selectedStyle, selectedGender, selectedSkinTone, selectedSeason, itemDescription]);
 
   const generateOutfitImage = useCallback(async () => {
     if (!currentOutfit) return;
@@ -404,9 +447,11 @@ const Index = () => {
                       description={item.description}
                       index={i}
                       isLocked={lockedIndices.has(i)}
+                      isRegenerating={regeneratingIndex === i}
                       altColors={item.altColors}
                       onSwap={() => {}}
                       onToggleLock={() => toggleLock(i)}
+                      onRegenerate={() => regenerateSingleItem(i)}
                       onColorPick={(hex, name) => {
                         setCurrentOutfit((prev) => {
                           if (!prev) return prev;
