@@ -135,10 +135,6 @@ const Index = () => {
 
   const addAnotherPiece = useCallback(async () => {
     if (!uploadedImage || !currentOutfit) return;
-    if (currentOutfit.items.length >= 6) {
-      toast.error("Outfit is already at the maximum of 6 pieces");
-      return;
-    }
     setIsAddingPiece(true);
     try {
       const compressed = await compressImage(uploadedImage);
@@ -216,6 +212,19 @@ const Index = () => {
     if (ok) toast.success("Outfit saved to gallery!");
     else toast.error("Failed to save outfit");
   }, [currentOutfit, resolvedStyle, selectedGender, outfitImageUrl, saveOutfit]);
+
+  const removeItem = useCallback((index: number) => {
+    setCurrentOutfit((prev) => {
+      if (!prev) return prev;
+      if (prev.items.length <= 4) {
+        toast.error("An outfit needs at least 4 pieces");
+        return prev;
+      }
+      const removed = prev.items[index];
+      toast.success(`Removed ${removed.label.toLowerCase()}`);
+      return { ...prev, items: prev.items.filter((_, i) => i !== index) };
+    });
+  }, []);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { RefreshCw, ChevronDown } from "lucide-react";
+import { RefreshCw, ChevronDown, X } from "lucide-react";
 
 interface OutfitCardProps {
   label: string;
@@ -10,12 +10,14 @@ interface OutfitCardProps {
   index: number;
   isLocked?: boolean;
   isRegenerating?: boolean;
+  canRemove?: boolean;
   altColors?: { hex: string; name: string }[];
   onRegenerate: () => void;
+  onRemove?: () => void;
   onColorPick?: (hex: string, name: string) => void;
 }
 
-const OutfitCard = ({ label, color, colorName, description, index, isLocked, isRegenerating, altColors, onRegenerate, onColorPick }: OutfitCardProps) => {
+const OutfitCard = ({ label, color, colorName, description, index, isLocked, isRegenerating, canRemove, altColors, onRegenerate, onRemove, onColorPick }: OutfitCardProps) => {
   const [showColors, setShowColors] = useState(false);
 
   return (
@@ -63,6 +65,15 @@ const OutfitCard = ({ label, color, colorName, description, index, isLocked, isR
           >
             <RefreshCw className={`w-4 h-4 ${isRegenerating ? "animate-spin" : ""}`} />
           </button>
+          {canRemove && onRemove && (
+            <button
+              onClick={onRemove}
+              className="opacity-0 group-hover:opacity-100 transition-opacity p-2 rounded-md hover:bg-destructive/10 text-muted-foreground hover:text-destructive"
+              title="Remove this item"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
         </div>
       </div>
 
