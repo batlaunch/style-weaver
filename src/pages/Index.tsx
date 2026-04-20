@@ -135,10 +135,6 @@ const Index = () => {
 
   const addAnotherPiece = useCallback(async () => {
     if (!uploadedImage || !currentOutfit) return;
-    if (currentOutfit.items.length >= 6) {
-      toast.error("Outfit is already at the maximum of 6 pieces");
-      return;
-    }
     setIsAddingPiece(true);
     try {
       const compressed = await compressImage(uploadedImage);
@@ -216,6 +212,19 @@ const Index = () => {
     if (ok) toast.success("Outfit saved to gallery!");
     else toast.error("Failed to save outfit");
   }, [currentOutfit, resolvedStyle, selectedGender, outfitImageUrl, saveOutfit]);
+
+  const removeItem = useCallback((index: number) => {
+    setCurrentOutfit((prev) => {
+      if (!prev) return prev;
+      if (prev.items.length <= 4) {
+        toast.error("An outfit needs at least 4 pieces");
+        return prev;
+      }
+      const removed = prev.items[index];
+      toast.success(`Removed ${removed.label.toLowerCase()}`);
+      return { ...prev, items: prev.items.filter((_, i) => i !== index) };
+    });
+  }, []);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -467,8 +476,10 @@ const Index = () => {
                       index={i}
                       isLocked={false}
                       isRegenerating={regeneratingIndex === i}
+                      canRemove={currentOutfit.items.length > 4}
                       altColors={item.altColors}
                       onRegenerate={() => regenerateSingleItem(i)}
+                      onRemove={() => removeItem(i)}
                       onColorPick={(hex, name) => {
                         setCurrentOutfit((prev) => {
                           if (!prev) return prev;
@@ -479,27 +490,25 @@ const Index = () => {
                       }}
                     />
                   ))}
-                  {currentOutfit.items.length < 6 && (
-                    <button
-                      onClick={addAnotherPiece}
-                      disabled={isAddingPiece}
-                      className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg border border-dashed border-accent/40 bg-accent/5 text-accent font-display text-xs uppercase tracking-wider hover:bg-accent/10 hover:border-accent/60 transition-colors disabled:opacity-50"
-                    >
-                      {isAddingPiece ? (
-                        <>
-                          <div className="w-3.5 h-3.5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
-                          Adding piece…
-                        </>
-                      ) : (
-                        <>
-                          <Plus className="w-3.5 h-3.5" />
-                          Add another piece
-                        </>
-                      )}
-                    </button>
-                  )}
+                  <button
+                    onClick={addAnotherPiece}
+                    disabled={isAddingPiece}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg border border-dashed border-accent/40 bg-accent/5 text-accent font-display text-xs uppercase tracking-wider hover:bg-accent/10 hover:border-accent/60 transition-colors disabled:opacity-50"
+                  >
+                    {isAddingPiece ? (
+                      <>
+                        <div className="w-3.5 h-3.5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+                        Adding piece…
+                      </>
+                    ) : (
+                      <>
+                        <Plus className="w-3.5 h-3.5" />
+                        Add another piece
+                      </>
+                    )}
+                  </button>
                   <p className="text-xs text-muted-foreground font-body text-center pt-2">
-                    Hover an item and click ↻ to regenerate just that piece
+                    Hover an item to regenerate ↻ or remove ✕ a piece
                   </p>
                 </motion.div>
               )}
