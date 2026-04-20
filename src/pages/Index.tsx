@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, RefreshCw, Shirt, Heart, ImageIcon, Menu, X, LogIn, LogOut } from "lucide-react";
+import { Sparkles, RefreshCw, Shirt, Heart, ImageIcon, Menu, X, LogIn, LogOut, Plus } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -90,6 +90,7 @@ const Index = () => {
   }, [uploadedImage, selectedStyle, selectedGender, selectedSkinTone, itemDescription]);
 
   const [regeneratingIndex, setRegeneratingIndex] = useState<number | null>(null);
+  const [isAddingPiece, setIsAddingPiece] = useState(false);
 
   const regenerateSingleItem = useCallback(async (index: number) => {
     if (!uploadedImage || !currentOutfit) return;
@@ -129,6 +130,57 @@ const Index = () => {
       toast.error("Failed to regenerate item");
     } finally {
       setRegeneratingIndex(null);
+    }
+  }, [uploadedImage, currentOutfit, selectedStyle, selectedGender, selectedSkinTone, selectedSeason, itemDescription]);
+
+  const addAnotherPiece = useCallback(async () => {
+    if (!uploadedImage || !currentOutfit) return;
+    if (currentOutfit.items.length >= 6) {
+      toast.error("Outfit is already at the maximum of 6 pieces");
+      return;
+    }
+    setIsAddingPiece(true);
+    try {
+      const compressed = await compressImage(uploadedImage);
+      const existingLabels = new Set(currentOutfit.items.map((it) => it.label));
+
+      const { data, error } = await supabase.functions.invoke("generate-outfit", {
+        body: {
+          imageBase64: compressed,
+          style: selectedStyle === "any" ? "any" : selectedStyle,
+          gender: selectedGender,
+          skinTone: selectedSkinTone,
+          season: selectedSeason,
+          itemDescription: itemDescription.trim() || undefined,
+          lockedItems: currentOutfit.items,
+          addPiece: true,
+        },
+      });
+
+      if (error) throw error;
+      if (data?.error) { toast.error(data.error); return; }
+
+      // Find the new item (the one whose label is not in the existing set)
+      const newItem = data.items?.find((it: any) => !existingLabels.has(it.label));
+      if (newItem) {
+        setCurrentOutfit((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            items: [...prev.items, newItem],
+            palette: data.palette || prev.palette,
+            harmony: data.harmony || prev.harmony,
+          };
+        });
+        toast.success(`Added ${newItem.label.toLowerCase()} to your outfit`);
+      } else {
+        toast.error("Couldn't find a new piece to add");
+      }
+    } catch (e) {
+      console.error("Add piece failed:", e);
+      toast.error("Failed to add another piece");
+    } finally {
+      setIsAddingPiece(false);
     }
   }, [uploadedImage, currentOutfit, selectedStyle, selectedGender, selectedSkinTone, selectedSeason, itemDescription]);
 
@@ -427,6 +479,25 @@ const Index = () => {
                       }}
                     />
                   ))}
+                  {currentOutfit.items.length < 6 && (
+                    <button
+                      onClick={addAnotherPiece}
+                      disabled={isAddingPiece}
+                      className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg border border-dashed border-accent/40 bg-accent/5 text-accent font-display text-xs uppercase tracking-wider hover:bg-accent/10 hover:border-accent/60 transition-colors disabled:opacity-50"
+                    >
+                      {isAddingPiece ? (
+                        <>
+                          <div className="w-3.5 h-3.5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+                          Adding piece…
+                        </>
+                      ) : (
+                        <>
+                          <Plus className="w-3.5 h-3.5" />
+                          Add another piece
+                        </>
+                      )}
+                    </button>
+                  )}
                   <p className="text-xs text-muted-foreground font-body text-center pt-2">
                     Hover an item and click ↻ to regenerate just that piece
                   </p>
