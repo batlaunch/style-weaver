@@ -86,6 +86,7 @@ const SEASONS: { value: SeasonType; label: string; emoji: string }[] = [
 ];
 
 const StylePreferences = ({ style, gender, skinTone, season, onStyleChange, onGenderChange, onSkinToneChange, onSeasonChange }: StylePreferencesProps) => {
+  const [styleOpen, setStyleOpen] = useState(false);
   const baseStyles = gender === "male" ? MALE_STYLES : FEMALE_STYLES;
   const usage = getStyleUsage();
   // Sort styles: keep "any" first, then frequently used (count > 0) sorted by count desc, then the rest in original order
@@ -186,45 +187,69 @@ const StylePreferences = ({ style, gender, skinTone, season, onStyleChange, onGe
         <h3 className="font-display text-xs uppercase tracking-[0.2em] text-muted-foreground mb-3">
           Style
         </h3>
-        <Select value={style} onValueChange={(val) => onStyleChange(val as StyleType)}>
-          <SelectTrigger className="w-full bg-card border-border text-foreground font-body text-sm">
-            <SelectValue>
-              {currentStyle && (
+        <Popover open={styleOpen} onOpenChange={setStyleOpen}>
+          <PopoverTrigger asChild>
+            <button
+              type="button"
+              className="flex h-10 w-full items-center justify-between rounded-md border border-border bg-card px-3 py-2 font-body text-sm text-foreground ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+            >
+              {currentStyle ? (
                 <span className="flex items-center gap-2">
                   <span>{currentStyle.emoji}</span>
                   {currentStyle.label}
                 </span>
+              ) : (
+                <span className="text-muted-foreground">Select style</span>
               )}
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent className="max-h-[300px]">
-            {frequent.length > 0 && (
-              <div className="px-2 pt-1.5 pb-1 text-[9px] font-display uppercase tracking-[0.2em] text-muted-foreground">
-                Frequently Used
-              </div>
-            )}
-            {styles.map((s, idx) => {
-              const isLastFrequent =
-                showDivider &&
-                s.value !== "any" &&
-                frequentValues.has(s.value) &&
-                !frequentValues.has(styles[idx + 1]?.value);
-              return (
-                <div key={s.value}>
-                  <SelectItem value={s.value} className="font-body text-sm">
-                    <span className="flex items-center gap-2">
+              <ChevronDown className="h-4 w-4 opacity-50" />
+            </button>
+          </PopoverTrigger>
+          <PopoverContent
+            align="start"
+            sideOffset={4}
+            className="p-0 w-[var(--radix-popover-trigger-width)] bg-popover border border-border"
+          >
+            <div className="max-h-[300px] overflow-y-auto p-1 style-scroll">
+              {frequent.length > 0 && (
+                <div className="px-2 pt-1.5 pb-1 text-[9px] font-display uppercase tracking-[0.2em] text-muted-foreground">
+                  Frequently Used
+                </div>
+              )}
+              {styles.map((s, idx) => {
+                const isLastFrequent =
+                  showDivider &&
+                  s.value !== "any" &&
+                  frequentValues.has(s.value) &&
+                  !frequentValues.has(styles[idx + 1]?.value);
+                const isSelected = s.value === style;
+                return (
+                  <div key={s.value}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onStyleChange(s.value);
+                        setStyleOpen(false);
+                      }}
+                      className={cn(
+                        "relative flex w-full items-center gap-2 rounded-sm py-1.5 pl-8 pr-2 font-body text-sm text-left outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+                        isSelected && "bg-accent/50"
+                      )}
+                    >
+                      <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+                        {isSelected && <Check className="h-4 w-4" />}
+                      </span>
                       <span>{s.emoji}</span>
                       {s.label}
-                    </span>
-                  </SelectItem>
-                  {isLastFrequent && (
-                    <div className="my-1 border-t border-border" />
-                  )}
-                </div>
-              );
-            })}
-          </SelectContent>
-        </Select>
+                    </button>
+                    {isLastFrequent && (
+                      <div className="my-1 border-t border-border" />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </PopoverContent>
+        </Popover>
       </div>
 
       {/* Season Selection */}
