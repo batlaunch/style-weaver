@@ -479,6 +479,25 @@ const Index = () => {
                       }}
                     />
                   ))}
+                  {currentOutfit.items.length < 6 && (
+                    <button
+                      onClick={addAnotherPiece}
+                      disabled={isAddingPiece}
+                      className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg border border-dashed border-accent/40 bg-accent/5 text-accent font-display text-xs uppercase tracking-wider hover:bg-accent/10 hover:border-accent/60 transition-colors disabled:opacity-50"
+                    >
+                      {isAddingPiece ? (
+                        <>
+                          <div className="w-3.5 h-3.5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+                          Adding piece…
+                        </>
+                      ) : (
+                        <>
+                          <Plus className="w-3.5 h-3.5" />
+                          Add another piece
+                        </>
+                      )}
+                    </button>
+                  )}
                   <p className="text-xs text-muted-foreground font-body text-center pt-2">
                     Hover an item and click ↻ to regenerate just that piece
                   </p>
