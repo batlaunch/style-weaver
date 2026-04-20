@@ -7,6 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { getStyleUsage } from "@/lib/styleUsage";
 
 export type StyleType = "any" | "casual" | "smart-casual" | "business-casual" | "business-professional" | "cocktail" | "evening-formal" | "streetwear" | "minimalist" | "old-money" | "preppy" | "athleisure" | "vintage" | "utility" | "techwear" | "gorpcore" | "dark-academia" | "soft-boy" | "skater" | "rock-grunge" | "bohemian" | "classic" | "cottagecore" | "coquette" | "eclectic-grandpa";
 export type GenderType = "male" | "female";
@@ -89,7 +90,21 @@ const SEASONS: { value: SeasonType; label: string; emoji: string }[] = [
 ];
 
 const StylePreferences = ({ style, gender, skinTone, season, onStyleChange, onGenderChange, onSkinToneChange, onSeasonChange }: StylePreferencesProps) => {
-  const styles = gender === "male" ? MALE_STYLES : FEMALE_STYLES;
+  const baseStyles = gender === "male" ? MALE_STYLES : FEMALE_STYLES;
+  const usage = getStyleUsage();
+  // Sort styles: keep "any" first, then frequently used (count > 0) sorted by count desc, then the rest in original order
+  const frequent = baseStyles
+    .filter((s) => s.value !== "any" && (usage[s.value] || 0) > 0)
+    .sort((a, b) => (usage[b.value] || 0) - (usage[a.value] || 0));
+  const rest = baseStyles.filter(
+    (s) => s.value !== "any" && !(usage[s.value] > 0)
+  );
+  const anyOption = baseStyles.find((s) => s.value === "any");
+  const styles = [
+    ...(anyOption ? [anyOption] : []),
+    ...frequent,
+    ...rest,
+  ];
   const currentStyle = styles.find((s) => s.value === style);
 
   // Reset to "any" if current style isn't available for selected gender
@@ -100,6 +115,9 @@ const StylePreferences = ({ style, gender, skinTone, season, onStyleChange, onGe
       onStyleChange("any");
     }
   };
+
+  const frequentValues = new Set(frequent.map((s) => s.value));
+  const showDivider = frequent.length > 0 && rest.length > 0;
 
   return (
     <motion.div
@@ -184,14 +202,31 @@ const StylePreferences = ({ style, gender, skinTone, season, onStyleChange, onGe
             </SelectValue>
           </SelectTrigger>
           <SelectContent className="max-h-[300px]">
-            {styles.map((s) => (
-              <SelectItem key={s.value} value={s.value} className="font-body text-sm">
-                <span className="flex items-center gap-2">
-                  <span>{s.emoji}</span>
-                  {s.label}
-                </span>
-              </SelectItem>
-            ))}
+            {frequent.length > 0 && (
+              <div className="px-2 pt-1.5 pb-1 text-[9px] font-display uppercase tracking-[0.2em] text-muted-foreground">
+                Frequently Used
+              </div>
+            )}
+            {styles.map((s, idx) => {
+              const isLastFrequent =
+                showDivider &&
+                s.value !== "any" &&
+                frequentValues.has(s.value) &&
+                !frequentValues.has(styles[idx + 1]?.value);
+              return (
+                <div key={s.value}>
+                  <SelectItem value={s.value} className="font-body text-sm">
+                    <span className="flex items-center gap-2">
+                      <span>{s.emoji}</span>
+                      {s.label}
+                    </span>
+                  </SelectItem>
+                  {isLastFrequent && (
+                    <div className="my-1 border-t border-border" />
+                  )}
+                </div>
+              );
+            })}
           </SelectContent>
         </Select>
       </div>
