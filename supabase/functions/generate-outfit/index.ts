@@ -67,7 +67,10 @@ Return ONLY valid JSON with this exact structure (no markdown, no backticks):
 IMPORTANT RULES:
 - The "items" array MUST include the uploaded piece as one of the items (with its original description)
 - The other items complete the outfit around it
-- Always include exactly 4 items and 5 palette colors
+- The outfit MUST include the core essentials: a Top, a Bottom, Shoes, and at least one Accessory or Outerwear (4 items minimum)
+- You DECIDE whether to include 4, 5, or 6 total items based on what the outfit genuinely needs. Add extra pieces (e.g. Outerwear, a second Accessory like a hat/bag/belt/scarf/jewelry/sunglasses, or a layering piece) ONLY when they meaningfully improve the look given the style, season, and uploaded piece. For example: cold seasons (fall/winter) often warrant outerwear and a scarf; streetwear/avant-garde styles often warrant extra accessories; minimalist styles usually stay at 4. Do not pad items just to hit 6.
+- Total items must be between 4 and 6. Never fewer than 4, never more than 6.
+- Each item MUST have a distinct "label" — use one of: Top, Bottom, Shoes, Outerwear, Accessory, Hat, Bag, Belt, Scarf, Jewelry, Sunglasses. If you include multiple accessories, give them their specific label (e.g. "Hat", "Bag") rather than repeating "Accessory".
 - Each item MUST have an "altColors" array with 3-4 alternative colors that fit the same harmony type
 - The altColors should include the current color as one option, plus 2-3 alternatives
 - palette should include the 5 most important colors in the outfit
