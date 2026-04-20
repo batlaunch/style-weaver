@@ -13,6 +13,7 @@ import HarmonyExplanation from "@/components/HarmonyExplanation";
 import StylePreferences, { type StyleType, type GenderType, type SkinTone, type SeasonType } from "@/components/StylePreferences";
 import { useSavedOutfits } from "@/hooks/useSavedOutfits";
 import { useAuth } from "@/hooks/useAuth";
+import { incrementStyleUsage } from "@/lib/styleUsage";
 import type { Outfit } from "@/lib/outfitTypes";
 
 const Index = () => {
@@ -74,6 +75,7 @@ const Index = () => {
       }
 
       setResolvedStyle(style === "any" ? "mixed" : style);
+      if (style !== "any") incrementStyleUsage(style);
       setCurrentOutfit({
         items: data.items,
         palette: data.palette,
