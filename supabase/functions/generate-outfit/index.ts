@@ -87,7 +87,8 @@ IMPORTANT RULES:
 - Each item MUST have an "altColors" array with 3-4 alternative colors that fit the same harmony type
 - The altColors should include the current color as one option, plus 2-3 alternatives
 - palette should include the 5 most important colors in the outfit
-- Use realistic, wearable color hex codes${lockedContext}`;
+- Use realistic, wearable color hex codes
+- Each item MUST have a "colorRole" field: "Base" for the ~60% neutral foundation pieces, "Secondary" for the ~30% supporting color pieces, and "Accent" for the ~10% pop pieces. Roles should sum visually to the 60/30/10 split — typically 2-3 Base items, 1-2 Secondary items, and 1 (rarely 2) Accent item. The Accent role is reserved for the pop color, even if the item itself is small (e.g. a bold bag or shoes).${lockedContext}`;
 
     const lockedNote = hasLockedItems
       ? ` Keep these items exactly as they are: ${lockedItems.map((i: any) => `${i.label} (${i.colorName} ${i.description})`).join(", ")}. Only change the unlocked items.`
