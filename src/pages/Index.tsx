@@ -16,21 +16,65 @@ import { useAuth } from "@/hooks/useAuth";
 import { incrementStyleUsage } from "@/lib/styleUsage";
 import type { Outfit } from "@/lib/outfitTypes";
 
+const STORAGE_KEY = "fitted-fashion:home-state";
+
+type PersistedState = {
+  uploadedImage: string | null;
+  currentOutfit: Outfit | null;
+  outfitImageUrl: string | null;
+  selectedStyle: StyleType;
+  selectedGender: GenderType;
+  selectedSkinTone: SkinTone;
+  selectedSeason: SeasonType;
+  resolvedStyle: string;
+  itemDescription: string;
+};
+
+const loadPersisted = (): Partial<PersistedState> => {
+  try {
+    const raw = sessionStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+};
+
 const Index = () => {
-  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const persisted = loadPersisted();
+  const [uploadedImage, setUploadedImage] = useState<string | null>(persisted.uploadedImage ?? null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
-  const [currentOutfit, setCurrentOutfit] = useState<Outfit | null>(null);
-  const [outfitImageUrl, setOutfitImageUrl] = useState<string | null>(null);
-  const [selectedStyle, setSelectedStyle] = useState<StyleType>("any");
-  const [selectedGender, setSelectedGender] = useState<GenderType>("male");
-  const [selectedSkinTone, setSelectedSkinTone] = useState<SkinTone>("medium");
-  const [resolvedStyle, setResolvedStyle] = useState<string>("classic");
-  const [itemDescription, setItemDescription] = useState("");
-  const [selectedSeason, setSelectedSeason] = useState<SeasonType>("spring");
+  const [currentOutfit, setCurrentOutfit] = useState<Outfit | null>(persisted.currentOutfit ?? null);
+  const [outfitImageUrl, setOutfitImageUrl] = useState<string | null>(persisted.outfitImageUrl ?? null);
+  const [selectedStyle, setSelectedStyle] = useState<StyleType>(persisted.selectedStyle ?? "any");
+  const [selectedGender, setSelectedGender] = useState<GenderType>(persisted.selectedGender ?? "male");
+  const [selectedSkinTone, setSelectedSkinTone] = useState<SkinTone>(persisted.selectedSkinTone ?? "medium");
+  const [resolvedStyle, setResolvedStyle] = useState<string>(persisted.resolvedStyle ?? "classic");
+  const [itemDescription, setItemDescription] = useState(persisted.itemDescription ?? "");
+  const [selectedSeason, setSelectedSeason] = useState<SeasonType>(persisted.selectedSeason ?? "spring");
   const { saveOutfit } = useSavedOutfits();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+
+  // Persist key state across navigation
+  useEffect(() => {
+    try {
+      const payload: PersistedState = {
+        uploadedImage,
+        currentOutfit,
+        outfitImageUrl,
+        selectedStyle,
+        selectedGender,
+        selectedSkinTone,
+        selectedSeason,
+        resolvedStyle,
+        itemDescription,
+      };
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    } catch {
+      // sessionStorage may be full (large base64 image) — ignore
+    }
+  }, [uploadedImage, currentOutfit, outfitImageUrl, selectedStyle, selectedGender, selectedSkinTone, selectedSeason, resolvedStyle, itemDescription]);
 
   const handleImageUpload = useCallback((_file: File, preview: string) => {
     setUploadedImage(preview);
