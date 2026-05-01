@@ -16,9 +16,10 @@ const HARMONY_EXPLANATIONS: Record<string, string> = {
 
 interface HarmonyExplanationProps {
   harmonyType: string;
+  rationale?: string;
 }
 
-const HarmonyExplanation = ({ harmonyType }: HarmonyExplanationProps) => {
+const HarmonyExplanation = ({ harmonyType, rationale }: HarmonyExplanationProps) => {
   const explanation = HARMONY_EXPLANATIONS[harmonyType] || HARMONY_EXPLANATIONS["Analogous"];
 
   return (
@@ -29,13 +30,25 @@ const HarmonyExplanation = ({ harmonyType }: HarmonyExplanationProps) => {
       className="bg-accent/5 border border-accent/20 rounded-lg p-4 flex gap-3"
     >
       <Info className="w-4 h-4 text-accent shrink-0 mt-0.5" />
-      <div>
-        <h4 className="font-display text-xs uppercase tracking-wider text-accent font-semibold mb-1">
-          Why these colors work — {harmonyType} Harmony
-        </h4>
-        <p className="font-body text-xs text-muted-foreground leading-relaxed">
-          {explanation}
-        </p>
+      <div className="space-y-3">
+        <div>
+          <h4 className="font-display text-xs uppercase tracking-wider text-accent font-semibold mb-1">
+            Why these colors work — {harmonyType} Harmony
+          </h4>
+          <p className="font-body text-xs text-muted-foreground leading-relaxed">
+            {explanation}
+          </p>
+        </div>
+        {rationale && (
+          <div className="pt-3 border-t border-accent/15">
+            <h4 className="font-display text-xs uppercase tracking-wider text-accent font-semibold mb-1">
+              Stylist's note — Why this outfit works
+            </h4>
+            <p className="font-body text-xs text-muted-foreground leading-relaxed italic">
+              {rationale}
+            </p>
+          </div>
+        )}
       </div>
     </motion.div>
   );
