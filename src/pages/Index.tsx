@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, RefreshCw, Shirt, Heart, ImageIcon, Menu, X, LogIn, LogOut, Plus } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
