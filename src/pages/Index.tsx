@@ -80,6 +80,7 @@ const Index = () => {
         items: data.items,
         palette: data.palette,
         harmony: data.harmony,
+        rationale: data.rationale,
       });
     } catch (e) {
       console.error("Outfit generation failed:", e);
@@ -122,7 +123,7 @@ const Index = () => {
           if (!prev) return prev;
           const newItems = [...prev.items];
           newItems[index] = newItem;
-          return { ...prev, items: newItems, palette: data.palette || prev.palette, harmony: data.harmony || prev.harmony };
+          return { ...prev, items: newItems, palette: data.palette || prev.palette, harmony: data.harmony || prev.harmony, rationale: data.rationale ?? prev.rationale };
         });
       }
     } catch (e) {
@@ -166,6 +167,7 @@ const Index = () => {
             items: [...prev.items, newItem],
             palette: data.palette || prev.palette,
             harmony: data.harmony || prev.harmony,
+            rationale: data.rationale ?? prev.rationale,
           };
         });
         toast.success(`Added ${newItem.label.toLowerCase()} to your outfit`);
@@ -448,7 +450,7 @@ const Index = () => {
                     colors={currentOutfit.palette}
                     harmonyType={currentOutfit.harmony}
                   />
-                  <HarmonyExplanation harmonyType={currentOutfit.harmony} />
+                  <HarmonyExplanation harmonyType={currentOutfit.harmony} rationale={currentOutfit.rationale} />
                 </>
               )}
             </AnimatePresence>

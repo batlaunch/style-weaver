@@ -70,8 +70,11 @@ Return ONLY valid JSON with this exact structure (no markdown, no backticks):
   "palette": [
     {"hex": "#hexcolor", "name": "Color Name"}
   ],
-  "harmony": "Analogous|Complementary|Monochromatic|Triadic|Split-Complementary"
+  "harmony": "Analogous|Complementary|Monochromatic|Triadic|Split-Complementary",
+  "rationale": "1-2 sentence styling rationale explaining the proportion balance and 60/30/10 color logic of THIS specific outfit"
 }
+
+The "rationale" field MUST be 1-2 concise sentences (max ~250 chars) that explain the SPECIFIC proportion choice (e.g. oversized top balanced with slim bottom) AND the SPECIFIC 60/30/10 color split for this outfit (e.g. "charcoal grounds 60%, cream softens 30%, brass accents 10%"). Make it feel like a real stylist's note — concrete, no generic platitudes.
 
 IMPORTANT RULES:
 - The "items" array MUST include the uploaded piece as one of the items (with its original description)
