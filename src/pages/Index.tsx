@@ -173,6 +173,7 @@ const Index = () => {
           };
         });
         toast.success(`Added ${newItem.label.toLowerCase()} to your outfit`);
+        setAddPieceRequest("");
       } else {
         toast.error("Couldn't find a new piece to add");
       }
