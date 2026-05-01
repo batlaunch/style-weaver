@@ -450,7 +450,7 @@ const Index = () => {
                     colors={currentOutfit.palette}
                     harmonyType={currentOutfit.harmony}
                   />
-                  <HarmonyExplanation harmonyType={currentOutfit.harmony} />
+                  <HarmonyExplanation harmonyType={currentOutfit.harmony} rationale={currentOutfit.rationale} />
                 </>
               )}
             </AnimatePresence>
