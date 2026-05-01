@@ -167,6 +167,7 @@ const Index = () => {
             items: [...prev.items, newItem],
             palette: data.palette || prev.palette,
             harmony: data.harmony || prev.harmony,
+            rationale: data.rationale ?? prev.rationale,
           };
         });
         toast.success(`Added ${newItem.label.toLowerCase()} to your outfit`);
