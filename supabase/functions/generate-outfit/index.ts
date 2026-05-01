@@ -60,6 +60,7 @@ Return ONLY valid JSON with this exact structure (no markdown, no backticks):
       "color": "#hexcolor",
       "colorName": "Color Name",
       "description": "Brief description",
+      "colorRole": "Base|Secondary|Accent",
       "altColors": [
         {"hex": "#hexcolor", "name": "Color Name"},
         {"hex": "#hexcolor", "name": "Color Name"},
