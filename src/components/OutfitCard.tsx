@@ -57,9 +57,19 @@ const OutfitCard = ({ label, color, colorName, description, index, isLocked, isR
           )}
         </button>
         <div className="flex-1 min-w-0">
-          <p className="font-display text-sm font-medium text-foreground uppercase tracking-wider">
-            {label}
-          </p>
+          <div className="flex items-center gap-2 flex-wrap">
+            <p className="font-display text-sm font-medium text-foreground uppercase tracking-wider">
+              {label}
+            </p>
+            {colorRole && ROLE_STYLES[colorRole] && (
+              <span
+                className={`font-display text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded border ${ROLE_STYLES[colorRole].cls}`}
+                title={`This piece plays the ${colorRole.toLowerCase()} role in the 60/30/10 color split`}
+              >
+                {ROLE_STYLES[colorRole].label}
+              </span>
+            )}
+          </div>
           <p className="text-sm text-muted-foreground mt-0.5">{description}</p>
           <p className="text-xs text-accent font-medium mt-1">{colorName}</p>
         </div>
