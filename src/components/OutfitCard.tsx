@@ -11,13 +11,20 @@ interface OutfitCardProps {
   isLocked?: boolean;
   isRegenerating?: boolean;
   canRemove?: boolean;
+  colorRole?: "Base" | "Secondary" | "Accent";
   altColors?: { hex: string; name: string }[];
   onRegenerate: () => void;
   onRemove?: () => void;
   onColorPick?: (hex: string, name: string) => void;
 }
 
-const OutfitCard = ({ label, color, colorName, description, index, isLocked, isRegenerating, canRemove, altColors, onRegenerate, onRemove, onColorPick }: OutfitCardProps) => {
+const ROLE_STYLES: Record<string, { label: string; cls: string }> = {
+  Base: { label: "Base · 60%", cls: "bg-muted text-muted-foreground border-border" },
+  Secondary: { label: "Secondary · 30%", cls: "bg-secondary text-foreground border-border" },
+  Accent: { label: "Accent · 10%", cls: "bg-accent/15 text-accent border-accent/40" },
+};
+
+const OutfitCard = ({ label, color, colorName, description, index, isLocked, isRegenerating, canRemove, colorRole, altColors, onRegenerate, onRemove, onColorPick }: OutfitCardProps) => {
   const [showColors, setShowColors] = useState(false);
 
   return (
