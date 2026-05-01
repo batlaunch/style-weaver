@@ -92,6 +92,7 @@ const Index = () => {
 
   const [regeneratingIndex, setRegeneratingIndex] = useState<number | null>(null);
   const [isAddingPiece, setIsAddingPiece] = useState(false);
+  const [addPieceRequest, setAddPieceRequest] = useState("");
 
   const regenerateSingleItem = useCallback(async (index: number) => {
     if (!uploadedImage || !currentOutfit) return;
@@ -151,6 +152,7 @@ const Index = () => {
           itemDescription: itemDescription.trim() || undefined,
           lockedItems: currentOutfit.items,
           addPiece: true,
+          addPieceRequest: addPieceRequest.trim() || undefined,
         },
       });
 
@@ -171,6 +173,7 @@ const Index = () => {
           };
         });
         toast.success(`Added ${newItem.label.toLowerCase()} to your outfit`);
+        setAddPieceRequest("");
       } else {
         toast.error("Couldn't find a new piece to add");
       }
@@ -180,7 +183,7 @@ const Index = () => {
     } finally {
       setIsAddingPiece(false);
     }
-  }, [uploadedImage, currentOutfit, selectedStyle, selectedGender, selectedSkinTone, selectedSeason, itemDescription]);
+  }, [uploadedImage, currentOutfit, selectedStyle, selectedGender, selectedSkinTone, selectedSeason, itemDescription, addPieceRequest]);
 
   const generateOutfitImage = useCallback(async () => {
     if (!currentOutfit) return;
@@ -493,26 +496,45 @@ const Index = () => {
                       }}
                     />
                   ))}
-                  <button
-                    onClick={addAnotherPiece}
-                    disabled={isAddingPiece}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg border border-dashed border-accent/40 bg-accent/5 text-accent font-display text-xs uppercase tracking-wider hover:bg-accent/10 hover:border-accent/60 transition-colors disabled:opacity-50"
-                  >
-                    {isAddingPiece ? (
-                      <>
-                        <div className="w-3.5 h-3.5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
-                        Adding piece…
-                      </>
-                    ) : (
-                      <>
-                        <Plus className="w-3.5 h-3.5" />
-                        Add another piece
-                      </>
-                    )}
-                  </button>
-                  <p className="text-xs text-muted-foreground font-body text-center pt-2">
-                    Hover an item to regenerate ↻ or remove ✕ a piece
-                  </p>
+                  <div className="space-y-2 pt-1">
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <input
+                        type="text"
+                        value={addPieceRequest}
+                        onChange={(e) => setAddPieceRequest(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && !isAddingPiece) {
+                            e.preventDefault();
+                            addAnotherPiece();
+                          }
+                        }}
+                        maxLength={200}
+                        placeholder="e.g. a brown leather belt, gold chain, beanie…"
+                        disabled={isAddingPiece}
+                        className="flex-1 px-3 py-3 rounded-lg border border-dashed border-accent/40 bg-accent/5 text-foreground placeholder:text-muted-foreground/70 font-body text-sm focus:outline-none focus:border-accent/70 focus:bg-accent/10 transition-colors disabled:opacity-50"
+                      />
+                      <button
+                        onClick={addAnotherPiece}
+                        disabled={isAddingPiece}
+                        className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg border border-dashed border-accent/40 bg-accent/5 text-accent font-display text-xs uppercase tracking-wider hover:bg-accent/10 hover:border-accent/60 transition-colors disabled:opacity-50 whitespace-nowrap"
+                      >
+                        {isAddingPiece ? (
+                          <>
+                            <div className="w-3.5 h-3.5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+                            Adding…
+                          </>
+                        ) : (
+                          <>
+                            <Plus className="w-3.5 h-3.5" />
+                            {addPieceRequest.trim() ? "Add this" : "Add piece"}
+                          </>
+                        )}
+                      </button>
+                    </div>
+                    <p className="text-xs text-muted-foreground font-body text-center">
+                      Describe a piece to add, or leave blank to let the stylist pick. Hover an item to regenerate ↻ or remove ✕.
+                    </p>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>

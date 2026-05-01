@@ -11,7 +11,7 @@ serve(async (req) => {
   }
 
   try {
-    const { imageBase64, style, gender, skinTone, season, itemDescription, lockedItems, regenerateSlot, addPiece } = await req.json();
+    const { imageBase64, style, gender, skinTone, season, itemDescription, lockedItems, regenerateSlot, addPiece, addPieceRequest } = await req.json();
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
@@ -99,8 +99,9 @@ IMPORTANT RULES:
       : "";
 
     const existingLabels = hasLockedItems ? lockedItems.map((i: any) => i.label).join(", ") : "";
+    const trimmedAddRequest = typeof addPieceRequest === "string" ? addPieceRequest.trim().slice(0, 300) : "";
     const addPieceNote = addPiece
-      ? ` The user wants to ADD ONE MORE piece to the existing outfit. Keep ALL locked items EXACTLY as they are (do not modify their label, color, colorName, or description). Then return the FULL items array including all the locked items PLUS exactly one brand-new additional piece (e.g. an extra accessory like a hat, bag, belt, scarf, jewelry, sunglasses, or a layering piece like outerwear). The new piece MUST have a label that is NOT already used in the existing outfit (existing labels: ${existingLabels}). Choose whichever extra piece makes the most sense for the style and season. The total number of items in the response must equal ${(lockedItems?.length || 0) + 1}.`
+      ? ` The user wants to ADD ONE MORE piece to the existing outfit. Keep ALL locked items EXACTLY as they are (do not modify their label, color, colorName, or description). Then return the FULL items array including all the locked items PLUS exactly one brand-new additional piece.${trimmedAddRequest ? ` THE USER SPECIFICALLY REQUESTS: "${trimmedAddRequest}". Honor this request — add a piece that matches their description as closely as possible while still fitting the outfit's style, palette (60/30/10), and harmony. Pick the most appropriate label for it (Outerwear, Hat, Bag, Belt, Scarf, Jewelry, Sunglasses, Accessory, etc.).` : ` Choose whichever extra piece makes the most sense for the style and season (e.g. an extra accessory like a hat, bag, belt, scarf, jewelry, sunglasses, or a layering piece like outerwear).`} The new piece MUST have a label that is NOT already used in the existing outfit (existing labels: ${existingLabels}). The total number of items in the response must equal ${(lockedItems?.length || 0) + 1}.`
       : "";
 
     const descriptionHint = itemDescription ? ` The user describes this item as: "${itemDescription}". Use this description to identify the item accurately.` : "";
