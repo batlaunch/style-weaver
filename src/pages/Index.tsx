@@ -123,7 +123,7 @@ const Index = () => {
           if (!prev) return prev;
           const newItems = [...prev.items];
           newItems[index] = newItem;
-          return { ...prev, items: newItems, palette: data.palette || prev.palette, harmony: data.harmony || prev.harmony };
+          return { ...prev, items: newItems, palette: data.palette || prev.palette, harmony: data.harmony || prev.harmony, rationale: data.rationale ?? prev.rationale };
         });
       }
     } catch (e) {
