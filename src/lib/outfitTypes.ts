@@ -15,6 +15,7 @@ export interface Outfit {
   items: OutfitItem[];
   palette: OutfitPaletteColor[];
   harmony: string;
+  rationale?: string;
 }
 
 export interface SavedOutfit extends Outfit {
