@@ -92,6 +92,7 @@ const Index = () => {
 
   const [regeneratingIndex, setRegeneratingIndex] = useState<number | null>(null);
   const [isAddingPiece, setIsAddingPiece] = useState(false);
+  const [addPieceRequest, setAddPieceRequest] = useState("");
 
   const regenerateSingleItem = useCallback(async (index: number) => {
     if (!uploadedImage || !currentOutfit) return;
