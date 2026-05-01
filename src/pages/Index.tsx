@@ -80,6 +80,7 @@ const Index = () => {
         items: data.items,
         palette: data.palette,
         harmony: data.harmony,
+        rationale: data.rationale,
       });
     } catch (e) {
       console.error("Outfit generation failed:", e);
