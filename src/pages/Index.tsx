@@ -480,6 +480,7 @@ const Index = () => {
                       isRegenerating={regeneratingIndex === i}
                       canRemove={currentOutfit.items.length > 4}
                       altColors={item.altColors}
+                      colorRole={item.colorRole}
                       onRegenerate={() => regenerateSingleItem(i)}
                       onRemove={() => removeItem(i)}
                       onColorPick={(hex, name) => {
