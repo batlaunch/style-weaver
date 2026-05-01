@@ -1,8 +1,11 @@
+export type ColorRole = "Base" | "Secondary" | "Accent";
+
 export interface OutfitItem {
   label: string;
   color: string;
   colorName: string;
   description: string;
+  colorRole?: ColorRole;
   altColors?: { hex: string; name: string }[];
 }
 
