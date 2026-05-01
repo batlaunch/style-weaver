@@ -152,6 +152,7 @@ const Index = () => {
           itemDescription: itemDescription.trim() || undefined,
           lockedItems: currentOutfit.items,
           addPiece: true,
+          addPieceRequest: addPieceRequest.trim() || undefined,
         },
       });
 
