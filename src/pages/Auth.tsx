@@ -52,7 +52,6 @@ const Auth = () => {
         });
         if (error) throw error;
         if (data.user) {
-          await claimDeviceOutfits(data.user.id);
           toast.success("Account created! You're signed in.");
           navigate("/");
         }
