@@ -90,6 +90,7 @@ const Index = () => {
     setCurrentOutfit(null);
     setOutfitImageUrl(null);
     setItemDescription("");
+    setLockedLabels(new Set());
   }, []);
 
   const requireAuth = useCallback(() => {
@@ -98,6 +99,21 @@ const Index = () => {
     navigate("/auth");
     return false;
   }, [user, navigate]);
+
+  const [regeneratingIndex, setRegeneratingIndex] = useState<number | null>(null);
+  const [isAddingPiece, setIsAddingPiece] = useState(false);
+  const [addPieceRequest, setAddPieceRequest] = useState("");
+  const [lockedLabels, setLockedLabels] = useState<Set<string>>(new Set());
+
+  const toggleLock = useCallback((label: string) => {
+    setLockedLabels((prev) => {
+      const next = new Set(prev);
+      if (next.has(label)) next.delete(label);
+      else next.add(label);
+      return next;
+    });
+  }, []);
+
 
   const generateOutfit = useCallback(async () => {
     if (!uploadedImage) return;
@@ -109,6 +125,11 @@ const Index = () => {
       const style = selectedStyle === "any" ? "any" : selectedStyle;
       const compressed = await compressImage(uploadedImage);
 
+      // Preserve locked items across a full regeneration
+      const lockedItems = currentOutfit
+        ? currentOutfit.items.filter((it) => lockedLabels.has(it.label))
+        : [];
+
       const { data, error } = await supabase.functions.invoke("generate-outfit", {
         body: {
           imageBase64: compressed,
@@ -117,6 +138,7 @@ const Index = () => {
           skinTone: selectedSkinTone,
           season: selectedSeason,
           itemDescription: itemDescription.trim() || undefined,
+          lockedItems: lockedItems.length > 0 ? lockedItems : undefined,
         },
       });
 
@@ -142,11 +164,7 @@ const Index = () => {
     } finally {
       setIsGenerating(false);
     }
-  }, [uploadedImage, selectedStyle, selectedGender, selectedSkinTone, itemDescription]);
-
-  const [regeneratingIndex, setRegeneratingIndex] = useState<number | null>(null);
-  const [isAddingPiece, setIsAddingPiece] = useState(false);
-  const [addPieceRequest, setAddPieceRequest] = useState("");
+  }, [uploadedImage, selectedStyle, selectedGender, selectedSkinTone, selectedSeason, itemDescription, currentOutfit, lockedLabels, requireAuth]);
 
   const regenerateSingleItem = useCallback(async (index: number) => {
     if (!uploadedImage || !currentOutfit) return;
@@ -565,7 +583,8 @@ const Index = () => {
                       colorName={item.colorName}
                       description={item.description}
                       index={i}
-                      isLocked={false}
+                      isLocked={lockedLabels.has(item.label)}
+                      onToggleLock={() => toggleLock(item.label)}
                       isRegenerating={regeneratingIndex === i}
                       canRemove={currentOutfit.items.length > 4}
                       altColors={item.altColors}
