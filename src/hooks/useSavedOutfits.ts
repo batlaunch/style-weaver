@@ -35,6 +35,7 @@ export function useSavedOutfits() {
           palette: row.palette as unknown as SavedOutfit["palette"],
           outfitImageUrl: row.outfit_image_url,
           createdAt: row.created_at,
+          liked: row.liked ?? false,
         }))
       );
     }
