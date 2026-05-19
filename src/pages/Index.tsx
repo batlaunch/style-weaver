@@ -182,6 +182,14 @@ const Index = () => {
 
   const addAnotherPiece = useCallback(async () => {
     if (!uploadedImage || !currentOutfit) return;
+
+    // Parse: split on commas OR newlines, trim, drop empties.
+    const requested = addPieceRequest
+      .split(/[\n,]+/)
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0)
+      .slice(0, 12);
+
     setIsAddingPiece(true);
     try {
       const compressed = await compressImage(uploadedImage);
@@ -197,34 +205,39 @@ const Index = () => {
           itemDescription: itemDescription.trim() || undefined,
           lockedItems: currentOutfit.items,
           addPiece: true,
-          addPieceRequest: addPieceRequest.trim() || undefined,
+          addPieceRequest: requested.length === 1 ? requested[0] : undefined,
+          addPieceRequests: requested.length > 1 ? requested : undefined,
         },
       });
 
       if (error) throw error;
       if (data?.error) { toast.error(data.error); return; }
 
-      // Find the new item (the one whose label is not in the existing set)
-      const newItem = data.items?.find((it: any) => !existingLabels.has(it.label));
-      if (newItem) {
+      // Find new items (anything whose label isn't already in the outfit)
+      const newItems = (data.items || []).filter((it: any) => !existingLabels.has(it.label));
+      if (newItems.length > 0) {
         setCurrentOutfit((prev) => {
           if (!prev) return prev;
           return {
             ...prev,
-            items: [...prev.items, newItem],
+            items: [...prev.items, ...newItems],
             palette: data.palette || prev.palette,
             harmony: data.harmony || prev.harmony,
             rationale: data.rationale ?? prev.rationale,
           };
         });
-        toast.success(`Added ${newItem.label.toLowerCase()} to your outfit`);
+        toast.success(
+          newItems.length === 1
+            ? `Added ${newItems[0].label.toLowerCase()} to your outfit`
+            : `Added ${newItems.length} new pieces to your outfit`
+        );
         setAddPieceRequest("");
       } else {
-        toast.error("Couldn't find a new piece to add");
+        toast.error("Couldn't find new pieces to add");
       }
     } catch (e) {
       console.error("Add piece failed:", e);
-      toast.error("Failed to add another piece");
+      toast.error("Failed to add pieces");
     } finally {
       setIsAddingPiece(false);
     }
