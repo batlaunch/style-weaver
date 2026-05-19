@@ -241,9 +241,9 @@ const StyleQuiz = () => {
               exit={{ opacity: 0, x: -30 }}
               transition={{ duration: 0.25 }}
             >
-              <h2 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight mb-8">
+              <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight mb-8">
                 {currentQ.question}
-              </h2>
+              </h1>
 
               <div className="grid gap-3">
                 {currentQ.options.map((opt) => {
@@ -296,9 +296,9 @@ const StyleQuiz = () => {
                 >
                   <Sparkles className="w-10 h-10 text-accent mx-auto mb-4" />
                 </motion.div>
-                <h2 className="font-display text-3xl sm:text-4xl font-bold text-foreground tracking-tight">
+                <h1 className="font-display text-3xl sm:text-4xl font-bold text-foreground tracking-tight">
                   {result.name}
-                </h2>
+                </h1>
                 <p className="font-body text-muted-foreground mt-2 text-lg">{result.tagline}</p>
               </div>
 

@@ -85,7 +85,7 @@ const ResetPassword = () => {
             className="text-center"
           >
             <CheckCircle className="w-12 h-12 text-accent mx-auto mb-4" />
-            <h2 className="font-display text-2xl font-bold text-foreground">Password updated!</h2>
+            <h1 className="font-display text-2xl font-bold text-foreground">Password updated!</h1>
             <p className="font-body text-muted-foreground mt-2">Redirecting you home…</p>
           </motion.div>
         ) : !isRecovery ? (
@@ -94,7 +94,7 @@ const ResetPassword = () => {
             animate={{ opacity: 1, y: 0 }}
             className="text-center"
           >
-            <h2 className="font-display text-2xl font-bold text-foreground">Invalid link</h2>
+            <h1 className="font-display text-2xl font-bold text-foreground">Invalid link</h1>
             <p className="font-body text-muted-foreground mt-3">
               This page is only accessible via a password reset link. Please request a new one.
             </p>
@@ -112,9 +112,9 @@ const ResetPassword = () => {
               animate={{ opacity: 1, y: 0 }}
               className="text-center mb-8"
             >
-              <h2 className="font-display text-3xl font-bold text-foreground tracking-tight">
+              <h1 className="font-display text-3xl font-bold text-foreground tracking-tight">
                 Set a new password
-              </h2>
+              </h1>
               <p className="font-body text-muted-foreground mt-3">
                 Choose a strong password for your account.
               </p>

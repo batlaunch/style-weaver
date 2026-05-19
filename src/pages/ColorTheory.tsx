@@ -61,7 +61,7 @@ const ColorTheory = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEO
-        title="Color Theory for Fashion — Harmonies & 60/30/10 Rule | Fitted Fashion"
+        title="Color Theory for Fashion — Harmony & Tips | Fitted Fashion"
         description="Master color harmonies, the 60-30-10 rule, and how to match colors to your skin undertone. A practical guide to color theory for everyday outfits."
         path="/color-theory"
         ogType="article"
