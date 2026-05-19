@@ -23,14 +23,7 @@ const Auth = () => {
     return null;
   }
 
-  const claimDeviceOutfits = async (userId: string) => {
-    const deviceId = getDeviceId();
-    await supabase
-      .from("saved_outfits")
-      .update({ user_id: userId })
-      .eq("device_id", deviceId)
-      .is("user_id", null);
-  };
+  // Anonymous outfit saving is no longer supported, so there's nothing to claim on sign-in.
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
