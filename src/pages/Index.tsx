@@ -192,6 +192,7 @@ const Index = () => {
 
   const addAnotherPiece = useCallback(async () => {
     if (!uploadedImage || !currentOutfit) return;
+    if (!requireAuth()) return;
 
     // Parse: split on commas OR newlines, trim, drop empties.
     const requested = addPieceRequest
