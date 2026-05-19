@@ -11,6 +11,7 @@ import OutfitCard from "@/components/OutfitCard";
 import ColorPalette from "@/components/ColorPalette";
 import HarmonyExplanation from "@/components/HarmonyExplanation";
 import StylePreferences, { type StyleType, type GenderType, type SkinTone, type SeasonType } from "@/components/StylePreferences";
+import SEO from "@/components/SEO";
 import { useSavedOutfits } from "@/hooks/useSavedOutfits";
 import { useAuth } from "@/hooks/useAuth";
 import { incrementStyleUsage } from "@/lib/styleUsage";
@@ -287,14 +288,27 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Fitted Fashion — AI Outfit Builder & Color Harmony"
+        description="Upload any clothing piece and let AI build a complete, color-coordinated outfit around it using 60/30/10 color theory and proven style harmonies."
+        path="/"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "WebApplication",
+          name: "Fitted Fashion",
+          applicationCategory: "LifestyleApplication",
+          operatingSystem: "Web",
+          description: "AI outfit builder that creates color-coordinated outfits from a single uploaded piece.",
+        }}
+      />
       {/* Header */}
       <header className="border-b border-border relative">
         <div className="container max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Shirt className="w-5 h-5 text-accent" />
-            <h1 className="font-display text-xl font-semibold tracking-tight text-foreground">
+            <p className="font-display text-xl font-semibold tracking-tight text-foreground">
               FITTED FASHION
-            </h1>
+            </p>
           </div>
 
           {/* Desktop nav */}
@@ -381,9 +395,9 @@ const Index = () => {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
         >
-          <h2 className="font-display text-3xl sm:text-4xl font-bold text-foreground tracking-tight">
-            Build your perfect outfit
-          </h2>
+          <h1 className="font-display text-3xl sm:text-4xl font-bold text-foreground tracking-tight">
+            FITTED FASHION — AI Outfit Builder
+          </h1>
           <p className="font-body text-muted-foreground mt-3 max-w-md mx-auto">
             Upload any clothing piece, pick your style, and AI will build a complete color-coordinated outfit around your item.
           </p>
@@ -553,6 +567,7 @@ const Index = () => {
                           }
                         }}
                         maxLength={200}
+                        aria-label="Describe a piece to add to the outfit"
                         placeholder="e.g. a brown leather belt, gold chain, beanie…"
                         disabled={isAddingPiece}
                         className="flex-1 px-3 py-3 rounded-lg border border-dashed border-accent/40 bg-accent/5 text-foreground placeholder:text-muted-foreground/70 font-body text-sm focus:outline-none focus:border-accent/70 focus:bg-accent/10 transition-colors disabled:opacity-50"
