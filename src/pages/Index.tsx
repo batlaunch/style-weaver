@@ -99,6 +99,21 @@ const Index = () => {
     return false;
   }, [user, navigate]);
 
+  const [regeneratingIndex, setRegeneratingIndex] = useState<number | null>(null);
+  const [isAddingPiece, setIsAddingPiece] = useState(false);
+  const [addPieceRequest, setAddPieceRequest] = useState("");
+  const [lockedLabels, setLockedLabels] = useState<Set<string>>(new Set());
+
+  const toggleLock = useCallback((label: string) => {
+    setLockedLabels((prev) => {
+      const next = new Set(prev);
+      if (next.has(label)) next.delete(label);
+      else next.add(label);
+      return next;
+    });
+  }, []);
+
+
   const generateOutfit = useCallback(async () => {
     if (!uploadedImage) return;
     if (!requireAuth()) return;
