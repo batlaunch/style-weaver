@@ -320,8 +320,8 @@ const Index = () => {
         <div className="container max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Shirt className="w-5 h-5 text-accent" />
-            <p className="font-display text-xl font-semibold tracking-tight text-foreground">
-              FITTED FASHION
+            <p className="font-display text-2xl font-medium tracking-[0.18em] text-accent uppercase">
+              Fitted Fashion
             </p>
           </div>
 
