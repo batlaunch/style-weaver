@@ -27,4 +27,5 @@ export interface SavedOutfit extends Outfit {
   gender: string;
   outfitImageUrl?: string | null;
   createdAt: string;
+  liked?: boolean;
 }

@@ -1,14 +1,15 @@
 import { motion } from "framer-motion";
-import { Trash2, Clock } from "lucide-react";
+import { Trash2, Clock, Heart } from "lucide-react";
 import type { SavedOutfit } from "@/lib/outfitTypes";
 
 interface SavedOutfitCardProps {
   outfit: SavedOutfit;
   index: number;
   onDelete: (id: string) => void;
+  onToggleLike?: (id: string, liked: boolean) => void;
 }
 
-const SavedOutfitCard = ({ outfit, index, onDelete }: SavedOutfitCardProps) => {
+const SavedOutfitCard = ({ outfit, index, onDelete, onToggleLike }: SavedOutfitCardProps) => {
   const date = new Date(outfit.createdAt);
   const formattedDate = date.toLocaleDateString("en-US", {
     month: "short",
@@ -81,14 +82,28 @@ const SavedOutfitCard = ({ outfit, index, onDelete }: SavedOutfitCardProps) => {
             <Clock className="w-3 h-3" />
             <span className="text-[10px] font-body">{formattedDate}</span>
           </div>
-          <button
-            onClick={() => onDelete(outfit.id)}
-            aria-label={`Remove ${outfit.style} outfit from gallery`}
-            className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive"
-            title="Remove from gallery"
-          >
-            <Trash2 className="w-3.5 h-3.5" />
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => onToggleLike?.(outfit.id, !outfit.liked)}
+              aria-label={outfit.liked ? "Unlike outfit" : "Like outfit"}
+              className={`p-1 rounded transition-colors ${
+                outfit.liked
+                  ? "text-red-500 hover:text-red-600"
+                  : "text-muted-foreground hover:text-red-500"
+              }`}
+              title={outfit.liked ? "Unlike" : "Like"}
+            >
+              <Heart className={`w-3.5 h-3.5 ${outfit.liked ? "fill-current" : ""}`} />
+            </button>
+            <button
+              onClick={() => onDelete(outfit.id)}
+              aria-label={`Remove ${outfit.style} outfit from gallery`}
+              className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive"
+              title="Remove from gallery"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
       </div>
     </motion.div>

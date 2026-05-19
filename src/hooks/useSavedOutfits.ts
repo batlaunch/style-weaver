@@ -35,6 +35,7 @@ export function useSavedOutfits() {
           palette: row.palette as unknown as SavedOutfit["palette"],
           outfitImageUrl: row.outfit_image_url,
           createdAt: row.created_at,
+          liked: row.liked ?? false,
         }))
       );
     }
@@ -86,5 +87,23 @@ export function useSavedOutfits() {
     []
   );
 
-  return { savedOutfits, isLoading, saveOutfit, deleteOutfit, refetch: fetchOutfits };
+  const toggleLike = useCallback(
+    async (id: string, liked: boolean) => {
+      const { error } = await supabase
+        .from("saved_outfits")
+        .update({ liked })
+        .eq("id", id);
+      if (error) {
+        console.error("Error toggling like:", error);
+        return false;
+      }
+      setSavedOutfits((prev) =>
+        prev.map((o) => (o.id === id ? { ...o, liked } : o))
+      );
+      return true;
+    },
+    []
+  );
+
+  return { savedOutfits, isLoading, saveOutfit, deleteOutfit, toggleLike, refetch: fetchOutfits };
 }

@@ -7,6 +7,13 @@ import SavedOutfitCard from "@/components/SavedOutfitCard";
 import SEO from "@/components/SEO";
 import { toast } from "sonner";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -19,25 +26,55 @@ import {
 
 const PAGE_SIZE = 12;
 
+type SortOption = "newest" | "oldest" | "most-liked";
+
+const SORT_LABELS: Record<SortOption, string> = {
+  newest: "Newest first",
+  oldest: "Oldest first",
+  "most-liked": "Most liked",
+};
+
 const Gallery = () => {
-  const { savedOutfits, isLoading, deleteOutfit } = useSavedOutfits();
+  const { savedOutfits, isLoading, deleteOutfit, toggleLike } = useSavedOutfits();
   const [search, setSearch] = useState("");
+  const [sort, setSort] = useState<SortOption>("newest");
   const [page, setPage] = useState(1);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    if (!q) return savedOutfits;
-    return savedOutfits.filter((o) => {
-      if (o.style.toLowerCase().includes(q)) return true;
-      if (o.harmony.toLowerCase().includes(q)) return true;
-      if (o.gender.toLowerCase().includes(q)) return true;
-      if (o.items.some((it) => it.description.toLowerCase().includes(q) || it.label.toLowerCase().includes(q) || it.colorName.toLowerCase().includes(q))) return true;
-      if (o.palette.some((c) => c.name.toLowerCase().includes(q))) return true;
-      return false;
-    });
-  }, [savedOutfits, search]);
+    let list = q
+      ? savedOutfits.filter((o) => {
+          if (o.style.toLowerCase().includes(q)) return true;
+          if (o.harmony.toLowerCase().includes(q)) return true;
+          if (o.gender.toLowerCase().includes(q)) return true;
+          if (o.items.some((it) => it.description.toLowerCase().includes(q) || it.label.toLowerCase().includes(q) || it.colorName.toLowerCase().includes(q))) return true;
+          if (o.palette.some((c) => c.name.toLowerCase().includes(q))) return true;
+          return false;
+        })
+      : [...savedOutfits];
+
+    switch (sort) {
+      case "oldest":
+        list.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+        break;
+      case "most-liked":
+        list.sort((a, b) => {
+          const aLiked = a.liked ? 1 : 0;
+          const bLiked = b.liked ? 1 : 0;
+          if (bLiked !== aLiked) return bLiked - aLiked;
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        });
+        break;
+      case "newest":
+      default:
+        list.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        break;
+    }
+
+    return list;
+  }, [savedOutfits, search, sort]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
@@ -45,6 +82,11 @@ const Gallery = () => {
 
   const onSearchChange = (v: string) => {
     setSearch(v);
+    setPage(1);
+  };
+
+  const onSortChange = (v: SortOption) => {
+    setSort(v);
     setPage(1);
   };
 
@@ -56,6 +98,11 @@ const Gallery = () => {
     setPendingDeleteId(null);
     if (ok) toast.success("Outfit removed from gallery");
     else toast.error("Failed to remove outfit");
+  };
+
+  const handleToggleLike = async (id: string, liked: boolean) => {
+    const ok = await toggleLike(id, liked);
+    if (!ok) toast.error("Failed to update like");
   };
 
   return (
@@ -94,27 +141,43 @@ const Gallery = () => {
           </p>
         </motion.div>
 
-        {/* Search */}
+        {/* Search + Sort */}
         {savedOutfits.length > 0 && (
-          <div className="mb-6 max-w-md mx-auto relative">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => onSearchChange(e.target.value)}
-              placeholder="Search by style, color, item, harmony…"
-              aria-label="Search saved outfits"
-              className="w-full pl-9 pr-9 py-2.5 rounded-lg border border-border bg-card text-foreground font-body text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
-            />
-            {search && (
-              <button
-                onClick={() => onSearchChange("")}
-                aria-label="Clear search"
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-secondary text-muted-foreground"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            )}
+          <div className="mb-6 max-w-md mx-auto space-y-3">
+            <div className="relative">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => onSearchChange(e.target.value)}
+                placeholder="Search by style, color, item, harmony…"
+                aria-label="Search saved outfits"
+                className="w-full pl-9 pr-9 py-2.5 rounded-lg border border-border bg-card text-foreground font-body text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
+              />
+              {search && (
+                <button
+                  onClick={() => onSearchChange("")}
+                  aria-label="Clear search"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-secondary text-muted-foreground"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+            <div className="flex items-center justify-end">
+              <Select value={sort} onValueChange={(v) => onSortChange(v as SortOption)}>
+                <SelectTrigger className="w-[160px] h-9 text-xs font-body" aria-label="Sort outfits">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {(Object.keys(SORT_LABELS) as SortOption[]).map((key) => (
+                    <SelectItem key={key} value={key} className="text-xs font-body">
+                      {SORT_LABELS[key]}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         )}
 
@@ -145,7 +208,7 @@ const Gallery = () => {
         ) : filtered.length === 0 ? (
           <div className="text-center py-16">
             <p className="font-body text-sm text-muted-foreground">
-              No outfits match “{search}”.
+              No outfits match "{search}".
             </p>
           </div>
         ) : (
@@ -158,6 +221,7 @@ const Gallery = () => {
                     outfit={outfit}
                     index={i}
                     onDelete={(id) => setPendingDeleteId(id)}
+                    onToggleLike={handleToggleLike}
                   />
                 ))}
               </AnimatePresence>
