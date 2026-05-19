@@ -11,7 +11,7 @@ serve(async (req) => {
   }
 
   try {
-    const { imageBase64, style, gender, skinTone, season, itemDescription, lockedItems, regenerateSlot, addPiece, addPieceRequest } = await req.json();
+    const { imageBase64, style, gender, skinTone, season, itemDescription, lockedItems, regenerateSlot, addPiece, addPieceRequest, addPieceRequests } = await req.json();
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
@@ -99,9 +99,25 @@ IMPORTANT RULES:
       : "";
 
     const existingLabels = hasLockedItems ? lockedItems.map((i: any) => i.label).join(", ") : "";
-    const trimmedAddRequest = typeof addPieceRequest === "string" ? addPieceRequest.trim().slice(0, 300) : "";
+
+    // Normalize add-piece request list: prefer explicit array, else split single string on commas/newlines.
+    const rawList: string[] = Array.isArray(addPieceRequests)
+      ? addPieceRequests
+      : (typeof addPieceRequest === "string" ? addPieceRequest.split(/[\n,]+/) : []);
+    const cleanedList = rawList
+      .map((s) => (typeof s === "string" ? s.trim().slice(0, 200) : ""))
+      .filter((s) => s.length > 0);
+    const addCount = addPiece ? Math.max(1, Math.min(cleanedList.length || 1, 12)) : 0;
+    const singleRequest = cleanedList.length === 1 ? cleanedList[0] : "";
+
     const addPieceNote = addPiece
-      ? ` The user wants to ADD ONE MORE piece to the existing outfit. Keep ALL locked items EXACTLY as they are (do not modify their label, color, colorName, or description). Then return the FULL items array including all the locked items PLUS exactly one brand-new additional piece.${trimmedAddRequest ? ` THE USER SPECIFICALLY REQUESTS: "${trimmedAddRequest}". Honor this request — add a piece that matches their description as closely as possible while still fitting the outfit's style, palette (60/30/10), and harmony. Pick the most appropriate label for it (Outerwear, Hat, Bag, Belt, Scarf, Jewelry, Sunglasses, Accessory, etc.).` : ` Choose whichever extra piece makes the most sense for the style and season (e.g. an extra accessory like a hat, bag, belt, scarf, jewelry, sunglasses, or a layering piece like outerwear).`} The new piece MUST have a label that is NOT already used in the existing outfit (existing labels: ${existingLabels}). The total number of items in the response must equal ${(lockedItems?.length || 0) + 1}.`
+      ? ` The user wants to ADD ${addCount} MORE piece${addCount > 1 ? "s" : ""} to the existing outfit. Keep ALL locked items EXACTLY as they are (do not modify their label, color, colorName, or description). Then return the FULL items array including all the locked items PLUS exactly ${addCount} brand-new additional piece${addCount > 1 ? "s" : ""}.${
+          cleanedList.length > 1
+            ? ` THE USER SPECIFICALLY REQUESTS THESE NEW PIECES (add one piece per entry, in this order):\n${cleanedList.map((s, i) => `${i + 1}. "${s}"`).join("\n")}\nHonor each request — add a piece for each entry that matches the description as closely as possible while still fitting the outfit's style, palette (60/30/10), and harmony. Pick the most appropriate label for each (Outerwear, Hat, Bag, Belt, Scarf, Jewelry, Sunglasses, Accessory, Top, Bottom, Shoes, etc.).`
+            : singleRequest
+              ? ` THE USER SPECIFICALLY REQUESTS: "${singleRequest}". Honor this request — add a piece that matches their description as closely as possible while still fitting the outfit's style, palette (60/30/10), and harmony. Pick the most appropriate label for it (Outerwear, Hat, Bag, Belt, Scarf, Jewelry, Sunglasses, Accessory, etc.).`
+              : ` Choose whichever extra piece makes the most sense for the style and season (e.g. an extra accessory like a hat, bag, belt, scarf, jewelry, sunglasses, or a layering piece like outerwear).`
+        } Each new piece MUST have a label that is NOT already used in the existing outfit (existing labels: ${existingLabels}). If multiple new pieces share a category (e.g. two accessories), give them distinct specific labels (e.g. "Hat" and "Belt") — never reuse a label. The total number of items in the response must equal ${(lockedItems?.length || 0) + addCount}.`
       : "";
 
     const descriptionHint = itemDescription ? ` The user describes this item as: "${itemDescription}". Use this description to identify the item accurately.` : "";
