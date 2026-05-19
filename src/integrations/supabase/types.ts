@@ -22,6 +22,7 @@ export type Database = {
           harmony: string
           id: string
           items: Json
+          liked: boolean
           outfit_image_url: string | null
           palette: Json
           style: string
@@ -34,6 +35,7 @@ export type Database = {
           harmony: string
           id?: string
           items: Json
+          liked?: boolean
           outfit_image_url?: string | null
           palette: Json
           style: string
@@ -46,6 +48,7 @@ export type Database = {
           harmony?: string
           id?: string
           items?: Json
+          liked?: boolean
           outfit_image_url?: string | null
           palette?: Json
           style?: string
