@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Heart, Loader2 } from "lucide-react";
 import { useSavedOutfits } from "@/hooks/useSavedOutfits";
 import SavedOutfitCard from "@/components/SavedOutfitCard";
+import SEO from "@/components/SEO";
 import { toast } from "sonner";
 
 const Gallery = () => {
@@ -16,10 +17,16 @@ const Gallery = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Saved Outfits Gallery | Fitted Fashion"
+        description="Your gallery of saved AI-generated outfits. Compare palettes, revisit styles, and find inspiration from your past looks."
+        path="/gallery"
+      />
       <header className="border-b border-border">
         <div className="container max-w-6xl mx-auto px-6 py-5 flex items-center gap-4">
           <Link
             to="/"
+            aria-label="Back to outfit builder"
             className="p-2 rounded-md hover:bg-secondary transition-colors text-foreground"
           >
             <ArrowLeft className="w-4 h-4" />

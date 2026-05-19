@@ -1,0 +1,12 @@
+# Fitted Fashion
+
+> AI-powered outfit styling. Upload any clothing piece and Fitted Fashion builds a complete, color-coordinated outfit around it using 60/30/10 color theory and proven harmonies.
+
+## Pages
+
+- [Outfit Builder](/): Upload a piece, pick a style, and generate a full outfit with color palette and rationale.
+- [Style Quiz](/style-quiz): Multi-step quiz that maps your taste to one of four archetypes (Classic, Streetwear, Boho, Minimalist).
+- [Gallery](/gallery): Browse saved outfits with palette swatches and per-item breakdowns.
+- [Color Theory](/color-theory): Guide to color harmonies, the 60-30-10 rule, and matching colors to skin undertones.
+- [Fashion Fundamentals](/fashion-guide): Principles of fit, layering, capsule wardrobes, texture, and accessories.
+- [Seasonal Style Guide](/seasonal-guide): Per-season palettes, fabrics, and essential pieces for spring, summer, fall, and winter.

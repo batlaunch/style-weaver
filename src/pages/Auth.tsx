@@ -7,6 +7,7 @@ import { lovable } from "@/integrations/lovable/index";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { getDeviceId } from "@/lib/deviceId";
+import SEO from "@/components/SEO";
 
 const Auth = () => {
   const [mode, setMode] = useState<"login" | "signup" | "forgot">("login");
@@ -110,16 +111,21 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title={`${mode === "forgot" ? "Reset Password" : mode === "login" ? "Sign In" : "Create Account"} — Fitted Fashion`}
+        description="Sign in or create an account to save outfits and access your gallery across devices."
+        path="/auth"
+      />
       <header className="border-b border-border">
         <div className="container max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex items-center gap-4">
-          <Link to="/" className="p-2 rounded-md hover:bg-secondary transition-colors text-foreground">
+          <Link to="/" aria-label="Back to outfit builder" className="p-2 rounded-md hover:bg-secondary transition-colors text-foreground">
             <ArrowLeft className="w-4 h-4" />
           </Link>
           <div className="flex items-center gap-3">
             <Shirt className="w-5 h-5 text-accent" />
-            <h1 className="font-display text-xl font-semibold tracking-tight text-foreground">
+            <p className="font-display text-xl font-semibold tracking-tight text-foreground">
               FITTED FASHION
-            </h1>
+            </p>
           </div>
         </div>
       </header>
@@ -131,9 +137,9 @@ const Auth = () => {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-8"
         >
-          <h2 className="font-display text-3xl font-bold text-foreground tracking-tight">
+          <h1 className="font-display text-3xl font-bold text-foreground tracking-tight">
             {title}
-          </h2>
+          </h1>
           <p className="font-body text-muted-foreground mt-3">{subtitle}</p>
         </motion.div>
 

@@ -46,6 +46,11 @@ const OutfitCard = ({ label, color, colorName, description, index, isLocked, isR
               setShowColors(!showColors);
             }
           }}
+          aria-label={
+            altColors && altColors.length > 0 && !isLocked
+              ? `Change color for ${label.toLowerCase()} (currently ${colorName})`
+              : `${label} color: ${colorName}`
+          }
           className={`w-14 h-14 rounded-md border border-border flex-shrink-0 relative transition-transform ${
             altColors && altColors.length > 0 && !isLocked ? "cursor-pointer hover:scale-105 hover:ring-2 hover:ring-accent/40" : "cursor-default"
           }`}
@@ -77,6 +82,7 @@ const OutfitCard = ({ label, color, colorName, description, index, isLocked, isR
           <button
             onClick={onRegenerate}
             disabled={isRegenerating}
+            aria-label={`Regenerate ${label.toLowerCase()}`}
             className="opacity-0 group-hover:opacity-100 transition-opacity p-2 rounded-md hover:bg-secondary text-muted-foreground hover:text-foreground disabled:opacity-50"
             title="Regenerate this item"
           >
@@ -85,6 +91,7 @@ const OutfitCard = ({ label, color, colorName, description, index, isLocked, isR
           {canRemove && onRemove && (
             <button
               onClick={onRemove}
+              aria-label={`Remove ${label.toLowerCase()} from outfit`}
               className="opacity-0 group-hover:opacity-100 transition-opacity p-2 rounded-md hover:bg-destructive/10 text-muted-foreground hover:text-destructive"
               title="Remove this item"
             >

@@ -12,6 +12,7 @@ interface UploadZoneProps {
 
 const UploadZone = ({ onImageUpload, uploadedImage, onClear, itemDescription, onItemDescriptionChange }: UploadZoneProps) => {
   const [isDragging, setIsDragging] = useState(false);
+  const inputId = "clothing-upload-input";
 
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
@@ -62,6 +63,7 @@ const UploadZone = ({ onImageUpload, uploadedImage, onClear, itemDescription, on
               />
               <button
                 onClick={onClear}
+                aria-label="Remove uploaded image"
                 className="absolute top-3 right-3 p-1.5 rounded-full bg-foreground/80 text-primary-foreground hover:bg-foreground transition-colors"
               >
                 <X className="w-4 h-4" />
@@ -94,7 +96,7 @@ const UploadZone = ({ onImageUpload, uploadedImage, onClear, itemDescription, on
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            htmlFor="file-upload"
+            htmlFor={inputId}
             onDragOver={(e) => {
               e.preventDefault();
               setIsDragging(true);
@@ -127,9 +129,10 @@ const UploadZone = ({ onImageUpload, uploadedImage, onClear, itemDescription, on
               </p>
             </div>
             <input
-              id="file-upload"
+              id={inputId}
               type="file"
               accept="image/*"
+              aria-label="Upload a clothing item image"
               className="hidden"
               onChange={handleFileSelect}
             />

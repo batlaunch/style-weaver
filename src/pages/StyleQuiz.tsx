@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight, Sparkles, RotateCcw, Shirt } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Progress } from "@/components/ui/progress";
+import SEO from "@/components/SEO";
 
 interface QuizQuestion {
   id: string;
@@ -187,14 +188,19 @@ const StyleQuiz = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Style Quiz — Find Your Fashion Archetype | Fitted Fashion"
+        description="Take the five-question style quiz to discover whether you're Classic, Streetwear, Bohemian, or Minimalist — and get matching outfit recommendations."
+        path="/style-quiz"
+      />
       {/* Header */}
       <header className="border-b border-border">
         <div className="container max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3">
+          <Link to="/" aria-label="Back to outfit builder" className="flex items-center gap-3">
             <Shirt className="w-5 h-5 text-accent" />
-            <h1 className="font-display text-xl font-semibold tracking-tight text-foreground">
+            <p className="font-display text-xl font-semibold tracking-tight text-foreground">
               FITTED FASHION
-            </h1>
+            </p>
           </Link>
           <nav className="flex items-center gap-6">
             <Link to="/" className="font-display text-xs uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors">
