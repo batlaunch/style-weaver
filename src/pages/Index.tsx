@@ -90,6 +90,7 @@ const Index = () => {
     setCurrentOutfit(null);
     setOutfitImageUrl(null);
     setItemDescription("");
+    setLockedLabels(new Set());
   }, []);
 
   const requireAuth = useCallback(() => {
@@ -582,7 +583,8 @@ const Index = () => {
                       colorName={item.colorName}
                       description={item.description}
                       index={i}
-                      isLocked={false}
+                      isLocked={lockedLabels.has(item.label)}
+                      onToggleLock={() => toggleLock(item.label)}
                       isRegenerating={regeneratingIndex === i}
                       canRemove={currentOutfit.items.length > 4}
                       altColors={item.altColors}
