@@ -647,6 +647,12 @@ const Index = () => {
                 </ul>
               </motion.div>
             )}
+
+            <MannequinDisplay
+              isGenerating={isGenerating || isGeneratingImage}
+              hasOutfit={!!currentOutfit}
+              outfitImageUrl={outfitImageUrl}
+            />
           </div>
         </div>
       </main>
