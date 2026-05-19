@@ -256,6 +256,7 @@ const Index = () => {
 
   const generateOutfitImage = useCallback(async () => {
     if (!currentOutfit) return;
+    if (!requireAuth()) return;
     setIsGeneratingImage(true);
     try {
       const { data, error } = await supabase.functions.invoke("generate-outfit-image", {
