@@ -41,7 +41,6 @@ const Auth = () => {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         if (data.user) {
-          await claimDeviceOutfits(data.user.id);
           toast.success("Welcome back!");
           navigate("/");
         }
