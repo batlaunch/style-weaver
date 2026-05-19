@@ -16,6 +16,7 @@ import { useSavedOutfits } from "@/hooks/useSavedOutfits";
 import { useAuth } from "@/hooks/useAuth";
 import { incrementStyleUsage } from "@/lib/styleUsage";
 import type { Outfit } from "@/lib/outfitTypes";
+import heroBanner from "@/assets/hero-fitted-fashion.png";
 
 const STORAGE_KEY = "fitted-fashion:home-state";
 
@@ -319,8 +320,8 @@ const Index = () => {
         <div className="container max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Shirt className="w-5 h-5 text-accent" />
-            <p className="font-display text-xl font-semibold tracking-tight text-foreground">
-              FITTED FASHION
+            <p className="font-display text-2xl font-medium tracking-[0.18em] text-accent uppercase">
+              Fitted Fashion
             </p>
           </div>
 
@@ -406,13 +407,19 @@ const Index = () => {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
+          className="mb-14"
         >
-          <h1 className="font-display text-3xl sm:text-4xl font-bold text-foreground tracking-tight">
-            FITTED FASHION — AI Outfit Builder
-          </h1>
-          <p className="font-body text-muted-foreground mt-3 max-w-md mx-auto">
-            Upload any clothing piece, pick your style, and AI will build a complete color-coordinated outfit around your item.
+          <div className="relative overflow-hidden rounded-2xl border border-[hsl(var(--gold)/0.25)] shadow-[0_20px_60px_-20px_hsl(var(--gold)/0.35)]">
+            <img
+              src={heroBanner}
+              alt="Fitted Fashion — watercolor mannequin with gold serif wordmark"
+              className="w-full h-auto object-cover"
+              loading="eager"
+            />
+          </div>
+          <h1 className="sr-only">Fitted Fashion — AI Outfit Builder & Color Harmony</h1>
+          <p className="font-body text-muted-foreground mt-6 max-w-xl mx-auto text-center italic">
+            Upload any piece. Choose your style. Watch a complete, color-balanced outfit take shape around it.
           </p>
         </motion.div>
 

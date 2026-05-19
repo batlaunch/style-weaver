@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -45,16 +45,16 @@
     --sidebar-border: 35 15% 88%;
     --sidebar-ring: 38 60% 55%;
 
-    --font-display: 'Space Grotesk', sans-serif;
+    --font-display: 'Cormorant Garamond', serif;
     --font-body: 'Outfit', sans-serif;
 
-    --gold: 38 60% 55%;
-    --gold-light: 38 50% 75%;
+    --gold: 40 55% 52%;
+    --gold-light: 40 50% 72%;
     --stone: 30 8% 50%;
     --stone-light: 35 12% 82%;
     --charcoal: 30 10% 18%;
-    --cream: 40 30% 96%;
-    --cream-dark: 38 20% 90%;
+    --cream: 40 35% 95%;
+    --cream-dark: 38 22% 89%;
   }
 
   .dark {
