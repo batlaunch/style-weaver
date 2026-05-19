@@ -631,7 +631,7 @@ const Index = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.3 }}
-                className="bg-card rounded-lg border border-border p-8 text-center"
+                className="bg-card rounded-lg border border-border p-8 text-center min-h-[320px] flex flex-col items-center justify-center"
               >
                 <Sparkles className="w-8 h-8 text-accent mx-auto mb-4" />
                 <h3 className="font-display text-lg font-medium text-foreground">
