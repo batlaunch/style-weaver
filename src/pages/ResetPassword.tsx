@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Shirt, ArrowLeft, Loader2, CheckCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import SEO from "@/components/SEO";
 
 const ResetPassword = () => {
   const [password, setPassword] = useState("");
@@ -57,16 +58,21 @@ const ResetPassword = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Reset Your Password — Fitted Fashion"
+        description="Set a new password for your Fitted Fashion account."
+        path="/reset-password"
+      />
       <header className="border-b border-border">
         <div className="container max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex items-center gap-4">
-          <Link to="/" className="p-2 rounded-md hover:bg-secondary transition-colors text-foreground">
+          <Link to="/" aria-label="Back to outfit builder" className="p-2 rounded-md hover:bg-secondary transition-colors text-foreground">
             <ArrowLeft className="w-4 h-4" />
           </Link>
           <div className="flex items-center gap-3">
             <Shirt className="w-5 h-5 text-accent" />
-            <h1 className="font-display text-xl font-semibold tracking-tight text-foreground">
+            <p className="font-display text-xl font-semibold tracking-tight text-foreground">
               FITTED FASHION
-            </h1>
+            </p>
           </div>
         </div>
       </header>
