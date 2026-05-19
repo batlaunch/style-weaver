@@ -109,6 +109,11 @@ const Index = () => {
       const style = selectedStyle === "any" ? "any" : selectedStyle;
       const compressed = await compressImage(uploadedImage);
 
+      // Preserve locked items across a full regeneration
+      const lockedItems = currentOutfit
+        ? currentOutfit.items.filter((it) => lockedLabels.has(it.label))
+        : [];
+
       const { data, error } = await supabase.functions.invoke("generate-outfit", {
         body: {
           imageBase64: compressed,
@@ -117,6 +122,7 @@ const Index = () => {
           skinTone: selectedSkinTone,
           season: selectedSeason,
           itemDescription: itemDescription.trim() || undefined,
+          lockedItems: lockedItems.length > 0 ? lockedItems : undefined,
         },
       });
 
@@ -142,7 +148,7 @@ const Index = () => {
     } finally {
       setIsGenerating(false);
     }
-  }, [uploadedImage, selectedStyle, selectedGender, selectedSkinTone, itemDescription]);
+  }, [uploadedImage, selectedStyle, selectedGender, selectedSkinTone, selectedSeason, itemDescription, currentOutfit, lockedLabels, requireAuth]);
 
   const [regeneratingIndex, setRegeneratingIndex] = useState<number | null>(null);
   const [isAddingPiece, setIsAddingPiece] = useState(false);
