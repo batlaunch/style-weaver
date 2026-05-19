@@ -283,6 +283,7 @@ const Index = () => {
 
   const handleSaveOutfit = useCallback(async () => {
     if (!currentOutfit) return;
+    if (!requireAuth()) return;
     const ok = await saveOutfit(currentOutfit, resolvedStyle, selectedGender, outfitImageUrl || undefined);
     if (ok) toast.success("Outfit saved to gallery!");
     else toast.error("Failed to save outfit");
