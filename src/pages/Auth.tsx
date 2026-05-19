@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
-import { getDeviceId } from "@/lib/deviceId";
+
 import SEO from "@/components/SEO";
 
 const Auth = () => {
@@ -23,14 +23,7 @@ const Auth = () => {
     return null;
   }
 
-  const claimDeviceOutfits = async (userId: string) => {
-    const deviceId = getDeviceId();
-    await supabase
-      .from("saved_outfits")
-      .update({ user_id: userId })
-      .eq("device_id", deviceId)
-      .is("user_id", null);
-  };
+  // Anonymous outfit saving is no longer supported, so there's nothing to claim on sign-in.
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,7 +41,6 @@ const Auth = () => {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         if (data.user) {
-          await claimDeviceOutfits(data.user.id);
           toast.success("Welcome back!");
           navigate("/");
         }
@@ -60,7 +52,6 @@ const Auth = () => {
         });
         if (error) throw error;
         if (data.user) {
-          await claimDeviceOutfits(data.user.id);
           toast.success("Account created! You're signed in.");
           navigate("/");
         }
@@ -88,11 +79,9 @@ const Auth = () => {
         return;
       }
 
-      // Session set — claim device outfits
+      // Session set
       const { data: { user: currentUser } } = await supabase.auth.getUser();
-      if (currentUser) {
-        await claimDeviceOutfits(currentUser.id);
-      }
+      void currentUser;
       toast.success("Signed in with Google!");
       navigate("/");
     } catch {

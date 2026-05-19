@@ -92,8 +92,16 @@ const Index = () => {
     setItemDescription("");
   }, []);
 
+  const requireAuth = useCallback(() => {
+    if (user) return true;
+    toast.error("Please sign in to use the AI stylist");
+    navigate("/auth");
+    return false;
+  }, [user, navigate]);
+
   const generateOutfit = useCallback(async () => {
     if (!uploadedImage) return;
+    if (!requireAuth()) return;
     setIsGenerating(true);
     setOutfitImageUrl(null);
 
@@ -142,6 +150,7 @@ const Index = () => {
 
   const regenerateSingleItem = useCallback(async (index: number) => {
     if (!uploadedImage || !currentOutfit) return;
+    if (!requireAuth()) return;
     setRegeneratingIndex(index);
     try {
       const compressed = await compressImage(uploadedImage);
@@ -183,6 +192,7 @@ const Index = () => {
 
   const addAnotherPiece = useCallback(async () => {
     if (!uploadedImage || !currentOutfit) return;
+    if (!requireAuth()) return;
 
     // Parse: split on commas OR newlines, trim, drop empties.
     const requested = addPieceRequest
@@ -246,6 +256,7 @@ const Index = () => {
 
   const generateOutfitImage = useCallback(async () => {
     if (!currentOutfit) return;
+    if (!requireAuth()) return;
     setIsGeneratingImage(true);
     try {
       const { data, error } = await supabase.functions.invoke("generate-outfit-image", {
@@ -272,6 +283,7 @@ const Index = () => {
 
   const handleSaveOutfit = useCallback(async () => {
     if (!currentOutfit) return;
+    if (!requireAuth()) return;
     const ok = await saveOutfit(currentOutfit, resolvedStyle, selectedGender, outfitImageUrl || undefined);
     if (ok) toast.success("Outfit saved to gallery!");
     else toast.error("Failed to save outfit");

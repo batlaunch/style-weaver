@@ -1,9 +1,26 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
+
+const json = (status: number, body: unknown) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+
+// Limits
+const MAX_BODY_BYTES = 3 * 1024 * 1024; // 3 MB total JSON body
+const MAX_IMAGE_B64 = 2_200_000; // ~1.6MB binary
+const MAX_DESC = 500;
+const MAX_ADD_REQ = 200;
+const MAX_ADD_REQ_LIST = 12;
+
+const clampText = (v: unknown, n: number) =>
+  typeof v === "string" ? v.replace(/[\u0000-\u001f\u007f]/g, " ").trim().slice(0, n) : "";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -11,7 +28,57 @@ serve(async (req) => {
   }
 
   try {
-    const { imageBase64, style, gender, skinTone, season, itemDescription, lockedItems, regenerateSlot, addPiece, addPieceRequest, addPieceRequests } = await req.json();
+    // 1. Auth: require a signed-in user
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) return json(401, { error: "Unauthorized" });
+    const supabaseAuth = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_ANON_KEY")!,
+      { global: { headers: { Authorization: authHeader } } }
+    );
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) return json(401, { error: "Unauthorized" });
+
+    // 2. Read + size-limit body
+    const raw = await req.text();
+    if (raw.length > MAX_BODY_BYTES) return json(413, { error: "Payload too large" });
+    let body: any;
+    try { body = JSON.parse(raw); } catch { return json(400, { error: "Invalid JSON" }); }
+
+    let { imageBase64, style, gender, skinTone, season, itemDescription, lockedItems, regenerateSlot, addPiece, addPieceRequest, addPieceRequests } = body ?? {};
+
+    // 3. Validate / clamp inputs
+    if (typeof imageBase64 !== "string" || !/^data:image\/(png|jpe?g|webp);base64,/.test(imageBase64)) {
+      return json(400, { error: "Invalid image" });
+    }
+    if (imageBase64.length > MAX_IMAGE_B64) return json(413, { error: "Image too large" });
+
+    style = clampText(style, 40) || "any";
+    gender = gender === "male" ? "male" : "female";
+    skinTone = clampText(skinTone, 40);
+    season = clampText(season, 40);
+    itemDescription = clampText(itemDescription, MAX_DESC);
+    regenerateSlot = clampText(regenerateSlot, 40);
+    addPieceRequest = clampText(addPieceRequest, MAX_ADD_REQ);
+    if (Array.isArray(addPieceRequests)) {
+      addPieceRequests = addPieceRequests
+        .map((s: unknown) => clampText(s, MAX_ADD_REQ))
+        .filter((s: string) => s.length > 0)
+        .slice(0, MAX_ADD_REQ_LIST);
+    } else {
+      addPieceRequests = undefined;
+    }
+    if (Array.isArray(lockedItems)) {
+      lockedItems = lockedItems.slice(0, 20).map((it: any) => ({
+        label: clampText(it?.label, 40),
+        color: clampText(it?.color, 16),
+        colorName: clampText(it?.colorName, 40),
+        description: clampText(it?.description, 200),
+      }));
+    } else {
+      lockedItems = undefined;
+    }
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
