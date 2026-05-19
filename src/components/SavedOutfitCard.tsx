@@ -1,11 +1,12 @@
 import { motion } from "framer-motion";
-import { Trash2, Clock } from "lucide-react";
+import { Trash2, Clock, Heart } from "lucide-react";
 import type { SavedOutfit } from "@/lib/outfitTypes";
 
 interface SavedOutfitCardProps {
   outfit: SavedOutfit;
   index: number;
   onDelete: (id: string) => void;
+  onToggleLike?: (id: string, liked: boolean) => void;
 }
 
 const SavedOutfitCard = ({ outfit, index, onDelete }: SavedOutfitCardProps) => {
