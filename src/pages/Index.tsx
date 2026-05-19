@@ -165,20 +165,6 @@ const Index = () => {
     }
   }, [uploadedImage, selectedStyle, selectedGender, selectedSkinTone, selectedSeason, itemDescription, currentOutfit, lockedLabels, requireAuth]);
 
-  const [regeneratingIndex, setRegeneratingIndex] = useState<number | null>(null);
-  const [isAddingPiece, setIsAddingPiece] = useState(false);
-  const [addPieceRequest, setAddPieceRequest] = useState("");
-  const [lockedLabels, setLockedLabels] = useState<Set<string>>(new Set());
-
-  const toggleLock = useCallback((label: string) => {
-    setLockedLabels((prev) => {
-      const next = new Set(prev);
-      if (next.has(label)) next.delete(label);
-      else next.add(label);
-      return next;
-    });
-  }, []);
-
   const regenerateSingleItem = useCallback(async (index: number) => {
     if (!uploadedImage || !currentOutfit) return;
     if (!requireAuth()) return;
