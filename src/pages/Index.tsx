@@ -434,24 +434,22 @@ const Index = () => {
               onItemDescriptionChange={setItemDescription}
             />
 
-            <div className="grid md:grid-cols-2 gap-6">
-              <StylePreferences
-                style={selectedStyle}
-                gender={selectedGender}
-                skinTone={selectedSkinTone}
-                season={selectedSeason}
-                onStyleChange={setSelectedStyle}
-                onGenderChange={setSelectedGender}
-                onSkinToneChange={setSelectedSkinTone}
-                onSeasonChange={setSelectedSeason}
-              />
+            <StylePreferences
+              style={selectedStyle}
+              gender={selectedGender}
+              skinTone={selectedSkinTone}
+              season={selectedSeason}
+              onStyleChange={setSelectedStyle}
+              onGenderChange={setSelectedGender}
+              onSkinToneChange={setSelectedSkinTone}
+              onSeasonChange={setSelectedSeason}
+            />
 
-              <MannequinDisplay
-                isGenerating={isGenerating || isGeneratingImage}
-                hasOutfit={!!currentOutfit}
-                outfitImageUrl={outfitImageUrl}
-              />
-            </div>
+            <MannequinDisplay
+              isGenerating={isGenerating || isGeneratingImage}
+              hasOutfit={!!currentOutfit}
+              outfitImageUrl={outfitImageUrl}
+            />
           </div>
 
           {/* Right: Controls + Outfit */}
