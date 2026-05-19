@@ -569,42 +569,49 @@ const Index = () => {
                   ))}
                   <div className="space-y-2 pt-1">
                     <div className="flex flex-col sm:flex-row gap-2">
-                      <input
-                        type="text"
+                      <textarea
                         value={addPieceRequest}
                         onChange={(e) => setAddPieceRequest(e.target.value)}
                         onKeyDown={(e) => {
-                          if (e.key === "Enter" && !isAddingPiece) {
+                          // Submit on Cmd/Ctrl+Enter — plain Enter inserts a newline for lists.
+                          if (e.key === "Enter" && (e.metaKey || e.ctrlKey) && !isAddingPiece) {
                             e.preventDefault();
                             addAnotherPiece();
                           }
                         }}
-                        maxLength={200}
-                        aria-label="Describe a piece to add to the outfit"
-                        placeholder="e.g. a brown leather belt, gold chain, beanie…"
+                        maxLength={1000}
+                        rows={2}
+                        aria-label="Describe one or more pieces to add to the outfit"
+                        placeholder={"e.g. brown leather belt, gold chain, beanie\nor one item per line"}
                         disabled={isAddingPiece}
-                        className="flex-1 px-3 py-3 rounded-lg border border-dashed border-accent/40 bg-accent/5 text-foreground placeholder:text-muted-foreground/70 font-body text-sm focus:outline-none focus:border-accent/70 focus:bg-accent/10 transition-colors disabled:opacity-50"
+                        className="flex-1 px-3 py-3 rounded-lg border border-dashed border-accent/40 bg-accent/5 text-foreground placeholder:text-muted-foreground/70 font-body text-sm focus:outline-none focus:border-accent/70 focus:bg-accent/10 transition-colors disabled:opacity-50 resize-y min-h-[68px]"
                       />
                       <button
                         onClick={addAnotherPiece}
                         disabled={isAddingPiece}
-                        className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg border border-dashed border-accent/40 bg-accent/5 text-accent font-display text-xs uppercase tracking-wider hover:bg-accent/10 hover:border-accent/60 transition-colors disabled:opacity-50 whitespace-nowrap"
+                        className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg border border-dashed border-accent/40 bg-accent/5 text-accent font-display text-xs uppercase tracking-wider hover:bg-accent/10 hover:border-accent/60 transition-colors disabled:opacity-50 whitespace-nowrap sm:self-stretch"
                       >
                         {isAddingPiece ? (
                           <>
                             <div className="w-3.5 h-3.5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
                             Adding…
                           </>
-                        ) : (
-                          <>
-                            <Plus className="w-3.5 h-3.5" />
-                            {addPieceRequest.trim() ? "Add this" : "Add piece"}
-                          </>
-                        )}
+                        ) : (() => {
+                          const count = addPieceRequest
+                            .split(/[\n,]+/)
+                            .map((s) => s.trim())
+                            .filter(Boolean).length;
+                          return (
+                            <>
+                              <Plus className="w-3.5 h-3.5" />
+                              {count > 1 ? `Add ${count} pieces` : count === 1 ? "Add this" : "Add piece"}
+                            </>
+                          );
+                        })()}
                       </button>
                     </div>
                     <p className="text-xs text-muted-foreground font-body text-center">
-                      Describe a piece to add, or leave blank to let the stylist pick. Hover an item to regenerate ↻ or remove ✕.
+                      Add one item, or paste a list (comma-separated or one per line). Press ⌘/Ctrl + Enter to submit. Hover an item to regenerate ↻ or remove ✕.
                     </p>
                   </div>
                 </motion.div>
