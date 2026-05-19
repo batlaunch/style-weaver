@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
+import SEO from "@/components/SEO";
 
 const HARMONIES = [
   {
@@ -59,9 +60,22 @@ const fadeUp = {
 const ColorTheory = () => {
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Color Theory for Fashion — Harmonies & 60/30/10 Rule | Fitted Fashion"
+        description="Master color harmonies, the 60-30-10 rule, and how to match colors to your skin undertone. A practical guide to color theory for everyday outfits."
+        path="/color-theory"
+        ogType="article"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Article",
+          headline: "Color Theory for Fashion",
+          description: "Color harmonies, the 60-30-10 rule, and matching color to skin undertones.",
+          author: { "@type": "Organization", name: "Fitted Fashion" },
+        }}
+      />
       <header className="border-b border-border">
         <div className="container max-w-4xl mx-auto px-6 py-5 flex items-center gap-4">
-          <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors">
+          <Link to="/" aria-label="Back to outfit builder" className="text-muted-foreground hover:text-foreground transition-colors">
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <h1 className="font-display text-xl font-semibold tracking-tight text-foreground">

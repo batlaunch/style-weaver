@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Shirt, Ruler, Layers, Palette, Scissors, Star } from "lucide-react";
+import SEO from "@/components/SEO";
 
 const PRINCIPLES = [
   {
@@ -78,9 +79,22 @@ const fadeUp = {
 const FashionGuide = () => {
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Fashion Fundamentals — Fit, Layering & Capsule Wardrobes | Fitted Fashion"
+        description="Six core principles of great style: fit, layering, capsule wardrobes, fabric, accessories, and dressing for the occasion. Plus eight quick-reference rules."
+        path="/fashion-guide"
+        ogType="article"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Article",
+          headline: "Fashion Fundamentals",
+          description: "Timeless principles of fit, layering, capsule wardrobes, texture, and accessories.",
+          author: { "@type": "Organization", name: "Fitted Fashion" },
+        }}
+      />
       <header className="border-b border-border">
         <div className="container max-w-4xl mx-auto px-6 py-5 flex items-center gap-4">
-          <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors">
+          <Link to="/" aria-label="Back to outfit builder" className="text-muted-foreground hover:text-foreground transition-colors">
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <h1 className="font-display text-xl font-semibold tracking-tight text-foreground">

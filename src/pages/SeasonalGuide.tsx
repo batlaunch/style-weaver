@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Sun, Leaf, Snowflake, Flower2 } from "lucide-react";
+import SEO from "@/components/SEO";
 
 const SEASONS = [
   {
@@ -97,9 +98,22 @@ const fadeUp = {
 const SeasonalGuide = () => {
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Seasonal Style Guide — Palettes & Essentials by Season | Fitted Fashion"
+        description="Spring, summer, fall, and winter dressing. Per-season palettes, go-to fabrics, essential pieces, and styling tips for adapting your wardrobe year-round."
+        path="/seasonal-guide"
+        ogType="article"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Article",
+          headline: "Seasonal Style Guide",
+          description: "Per-season palettes, fabrics, and essential pieces for spring, summer, fall, and winter.",
+          author: { "@type": "Organization", name: "Fitted Fashion" },
+        }}
+      />
       <header className="border-b border-border">
         <div className="container max-w-4xl mx-auto px-6 py-5 flex items-center gap-4">
-          <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors">
+          <Link to="/" aria-label="Back to outfit builder" className="text-muted-foreground hover:text-foreground transition-colors">
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <h1 className="font-display text-xl font-semibold tracking-tight text-foreground">
