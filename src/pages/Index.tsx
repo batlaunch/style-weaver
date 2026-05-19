@@ -434,24 +434,16 @@ const Index = () => {
               onItemDescriptionChange={setItemDescription}
             />
 
-            <div className="grid md:grid-cols-2 gap-6 items-start">
-              <StylePreferences
-                style={selectedStyle}
-                gender={selectedGender}
-                skinTone={selectedSkinTone}
-                season={selectedSeason}
-                onStyleChange={setSelectedStyle}
-                onGenderChange={setSelectedGender}
-                onSkinToneChange={setSelectedSkinTone}
-                onSeasonChange={setSelectedSeason}
-              />
-
-              <MannequinDisplay
-                isGenerating={isGenerating || isGeneratingImage}
-                hasOutfit={!!currentOutfit}
-                outfitImageUrl={outfitImageUrl}
-              />
-            </div>
+            <StylePreferences
+              style={selectedStyle}
+              gender={selectedGender}
+              skinTone={selectedSkinTone}
+              season={selectedSeason}
+              onStyleChange={setSelectedStyle}
+              onGenderChange={setSelectedGender}
+              onSkinToneChange={setSelectedSkinTone}
+              onSeasonChange={setSelectedSeason}
+            />
           </div>
 
           {/* Right: Controls + Outfit */}
@@ -655,6 +647,12 @@ const Index = () => {
                 </ul>
               </motion.div>
             )}
+
+            <MannequinDisplay
+              isGenerating={isGenerating || isGeneratingImage}
+              hasOutfit={!!currentOutfit}
+              outfitImageUrl={outfitImageUrl}
+            />
           </div>
         </div>
       </main>
