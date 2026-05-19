@@ -79,11 +79,9 @@ const Auth = () => {
         return;
       }
 
-      // Session set — claim device outfits
+      // Session set
       const { data: { user: currentUser } } = await supabase.auth.getUser();
-      if (currentUser) {
-        await claimDeviceOutfits(currentUser.id);
-      }
+      void currentUser;
       toast.success("Signed in with Google!");
       navigate("/");
     } catch {
