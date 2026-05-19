@@ -92,8 +92,16 @@ const Index = () => {
     setItemDescription("");
   }, []);
 
+  const requireAuth = useCallback(() => {
+    if (user) return true;
+    toast.error("Please sign in to use the AI stylist");
+    navigate("/auth");
+    return false;
+  }, [user, navigate]);
+
   const generateOutfit = useCallback(async () => {
     if (!uploadedImage) return;
+    if (!requireAuth()) return;
     setIsGenerating(true);
     setOutfitImageUrl(null);
 
