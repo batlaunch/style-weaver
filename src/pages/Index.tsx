@@ -493,6 +493,7 @@ const Index = () => {
                         disabled={isGenerating}
                         className="flex items-center justify-center gap-2 px-4 py-3.5 rounded-lg border border-border bg-card text-foreground font-display text-sm uppercase tracking-wider hover:bg-secondary transition-colors disabled:opacity-50"
                         title="Regenerate"
+                        aria-label="Regenerate outfit"
                       >
                         <RefreshCw className="w-4 h-4" />
                       </button>
@@ -500,6 +501,7 @@ const Index = () => {
                         onClick={handleSaveOutfit}
                         className="flex items-center justify-center gap-2 px-4 py-3.5 rounded-lg border border-border bg-card text-foreground font-display text-sm uppercase tracking-wider hover:bg-accent/10 hover:text-accent hover:border-accent/40 transition-colors"
                         title="Save to gallery"
+                        aria-label="Save outfit to gallery"
                       >
                         <Heart className="w-4 h-4" />
                       </button>
@@ -551,9 +553,9 @@ const Index = () => {
                   className="space-y-3"
                 >
                   <div>
-                    <h3 className="font-display text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                    <h2 className="font-display text-xs uppercase tracking-[0.2em] text-muted-foreground">
                       Outfit Breakdown
-                    </h3>
+                    </h2>
                   </div>
                   {currentOutfit.items.map((item, i) => (
                     <OutfitCard
@@ -640,9 +642,9 @@ const Index = () => {
                 className="bg-card rounded-lg border border-border p-8 text-center min-h-[320px] flex flex-col items-center justify-center"
               >
                 <Sparkles className="w-8 h-8 text-accent mx-auto mb-4" />
-                <h3 className="font-display text-lg font-medium text-foreground">
+                <h2 className="font-display text-lg font-medium text-foreground">
                   How it works
-                </h3>
+                </h2>
                 <ul className="mt-4 space-y-3 text-sm text-muted-foreground font-body text-left max-w-xs mx-auto">
                   <li className="flex gap-3">
                     <span className="text-accent font-display font-bold">01</span>

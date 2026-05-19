@@ -99,7 +99,7 @@ const SeasonalGuide = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEO
-        title="Seasonal Style Guide — Palettes & Essentials by Season | Fitted Fashion"
+        title="Seasonal Style Guide — Dress Year-Round | Fitted Fashion"
         description="Spring, summer, fall, and winter dressing. Per-season palettes, go-to fabrics, essential pieces, and styling tips for adapting your wardrobe year-round."
         path="/seasonal-guide"
         ogType="article"

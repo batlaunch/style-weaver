@@ -80,7 +80,7 @@ const FashionGuide = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEO
-        title="Fashion Fundamentals — Fit, Layering & Capsule Wardrobes | Fitted Fashion"
+        title="Fashion Fundamentals — Core Style Rules | Fitted Fashion"
         description="Six core principles of great style: fit, layering, capsule wardrobes, fabric, accessories, and dressing for the occasion. Plus eight quick-reference rules."
         path="/fashion-guide"
         ogType="article"
