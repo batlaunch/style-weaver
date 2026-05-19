@@ -105,6 +105,7 @@ const UploadZone = ({ onImageUpload, uploadedImage, onClear, itemDescription, on
             onDrop={handleDrop}
             className={`
               flex flex-col items-center justify-center gap-4 p-12
+              min-h-[320px]
               border-2 border-dashed rounded-lg cursor-pointer
               transition-all duration-300
               ${isDragging
