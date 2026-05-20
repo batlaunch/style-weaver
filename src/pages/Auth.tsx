@@ -3,11 +3,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Shirt, ArrowLeft, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
 
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 
 import SEO from "@/components/SEO";
+
+const SITE_URL = "https://fittedfashion.batlaunch.com";
 
 const Auth = () => {
   const [mode, setMode] = useState<"login" | "signup" | "forgot">("login");
@@ -32,7 +35,7 @@ const Auth = () => {
     try {
       if (mode === "forgot") {
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
-          redirectTo: `${window.location.origin}/reset-password`,
+          redirectTo: `${SITE_URL}/reset-password`,
         });
         if (error) throw error;
         toast.success("Password reset link sent! Check your email.");
@@ -48,7 +51,7 @@ const Auth = () => {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: window.location.origin },
+          options: { emailRedirectTo: SITE_URL },
         });
         if (error) throw error;
         if (data.user) {
@@ -66,12 +69,15 @@ const Auth = () => {
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: { redirectTo: "https://fittedfashion.batlaunch.com" },
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: SITE_URL,
+        extraParams: {
+          prompt: "select_account",
+        },
       });
-      if (error) throw error;
-      // Browser will redirect to Google
+      if (result.error) throw result.error;
+      if (result.redirected) return;
+      navigate("/");
     } catch {
       toast.error("Google sign-in failed. Please try again.");
       setGoogleLoading(false);
