@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://style-muse-ai-48.lovable.app/sitemap.xml
+Sitemap: https://fittedfashion.batlaunch.com/sitemap.xml
