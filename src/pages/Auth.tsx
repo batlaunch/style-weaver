@@ -68,7 +68,7 @@ const Auth = () => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo: "https://fittedfashion.batlaunch.com/" },
+        options: { redirectTo: "https://fittedfashion.batlaunch.com" },
       });
       if (error) throw error;
       // Browser will redirect to Google
