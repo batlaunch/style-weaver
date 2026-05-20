@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet-async";
 
-const SITE = "https://style-muse-ai-48.lovable.app";
+const SITE = "https://fittedfashion.batlaunch.com";
 const DEFAULT_OG = `${SITE}/og-image.jpg`;
 
 interface SEOProps {
