@@ -117,7 +117,7 @@ const Index = () => {
 
   const generateOutfit = useCallback(async () => {
     if (!uploadedImage) return;
-    if (!requireAuth()) return;
+
     setIsGenerating(true);
     setOutfitImageUrl(null);
 
