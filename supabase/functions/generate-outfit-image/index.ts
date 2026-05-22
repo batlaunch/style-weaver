@@ -50,7 +50,7 @@ serve(async (req) => {
     const safeStyle = clamp(style, 40);
     const prompt = `A rough, loose fashion sketch of a ${genderDesc} mannequin wearing: ${itemDescriptions}. Style cue: ${safeStyle}. Quick gestural drawing style, watercolor-like washes of color suggesting the outfit, minimal detail, artistic and abstract. White background, full body pose. Focus on overall silhouette and color blocking rather than exact garment details. No text, no labels.`;
 
-    console.log("Generating outfit image for user:", claimsData.claims.sub);
+    console.log("Generating outfit image");
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
