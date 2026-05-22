@@ -23,21 +23,8 @@ serve(async (req) => {
   }
 
   try {
-    // 1. Require authenticated user
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return json(401, { error: "Unauthorized" });
-    }
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
-      { global: { headers: { Authorization: authHeader } } }
-    );
-    const token = authHeader.replace("Bearer ", "");
-    const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token);
-    if (claimsError || !claimsData?.claims) {
-      return json(401, { error: "Unauthorized" });
-    }
+    // Auth is optional — anonymous users may generate outfit images.
+
 
     // 2. Size-limit the body
     const raw = await req.text();
@@ -63,7 +50,7 @@ serve(async (req) => {
     const safeStyle = clamp(style, 40);
     const prompt = `A rough, loose fashion sketch of a ${genderDesc} mannequin wearing: ${itemDescriptions}. Style cue: ${safeStyle}. Quick gestural drawing style, watercolor-like washes of color suggesting the outfit, minimal detail, artistic and abstract. White background, full body pose. Focus on overall silhouette and color blocking rather than exact garment details. No text, no labels.`;
 
-    console.log("Generating outfit image for user:", claimsData.claims.sub);
+    console.log("Generating outfit image");
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
