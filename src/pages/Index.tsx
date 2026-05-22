@@ -169,7 +169,7 @@ const Index = () => {
 
   const regenerateSingleItem = useCallback(async (index: number) => {
     if (!uploadedImage || !currentOutfit) return;
-    if (!requireAuth()) return;
+
     setRegeneratingIndex(index);
     try {
       const compressed = await compressImage(uploadedImage);
