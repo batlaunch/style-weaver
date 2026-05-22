@@ -164,7 +164,8 @@ const Index = () => {
     } finally {
       setIsGenerating(false);
     }
-  }, [uploadedImage, selectedStyle, selectedGender, selectedSkinTone, selectedSeason, itemDescription, currentOutfit, lockedLabels, requireAuth]);
+  }, [uploadedImage, selectedStyle, selectedGender, selectedSkinTone, selectedSeason, itemDescription, currentOutfit, lockedLabels]);
+
 
   const regenerateSingleItem = useCallback(async (index: number) => {
     if (!uploadedImage || !currentOutfit) return;
