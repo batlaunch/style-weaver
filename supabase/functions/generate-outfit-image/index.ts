@@ -23,21 +23,8 @@ serve(async (req) => {
   }
 
   try {
-    // 1. Require authenticated user
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return json(401, { error: "Unauthorized" });
-    }
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
-      { global: { headers: { Authorization: authHeader } } }
-    );
-    const token = authHeader.replace("Bearer ", "");
-    const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token);
-    if (claimsError || !claimsData?.claims) {
-      return json(401, { error: "Unauthorized" });
-    }
+    // Auth is optional — anonymous users may generate outfit images.
+
 
     // 2. Size-limit the body
     const raw = await req.text();
