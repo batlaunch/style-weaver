@@ -55,6 +55,7 @@ const Index = () => {
   const [resolvedStyle, setResolvedStyle] = useState<string>(persisted.resolvedStyle ?? "classic");
   const [itemDescription, setItemDescription] = useState(persisted.itemDescription ?? "");
   const [selectedSeason, setSelectedSeason] = useState<SeasonType>(persisted.selectedSeason ?? "spring");
+  const [selectedOccasion, setSelectedOccasion] = useState<OccasionType>(persisted.selectedOccasion ?? "any");
   const { saveOutfit } = useSavedOutfits();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
