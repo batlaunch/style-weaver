@@ -212,7 +212,7 @@ const Index = () => {
     } finally {
       setRegeneratingIndex(null);
     }
-  }, [uploadedImage, currentOutfit, selectedStyle, selectedGender, selectedSkinTone, selectedSeason, itemDescription]);
+  }, [uploadedImage, currentOutfit, selectedStyle, selectedGender, selectedSkinTone, selectedSeason, selectedOccasion, itemDescription]);
 
   const addAnotherPiece = useCallback(async () => {
     if (!uploadedImage || !currentOutfit) return;
