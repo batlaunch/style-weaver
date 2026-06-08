@@ -286,6 +286,29 @@ const StylePreferences = ({ style, gender, skinTone, season, occasion, onStyleCh
           ))}
         </div>
       </div>
+
+      {/* Occasion Selection */}
+      <div>
+        <h3 className="font-display text-xs uppercase tracking-[0.2em] text-muted-foreground mb-3">
+          Occasion
+        </h3>
+        <div className="grid grid-cols-3 gap-2">
+          {OCCASIONS.map((o) => (
+            <button
+              key={o.value}
+              onClick={() => onOccasionChange(o.value)}
+              className={`flex flex-col items-center gap-1 py-2.5 rounded-md font-body text-xs transition-all ${
+                occasion === o.value
+                  ? "bg-foreground text-primary-foreground"
+                  : "border border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
+              }`}
+            >
+              <span className="text-base">{o.emoji}</span>
+              <span className="text-[10px]">{o.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
     </motion.div>
   );
 };
