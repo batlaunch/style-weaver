@@ -308,6 +308,15 @@ const StylePreferences = ({ style, gender, skinTone, season, occasion, onStyleCh
             </button>
           ))}
         </div>
+        <div className="mt-3">
+          <input
+            type="text"
+            value={occasion}
+            onChange={(e) => onOccasionChange(e.target.value)}
+            placeholder="Or type a specific occasion…"
+            className="flex h-10 w-full items-center rounded-md border border-border bg-card px-3 py-2 font-body text-sm text-foreground placeholder:text-muted-foreground ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+          />
+        </div>
       </div>
     </motion.div>
   );
