@@ -71,6 +71,7 @@ const Index = () => {
         selectedGender,
         selectedSkinTone,
         selectedSeason,
+        selectedOccasion,
         resolvedStyle,
         itemDescription,
       };
@@ -78,7 +79,7 @@ const Index = () => {
     } catch {
       // sessionStorage may be full (large base64 image) — ignore
     }
-  }, [uploadedImage, currentOutfit, outfitImageUrl, selectedStyle, selectedGender, selectedSkinTone, selectedSeason, resolvedStyle, itemDescription]);
+  }, [uploadedImage, currentOutfit, outfitImageUrl, selectedStyle, selectedGender, selectedSkinTone, selectedSeason, selectedOccasion, resolvedStyle, itemDescription]);
 
   const handleImageUpload = useCallback((_file: File, preview: string) => {
     setUploadedImage(preview);
