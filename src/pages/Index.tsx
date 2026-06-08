@@ -278,7 +278,7 @@ const Index = () => {
     } finally {
       setIsAddingPiece(false);
     }
-  }, [uploadedImage, currentOutfit, selectedStyle, selectedGender, selectedSkinTone, selectedSeason, itemDescription, addPieceRequest]);
+  }, [uploadedImage, currentOutfit, selectedStyle, selectedGender, selectedSkinTone, selectedSeason, selectedOccasion, itemDescription, addPieceRequest]);
 
   const generateOutfitImage = useCallback(async () => {
     if (!currentOutfit) return;
