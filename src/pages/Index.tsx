@@ -569,6 +569,7 @@ const Index = () => {
                     harmonyType={currentOutfit.harmony}
                   />
                   <HarmonyExplanation harmonyType={currentOutfit.harmony} rationale={currentOutfit.rationale} />
+                  <AccessoryCohesionChecklist outfit={currentOutfit} occasion={selectedOccasion} />
                 </>
               )}
             </AnimatePresence>
