@@ -37,7 +37,7 @@ serve(async (req) => {
     let body: any;
     try { body = JSON.parse(raw); } catch { return json(400, { error: "Invalid JSON" }); }
 
-    let { imageBase64, style, gender, skinTone, season, occasion, itemDescription, lockedItems, regenerateSlot, addPiece, addPieceRequest, addPieceRequests } = body ?? {};
+    let { imageBase64, style, gender, skinTone, season, occasion, itemDescription, lockedItems, regenerateSlot, avoidItem, regenerationSeed, addPiece, addPieceRequest, addPieceRequests } = body ?? {};
 
     // 3. Validate / clamp inputs
     if (typeof imageBase64 !== "string" || !/^data:image\/(png|jpe?g|webp);base64,/.test(imageBase64)) {
@@ -200,8 +200,12 @@ IMPORTANT RULES:
       ? ` Keep these items exactly as they are: ${lockedItems.map((i: any) => `${i.label} (${i.colorName} ${i.description})`).join(", ")}. Only change the unlocked items.`
       : "";
 
+    const avoidNote = avoidItem
+      ? ` AVOID this previous "${avoidItem.label}" — do NOT return anything similar: previous was "${avoidItem.colorName} ${avoidItem.description}" (hex ${avoidItem.color}). The new ${avoidItem.label} MUST differ in BOTH color family AND silhouette/material from the previous one. Pick a meaningfully different garment (e.g. different cut, fabric, or styling detail) in a different hue while still respecting the harmony and 60/30/10 roles.`
+      : "";
+    const seedNote = regenerationSeed ? ` Variation seed: ${regenerationSeed} — use this to explore a fresh direction you haven't tried before.` : "";
     const regenerateNote = regenerateSlot
-      ? ` I want you to ONLY regenerate the "${regenerateSlot}" slot with a completely different option. Keep all other items exactly as specified in the locked items.`
+      ? ` I want you to ONLY regenerate the "${regenerateSlot}" slot with a completely different option. Keep all other items exactly as specified in the locked items.${avoidNote}${seedNote}`
       : "";
 
     const existingLabels = hasLockedItems ? lockedItems.map((i: any) => i.label).join(", ") : "";
@@ -252,6 +256,7 @@ IMPORTANT RULES:
       body: JSON.stringify({
         model: "google/gemini-2.5-flash",
         messages,
+        temperature: regenerateSlot ? 1.1 : 0.9,
       }),
     });
 

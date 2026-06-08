@@ -179,6 +179,7 @@ const Index = () => {
     try {
       const compressed = await compressImage(uploadedImage);
       const keptItems = currentOutfit.items.filter((_, i) => i !== index);
+      const previousItem = currentOutfit.items[index];
 
       const { data, error } = await supabase.functions.invoke("generate-outfit", {
         body: {
@@ -190,7 +191,14 @@ const Index = () => {
           occasion: selectedOccasion,
           itemDescription: itemDescription.trim() || undefined,
           lockedItems: keptItems,
-          regenerateSlot: currentOutfit.items[index].label,
+          regenerateSlot: previousItem.label,
+          avoidItem: {
+            label: previousItem.label,
+            color: previousItem.color,
+            colorName: previousItem.colorName,
+            description: previousItem.description,
+          },
+          regenerationSeed: Math.random().toString(36).slice(2, 10),
         },
       });
 
