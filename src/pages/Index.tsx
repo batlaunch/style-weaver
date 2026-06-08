@@ -10,7 +10,7 @@ import MannequinDisplay from "@/components/MannequinDisplay";
 import OutfitCard from "@/components/OutfitCard";
 import ColorPalette from "@/components/ColorPalette";
 import HarmonyExplanation from "@/components/HarmonyExplanation";
-import StylePreferences, { type StyleType, type GenderType, type SkinTone, type SeasonType } from "@/components/StylePreferences";
+import StylePreferences, { type StyleType, type GenderType, type SkinTone, type SeasonType, type OccasionType } from "@/components/StylePreferences";
 import SEO from "@/components/SEO";
 import { useSavedOutfits } from "@/hooks/useSavedOutfits";
 import { useAuth } from "@/hooks/useAuth";
