@@ -9,7 +9,7 @@ export type StyleType = "any" | "casual" | "smart-casual" | "business-casual" | 
 export type GenderType = "male" | "female";
 export type SkinTone = "fair" | "light" | "medium" | "olive" | "tan" | "brown" | "dark";
 export type SeasonType = "any" | "spring" | "summer" | "fall" | "winter";
-export type OccasionType = "any" | "work" | "date-night" | "weekend" | "event" | "travel";
+export type OccasionType = string;
 
 interface StylePreferencesProps {
   style: StyleType;
@@ -307,6 +307,15 @@ const StylePreferences = ({ style, gender, skinTone, season, occasion, onStyleCh
               <span className="text-[10px]">{o.label}</span>
             </button>
           ))}
+        </div>
+        <div className="mt-3">
+          <input
+            type="text"
+            value={occasion}
+            onChange={(e) => onOccasionChange(e.target.value)}
+            placeholder="Or type a specific occasion…"
+            className="flex h-10 w-full items-center rounded-md border border-border bg-card px-3 py-2 font-body text-sm text-foreground placeholder:text-muted-foreground ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+          />
         </div>
       </div>
     </motion.div>
