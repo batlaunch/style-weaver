@@ -49,6 +49,7 @@ serve(async (req) => {
     gender = gender === "male" ? "male" : "female";
     skinTone = clampText(skinTone, 40);
     season = clampText(season, 40);
+    occasion = clampText(occasion, 40);
     itemDescription = clampText(itemDescription, MAX_DESC);
     regenerateSlot = clampText(regenerateSlot, 40);
     addPieceRequest = clampText(addPieceRequest, MAX_ADD_REQ);
