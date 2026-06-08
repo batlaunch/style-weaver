@@ -9,7 +9,7 @@ export type StyleType = "any" | "casual" | "smart-casual" | "business-casual" | 
 export type GenderType = "male" | "female";
 export type SkinTone = "fair" | "light" | "medium" | "olive" | "tan" | "brown" | "dark";
 export type SeasonType = "any" | "spring" | "summer" | "fall" | "winter";
-export type OccasionType = "any" | "work" | "date-night" | "weekend" | "event" | "travel";
+export type OccasionType = string;
 
 interface StylePreferencesProps {
   style: StyleType;
