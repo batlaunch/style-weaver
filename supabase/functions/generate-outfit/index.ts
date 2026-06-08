@@ -256,6 +256,7 @@ IMPORTANT RULES:
       body: JSON.stringify({
         model: "google/gemini-2.5-flash",
         messages,
+        temperature: regenerateSlot ? 1.1 : 0.9,
       }),
     });
 
