@@ -9,16 +9,19 @@ export type StyleType = "any" | "casual" | "smart-casual" | "business-casual" | 
 export type GenderType = "male" | "female";
 export type SkinTone = "fair" | "light" | "medium" | "olive" | "tan" | "brown" | "dark";
 export type SeasonType = "any" | "spring" | "summer" | "fall" | "winter";
+export type OccasionType = "any" | "work" | "date-night" | "weekend" | "event" | "travel";
 
 interface StylePreferencesProps {
   style: StyleType;
   gender: GenderType;
   skinTone: SkinTone;
   season: SeasonType;
+  occasion: OccasionType;
   onStyleChange: (style: StyleType) => void;
   onGenderChange: (gender: GenderType) => void;
   onSkinToneChange: (tone: SkinTone) => void;
   onSeasonChange: (season: SeasonType) => void;
+  onOccasionChange: (occasion: OccasionType) => void;
 }
 
 const MALE_STYLES: { value: StyleType; label: string; emoji: string }[] = [
@@ -85,7 +88,16 @@ const SEASONS: { value: SeasonType; label: string; emoji: string }[] = [
   { value: "winter", label: "Winter", emoji: "❄️" },
 ];
 
-const StylePreferences = ({ style, gender, skinTone, season, onStyleChange, onGenderChange, onSkinToneChange, onSeasonChange }: StylePreferencesProps) => {
+const OCCASIONS: { value: OccasionType; label: string; emoji: string }[] = [
+  { value: "any", label: "Any", emoji: "✦" },
+  { value: "work", label: "Work", emoji: "💼" },
+  { value: "date-night", label: "Date Night", emoji: "🌙" },
+  { value: "weekend", label: "Weekend", emoji: "☕" },
+  { value: "event", label: "Event", emoji: "🥂" },
+  { value: "travel", label: "Travel", emoji: "✈️" },
+];
+
+const StylePreferences = ({ style, gender, skinTone, season, occasion, onStyleChange, onGenderChange, onSkinToneChange, onSeasonChange, onOccasionChange }: StylePreferencesProps) => {
   const [styleOpen, setStyleOpen] = useState(false);
   const baseStyles = gender === "male" ? MALE_STYLES : FEMALE_STYLES;
   const usage = getStyleUsage();
@@ -270,6 +282,29 @@ const StylePreferences = ({ style, gender, skinTone, season, onStyleChange, onGe
             >
               <span className="text-base">{s.emoji}</span>
               <span className="text-[10px]">{s.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Occasion Selection */}
+      <div>
+        <h3 className="font-display text-xs uppercase tracking-[0.2em] text-muted-foreground mb-3">
+          Occasion
+        </h3>
+        <div className="grid grid-cols-3 gap-2">
+          {OCCASIONS.map((o) => (
+            <button
+              key={o.value}
+              onClick={() => onOccasionChange(o.value)}
+              className={`flex flex-col items-center gap-1 py-2.5 rounded-md font-body text-xs transition-all ${
+                occasion === o.value
+                  ? "bg-foreground text-primary-foreground"
+                  : "border border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
+              }`}
+            >
+              <span className="text-base">{o.emoji}</span>
+              <span className="text-[10px]">{o.label}</span>
             </button>
           ))}
         </div>

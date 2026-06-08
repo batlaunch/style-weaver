@@ -10,7 +10,7 @@ import MannequinDisplay from "@/components/MannequinDisplay";
 import OutfitCard from "@/components/OutfitCard";
 import ColorPalette from "@/components/ColorPalette";
 import HarmonyExplanation from "@/components/HarmonyExplanation";
-import StylePreferences, { type StyleType, type GenderType, type SkinTone, type SeasonType } from "@/components/StylePreferences";
+import StylePreferences, { type StyleType, type GenderType, type SkinTone, type SeasonType, type OccasionType } from "@/components/StylePreferences";
 import SEO from "@/components/SEO";
 import { useSavedOutfits } from "@/hooks/useSavedOutfits";
 import { useAuth } from "@/hooks/useAuth";
@@ -28,6 +28,7 @@ type PersistedState = {
   selectedGender: GenderType;
   selectedSkinTone: SkinTone;
   selectedSeason: SeasonType;
+  selectedOccasion: OccasionType;
   resolvedStyle: string;
   itemDescription: string;
 };
@@ -54,6 +55,7 @@ const Index = () => {
   const [resolvedStyle, setResolvedStyle] = useState<string>(persisted.resolvedStyle ?? "classic");
   const [itemDescription, setItemDescription] = useState(persisted.itemDescription ?? "");
   const [selectedSeason, setSelectedSeason] = useState<SeasonType>(persisted.selectedSeason ?? "spring");
+  const [selectedOccasion, setSelectedOccasion] = useState<OccasionType>(persisted.selectedOccasion ?? "any");
   const { saveOutfit } = useSavedOutfits();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
@@ -69,6 +71,7 @@ const Index = () => {
         selectedGender,
         selectedSkinTone,
         selectedSeason,
+        selectedOccasion,
         resolvedStyle,
         itemDescription,
       };
@@ -76,7 +79,7 @@ const Index = () => {
     } catch {
       // sessionStorage may be full (large base64 image) — ignore
     }
-  }, [uploadedImage, currentOutfit, outfitImageUrl, selectedStyle, selectedGender, selectedSkinTone, selectedSeason, resolvedStyle, itemDescription]);
+  }, [uploadedImage, currentOutfit, outfitImageUrl, selectedStyle, selectedGender, selectedSkinTone, selectedSeason, selectedOccasion, resolvedStyle, itemDescription]);
 
   const handleImageUpload = useCallback((_file: File, preview: string) => {
     setUploadedImage(preview);
@@ -137,6 +140,7 @@ const Index = () => {
           gender: selectedGender,
           skinTone: selectedSkinTone,
           season: selectedSeason,
+          occasion: selectedOccasion,
           itemDescription: itemDescription.trim() || undefined,
           lockedItems: lockedItems.length > 0 ? lockedItems : undefined,
         },
@@ -164,7 +168,7 @@ const Index = () => {
     } finally {
       setIsGenerating(false);
     }
-  }, [uploadedImage, selectedStyle, selectedGender, selectedSkinTone, selectedSeason, itemDescription, currentOutfit, lockedLabels]);
+  }, [uploadedImage, selectedStyle, selectedGender, selectedSkinTone, selectedSeason, selectedOccasion, itemDescription, currentOutfit, lockedLabels]);
 
 
   const regenerateSingleItem = useCallback(async (index: number) => {
@@ -182,6 +186,7 @@ const Index = () => {
           gender: selectedGender,
           skinTone: selectedSkinTone,
           season: selectedSeason,
+          occasion: selectedOccasion,
           itemDescription: itemDescription.trim() || undefined,
           lockedItems: keptItems,
           regenerateSlot: currentOutfit.items[index].label,
@@ -207,7 +212,7 @@ const Index = () => {
     } finally {
       setRegeneratingIndex(null);
     }
-  }, [uploadedImage, currentOutfit, selectedStyle, selectedGender, selectedSkinTone, selectedSeason, itemDescription]);
+  }, [uploadedImage, currentOutfit, selectedStyle, selectedGender, selectedSkinTone, selectedSeason, selectedOccasion, itemDescription]);
 
   const addAnotherPiece = useCallback(async () => {
     if (!uploadedImage || !currentOutfit) return;
@@ -233,6 +238,7 @@ const Index = () => {
           gender: selectedGender,
           skinTone: selectedSkinTone,
           season: selectedSeason,
+          occasion: selectedOccasion,
           itemDescription: itemDescription.trim() || undefined,
           lockedItems: currentOutfit.items,
           addPiece: true,
@@ -272,7 +278,7 @@ const Index = () => {
     } finally {
       setIsAddingPiece(false);
     }
-  }, [uploadedImage, currentOutfit, selectedStyle, selectedGender, selectedSkinTone, selectedSeason, itemDescription, addPieceRequest]);
+  }, [uploadedImage, currentOutfit, selectedStyle, selectedGender, selectedSkinTone, selectedSeason, selectedOccasion, itemDescription, addPieceRequest]);
 
   const generateOutfitImage = useCallback(async () => {
     if (!currentOutfit) return;
@@ -471,10 +477,12 @@ const Index = () => {
               gender={selectedGender}
               skinTone={selectedSkinTone}
               season={selectedSeason}
+              occasion={selectedOccasion}
               onStyleChange={setSelectedStyle}
               onGenderChange={setSelectedGender}
               onSkinToneChange={setSelectedSkinTone}
               onSeasonChange={setSelectedSeason}
+              onOccasionChange={setSelectedOccasion}
             />
           </div>
 
