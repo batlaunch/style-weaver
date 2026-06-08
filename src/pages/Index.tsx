@@ -29,7 +29,7 @@ type PersistedState = {
   selectedGender: GenderType;
   selectedSkinTone: SkinTone;
   selectedSeason: SeasonType;
-  selectedOccasion: OccasionType;
+  selectedOccasion: string;
   resolvedStyle: string;
   itemDescription: string;
 };
