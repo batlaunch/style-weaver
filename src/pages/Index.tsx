@@ -238,6 +238,7 @@ const Index = () => {
           gender: selectedGender,
           skinTone: selectedSkinTone,
           season: selectedSeason,
+          occasion: selectedOccasion,
           itemDescription: itemDescription.trim() || undefined,
           lockedItems: currentOutfit.items,
           addPiece: true,
