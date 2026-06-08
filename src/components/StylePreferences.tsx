@@ -9,16 +9,19 @@ export type StyleType = "any" | "casual" | "smart-casual" | "business-casual" | 
 export type GenderType = "male" | "female";
 export type SkinTone = "fair" | "light" | "medium" | "olive" | "tan" | "brown" | "dark";
 export type SeasonType = "any" | "spring" | "summer" | "fall" | "winter";
+export type OccasionType = "any" | "work" | "date-night" | "weekend" | "event" | "travel";
 
 interface StylePreferencesProps {
   style: StyleType;
   gender: GenderType;
   skinTone: SkinTone;
   season: SeasonType;
+  occasion: OccasionType;
   onStyleChange: (style: StyleType) => void;
   onGenderChange: (gender: GenderType) => void;
   onSkinToneChange: (tone: SkinTone) => void;
   onSeasonChange: (season: SeasonType) => void;
+  onOccasionChange: (occasion: OccasionType) => void;
 }
 
 const MALE_STYLES: { value: StyleType; label: string; emoji: string }[] = [
