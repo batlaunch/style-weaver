@@ -89,6 +89,19 @@ serve(async (req) => {
       ? `\nThe outfit is for ${season}. Choose fabrics, layers, and colors appropriate for ${season} weather. For example: lighter fabrics and brighter colors for spring/summer, heavier layers and richer tones for fall/winter.`
       : "";
 
+    const OCCASION_GUIDANCE: Record<string, string> = {
+      "work": "WORK / OFFICE: Lean polished and professional. Silhouettes: tailored trouser, pencil or A-line skirt, blazer, button-down, fine knit, midi dress. Textures: wool, twill, fine cotton, leather. Accessories must read minimal and refined — structured top-handle or tote bag, classic watch, stud or small-hoop earrings, delicate necklace, thin leather belt, loafers/pointed flats/low block heel/clean ankle boot. No loud logos, no party-bright accents, no sneakers unless the style is athleisure.",
+      "date-night": "DATE NIGHT: Lean elevated and intentional with one clear hero piece (slip skirt, leather jacket, silk shirt, fitted knit, sleek trouser, mini/midi dress). Textures: silk, satin, leather, fine knit, suede. Accessories: ONE statement (sculptural earrings OR bold heel OR small evening bag OR layered gold chains — not all four). Heeled boot, mule, strappy sandal, or polished loafer. Clutch, small shoulder bag, or compact top-handle. Keep palette tight; let texture and fit do the work.",
+      "weekend": "WEEKEND / CASUAL: Lean relaxed but considered — not sloppy. Silhouettes: relaxed denim, cargo, wide trouser, tee, sweatshirt, overshirt, chore jacket, casual midi dress. Textures: denim, jersey, fleece, canvas, washed cotton. Accessories: crossbody or tote, cap or bucket hat, slouchy beanie in cold weather, sneakers / chunky loafer / mule / casual boot, simple watch, sunglasses. Layered necklaces or a stack of rings keeps it personal.",
+      "event": "EVENT / OCCASION (party, wedding guest, gallery, dinner out): Lean dressy. Silhouettes: midi or maxi dress, jumpsuit, tailored suit, satin skirt + fine knit, blazer + slip combo. Textures: satin, silk, velvet, lace, sequins (one piece only), fine wool. Accessories: clutch or small structured bag, heel or dressy flat (slingback, mule, strappy sandal), statement earrings OR a bold cuff, optional fascinator/hair accessory. Keep it cohesive — one bold accent, supporting pieces quiet.",
+      "travel": "TRAVEL: Lean comfortable, layerable, and put-together. Silhouettes: stretch or pull-on trouser, knit dress, button-down, soft tee, longline cardigan, denim jacket, trench, oversized scarf as blanket. Textures: ponte, jersey, fine merino, washed denim, soft leather. Accessories: roomy crossbody or tote (hands-free), comfortable loafer / clean sneaker / low boot, large sunglasses, watch, oversized scarf, minimal jewelry that won't set off security. Avoid stiff fabrics and complicated layering.",
+      "any": "",
+    };
+    const occasionKey = occasion && OCCASION_GUIDANCE[occasion] !== undefined ? occasion : "any";
+    const occasionContext = occasionKey !== "any" && OCCASION_GUIDANCE[occasionKey]
+      ? `\n\nOCCASION: ${OCCASION_GUIDANCE[occasionKey]}`
+      : "";
+
     const systemPrompt = `You are a Senior Fashion Stylist and Wardrobe Architect. The user will show you a photo of a clothing item they own. Your job is to:
 1. Identify what the item is (e.g. "navy blue crew-neck sweater") and its dominant color
 2. Build a complete, well-proportioned outfit around that piece, matching the requested style and gender
