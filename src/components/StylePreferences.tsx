@@ -88,7 +88,16 @@ const SEASONS: { value: SeasonType; label: string; emoji: string }[] = [
   { value: "winter", label: "Winter", emoji: "❄️" },
 ];
 
-const StylePreferences = ({ style, gender, skinTone, season, onStyleChange, onGenderChange, onSkinToneChange, onSeasonChange }: StylePreferencesProps) => {
+const OCCASIONS: { value: OccasionType; label: string; emoji: string }[] = [
+  { value: "any", label: "Any", emoji: "✦" },
+  { value: "work", label: "Work", emoji: "💼" },
+  { value: "date-night", label: "Date Night", emoji: "🌙" },
+  { value: "weekend", label: "Weekend", emoji: "☕" },
+  { value: "event", label: "Event", emoji: "🥂" },
+  { value: "travel", label: "Travel", emoji: "✈️" },
+];
+
+const StylePreferences = ({ style, gender, skinTone, season, occasion, onStyleChange, onGenderChange, onSkinToneChange, onSeasonChange, onOccasionChange }: StylePreferencesProps) => {
   const [styleOpen, setStyleOpen] = useState(false);
   const baseStyles = gender === "male" ? MALE_STYLES : FEMALE_STYLES;
   const usage = getStyleUsage();
