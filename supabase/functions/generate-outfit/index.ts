@@ -127,14 +127,30 @@ STYLE ARCHETYPE GUIDANCE — pull from a WIDE range. Match the requested style w
 
 CREATIVE BREADTH — actively VARY your suggestions. Do not default to the same safe pieces every time. Rotate through unexpected-but-correct choices: pleated trouser vs. straight jean vs. cargo vs. midi skirt vs. tailored short; loafer vs. mary jane vs. western boot vs. mesh flat vs. retro sneaker; trench vs. moto vs. chore coat vs. cropped cardigan vs. waistcoat. Consider an unexpected high/low pairing (slip dress + chore jacket, tailored trouser + graphic tee, sequined skirt + crew sweater) when the style allows — these feel modern rather than catalog-perfect. Ask yourself: "would a real stylist make a more interesting choice here?"
 
-ACCESSORIES — they are NOT optional decoration; they are what takes the look from "wearing clothes" to "wearing an outfit". Treat accessory slots with the same intent as main garments:
-- Categories to rotate through (do not always pick the same one): footwear, bag (tote / crossbody / clutch / top-handle / bucket / sling), belt (waist or hip — one of the single biggest outfit upgraders, can tie a disjointed look together), jewelry (watch, earrings from studs to statement, necklace from delicate to chunky, layered chains, rings, bracelet/cuff), hat (cap, beret, bucket, wide-brim, beanie), scarf (silk neckerchief, oversized wool, bandana), sunglasses, hair accessory (silk scrunchie, claw clip, headband), gloves in cold weather.
-- One statement accessory + a couple of subtle ones beats four loud accessories. If you pick a bold bag, keep jewelry delicate; if you pick chunky earrings, keep the bag quiet. Avoid over-accessorizing.
-- Match accessory scale to garment volume: voluminous/flowy garments → smaller, finer accessories; clean/minimal garments → can take a larger, sculptural accessory.
-- Keep metal tones cohesive within a single outfit (all gold OR all silver OR an intentional mix) and keep leather tones coordinated (bag, belt, and shoes do not have to match exactly but should share an undertone — all warm browns, all blacks, or an intentional contrast).
-- An accessory can also be the hero/accent that delivers the 10% pop color when every garment is neutral.
-- Tailor accessories to occasion: casual = lightweight & functional (cap, crossbody, sneakers, watch); workwear = minimal & polished (stud earrings, structured bag, classic watch); evening = one bold statement (clutch, sculptural earrings, heeled boot).
-${skinToneContext}${seasonContext}
+ACCESSORIES — they are NOT optional decoration; they are what takes the look from "wearing clothes" to "wearing an outfit". Treat accessory slots with the same intent as main garments and ALWAYS include at least one deliberate accessory beyond shoes (jewelry, bag, belt, hat, scarf, sunglasses, or hair piece). Apply these PAIRING RULES strictly:
+
+1. COLOR ROLE — Decide each accessory's color role before picking it:
+   - If the outfit's garments cover the full 60/30/10 split, accessories should echo Base or Secondary colors so they recede.
+   - If the garments are all-neutral, give ONE accessory the 10% Accent role and let it carry the pop color (e.g. red bag, emerald earrings, mustard scarf).
+   - Accessory colors must come from the same harmony as the palette (Analogous, Complementary, Monochromatic, Triadic, or Split-Complementary) — never introduce a hue that breaks the harmony.
+
+2. METAL TONE — Pick ONE dominant metal (gold, silver, rose gold, gunmetal, brass) and use it across watch, jewelry, belt buckle, and bag hardware. Mixing is only allowed if it is clearly intentional (e.g. a two-tone watch) — never accidentally. Match metal warmth to the palette undertone: warm palettes (cream, camel, rust, olive) → gold or brass; cool palettes (navy, grey, black, icy blue) → silver or gunmetal; rose gold sits between.
+
+3. LEATHER COORDINATION — Shoes, belt, and bag form a "leather triangle". They do NOT have to match exactly, but they MUST share an undertone family:
+   - All cool blacks together, OR all warm browns together (tan / cognac / chocolate), OR all whites/creams together.
+   - Crossing families is only acceptable as a deliberate contrast accent (e.g. all-black outfit with one cognac belt as the 10% accent) — and only once per outfit.
+   - For belts specifically: if the outfit has belt loops or a defined waist moment, INCLUDE a belt. Its leather + buckle metal must match the shoes/bag and the chosen metal tone above.
+
+4. JEWELRY LAYERING — When picking jewelry, follow stylist convention: layer pieces of varied lengths/widths for depth, but anchor with one focal piece. If earrings are the statement, keep necklace delicate or skip it. If a chunky necklace is the statement, keep earrings tiny. Rings and a watch can always coexist with the above.
+
+5. BAG ↔ SHOE LOGIC — Bag style should agree with the shoes' formality: sneakers/casual boots → tote, crossbody, bucket, sling; loafers/flats/low boots → top-handle, hobo, structured shoulder; heels/dressy flats → clutch, mini bag, small top-handle. A clutch with sneakers reads wrong unless the style explicitly calls for it.
+
+6. SCALE — Match accessory size to garment volume. Voluminous/flowy garments → smaller, finer accessories. Clean/minimal garments → can take one larger, sculptural accessory. Never pair oversized jewelry with oversized garments AND a large bag — pick one big thing.
+
+7. OCCASION OVERLAY — Tailor accessories to the occasion. Casual = lightweight & functional (cap, crossbody, sneakers, watch). Work = minimal & polished (stud earrings, structured bag, classic watch, thin belt). Evening/Event = one bold statement (clutch, sculptural earrings, heeled boot). Travel = hands-free, comfortable, security-friendly.
+
+CATEGORIES TO ROTATE THROUGH (do not always pick the same): footwear (loafer / mary jane / ballet flat / western boot / chelsea / mule / sneaker / heel / sandal), bag (tote / crossbody / clutch / top-handle / bucket / sling / hobo), belt (waist or hip — one of the single biggest outfit upgraders), jewelry (watch, earrings from studs to statement, necklace from delicate to chunky, layered chains, rings, bracelet/cuff), hat (cap, beret, bucket, wide-brim, beanie), scarf (silk neckerchief, oversized wool, bandana), sunglasses, hair accessory (silk scrunchie, claw clip, headband), gloves in cold weather.
+${skinToneContext}${seasonContext}${occasionContext}
 
 Return ONLY valid JSON with this exact structure (no markdown, no backticks):
 {
