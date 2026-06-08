@@ -92,16 +92,34 @@ serve(async (req) => {
 1. Identify what the item is (e.g. "navy blue crew-neck sweater") and its dominant color
 2. Build a complete, well-proportioned outfit around that piece, matching the requested style and gender
 3. Use color harmony theory (analogous, complementary, monochromatic, triadic, or split-complementary) AND a "Base + Accent" distribution: roughly 60% neutral foundation (black, navy, grey, white, cream, olive, brown), 30% secondary color, 10% pop/accent. The chosen harmony defines WHICH colors relate; the 60/30/10 split defines HOW MUCH of each appears across the outfit.
-4. Apply silhouette balance (Rule of Proportions): if the uploaded piece or the top is oversized/relaxed, pair it with slimmer or more structured bottoms; if it is fitted, you may go fuller/wider on the bottom. Avoid oversized-on-oversized or skinny-on-skinny unless the requested style explicitly calls for it (e.g. avant-garde, certain streetwear).
+4. Apply silhouette balance (Rule of Proportions + Rule of Thirds): if the uploaded piece or the top is oversized/relaxed, pair it with slimmer or more structured bottoms; if it is fitted, you may go fuller/wider on the bottom. Avoid oversized-on-oversized or skinny-on-skinny unless the requested style explicitly calls for it (e.g. avant-garde, certain streetwear). Aim to break the body into roughly 1/3 + 2/3 vertical sections (e.g. cropped jacket over long trousers, tucked top + high-rise bottom, belt defining the waist) rather than cutting it 50/50 — this almost always reads more elegant and intentional.
 5. For each item, provide 3-4 alternative color options that would also work within the same color harmony AND respect the 60/30/10 role of that item (a neutral piece's alts should stay in the neutral family; an accent piece's alts can be other accent-strength colors).
+6. Mix textures and finishes deliberately — a single outfit feels richer when it combines at least two of: smooth (silk, satin, fine knit), structured (wool, denim, leather), soft (cashmere, jersey, suede), and crisp (poplin, twill). Texture contrast lets you keep a tight color palette without the outfit feeling flat.
+7. Build around a clear focal point. Pick ONE hero piece per outfit — it can be the uploaded item, a statement accessory (bold bag, sculptural earrings, snakeskin boot, vintage belt), or a strong silhouette — and let the rest of the look support it. Never give an outfit two competing statement pieces; the supporting items should be quieter in color, scale, or texture so the hero reads first.
 
-STYLE ARCHETYPE GUIDANCE (apply when the requested style matches; otherwise infer the closest archetype):
-- Minimalist: high-quality basics, monochromatic or tonal palettes, no logos, clean lines.
-- Streetwear: bold/oversized silhouettes, graphic elements, statement sneakers, layered accessories.
-- Americana / Workwear: durable fabrics (denim, leather, canvas, flannel), earth tones, sturdy boots.
-- Classic / Androgynous: gender-neutral cuts, boxy blazers, straight-leg trousers, loafers or clean sneakers.
+STYLE ARCHETYPE GUIDANCE — pull from a WIDE range. Match the requested style when given; otherwise pick the archetype that flatters the uploaded piece best, and feel free to draw inspiration from named aesthetics and style icons (French girl / Jane Birkin, quiet luxury / Sofia Richie, old money / Ralph Lauren, Brigitte Bardot, Cary Grant tailoring, dark academia, coastal grandmother, mob wife, gorpcore, Y2K, cottagecore, techwear, western, indie sleaze, balletcore, stealth wealth) — vary inspiration across generations so outfits do not feel same-y:
+- Minimalist: high-quality basics, monochromatic or tonal palettes, no logos, clean lines, one subtle accessory.
+- Streetwear: bold/oversized silhouettes, graphic elements, statement sneakers, layered accessories, hat or cap optional.
+- Americana / Workwear: durable fabrics (denim, leather, canvas, flannel), earth tones, sturdy boots, leather belt.
+- Classic / Androgynous: gender-neutral cuts, boxy blazers, straight-leg trousers, loafers or clean sneakers, watch.
 - Avant-Garde: experimental shapes, asymmetry, unexpected proportions, high-contrast textures.
-- Boho, Vintage, Preppy, Athleisure, etc.: lean on their established conventions while still respecting proportion balance and the 60/30/10 color split.
+- Quiet Luxury / Old Money: tonal neutrals, cashmere, leather, gold hardware, no visible branding, structured bag.
+- Boho: flowy fabrics, layered jewelry, woven/straw textures, earthy palette, scarves and hats.
+- Preppy: tailored basics, knits, pleats, loafers, headbands, structured top-handle bag.
+- Vintage / Editorial: era-anchored references (60s mod, 70s flare, 90s grunge, Y2K) updated with one modern element.
+- Athleisure / Gorpcore: technical fabrics, sneakers or trail shoes, crossbody or sling bag, cap or beanie.
+- Romantic / Balletcore: soft fabrics, ribbons, ballet flats, delicate jewelry, blush/cream palette.
+- Western, Cottagecore, Dark Academia, Coastal, Techwear, etc.: lean on their established conventions while still respecting proportion balance and the 60/30/10 color split.
+
+CREATIVE BREADTH — actively VARY your suggestions. Do not default to the same safe pieces every time. Rotate through unexpected-but-correct choices: pleated trouser vs. straight jean vs. cargo vs. midi skirt vs. tailored short; loafer vs. mary jane vs. western boot vs. mesh flat vs. retro sneaker; trench vs. moto vs. chore coat vs. cropped cardigan vs. waistcoat. Consider an unexpected high/low pairing (slip dress + chore jacket, tailored trouser + graphic tee, sequined skirt + crew sweater) when the style allows — these feel modern rather than catalog-perfect. Ask yourself: "would a real stylist make a more interesting choice here?"
+
+ACCESSORIES — they are NOT optional decoration; they are what takes the look from "wearing clothes" to "wearing an outfit". Treat accessory slots with the same intent as main garments:
+- Categories to rotate through (do not always pick the same one): footwear, bag (tote / crossbody / clutch / top-handle / bucket / sling), belt (waist or hip — one of the single biggest outfit upgraders, can tie a disjointed look together), jewelry (watch, earrings from studs to statement, necklace from delicate to chunky, layered chains, rings, bracelet/cuff), hat (cap, beret, bucket, wide-brim, beanie), scarf (silk neckerchief, oversized wool, bandana), sunglasses, hair accessory (silk scrunchie, claw clip, headband), gloves in cold weather.
+- One statement accessory + a couple of subtle ones beats four loud accessories. If you pick a bold bag, keep jewelry delicate; if you pick chunky earrings, keep the bag quiet. Avoid over-accessorizing.
+- Match accessory scale to garment volume: voluminous/flowy garments → smaller, finer accessories; clean/minimal garments → can take a larger, sculptural accessory.
+- Keep metal tones cohesive within a single outfit (all gold OR all silver OR an intentional mix) and keep leather tones coordinated (bag, belt, and shoes do not have to match exactly but should share an undertone — all warm browns, all blacks, or an intentional contrast).
+- An accessory can also be the hero/accent that delivers the 10% pop color when every garment is neutral.
+- Tailor accessories to occasion: casual = lightweight & functional (cap, crossbody, sneakers, watch); workwear = minimal & polished (stud earrings, structured bag, classic watch); evening = one bold statement (clutch, sculptural earrings, heeled boot).
 ${skinToneContext}${seasonContext}
 
 Return ONLY valid JSON with this exact structure (no markdown, no backticks):
