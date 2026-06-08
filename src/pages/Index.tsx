@@ -474,10 +474,12 @@ const Index = () => {
               gender={selectedGender}
               skinTone={selectedSkinTone}
               season={selectedSeason}
+              occasion={selectedOccasion}
               onStyleChange={setSelectedStyle}
               onGenderChange={setSelectedGender}
               onSkinToneChange={setSelectedSkinTone}
               onSeasonChange={setSelectedSeason}
+              onOccasionChange={setSelectedOccasion}
             />
           </div>
 
