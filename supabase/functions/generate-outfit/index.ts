@@ -200,8 +200,12 @@ IMPORTANT RULES:
       ? ` Keep these items exactly as they are: ${lockedItems.map((i: any) => `${i.label} (${i.colorName} ${i.description})`).join(", ")}. Only change the unlocked items.`
       : "";
 
+    const avoidNote = avoidItem
+      ? ` AVOID this previous "${avoidItem.label}" — do NOT return anything similar: previous was "${avoidItem.colorName} ${avoidItem.description}" (hex ${avoidItem.color}). The new ${avoidItem.label} MUST differ in BOTH color family AND silhouette/material from the previous one. Pick a meaningfully different garment (e.g. different cut, fabric, or styling detail) in a different hue while still respecting the harmony and 60/30/10 roles.`
+      : "";
+    const seedNote = regenerationSeed ? ` Variation seed: ${regenerationSeed} — use this to explore a fresh direction you haven't tried before.` : "";
     const regenerateNote = regenerateSlot
-      ? ` I want you to ONLY regenerate the "${regenerateSlot}" slot with a completely different option. Keep all other items exactly as specified in the locked items.`
+      ? ` I want you to ONLY regenerate the "${regenerateSlot}" slot with a completely different option. Keep all other items exactly as specified in the locked items.${avoidNote}${seedNote}`
       : "";
 
     const existingLabels = hasLockedItems ? lockedItems.map((i: any) => i.label).join(", ") : "";
