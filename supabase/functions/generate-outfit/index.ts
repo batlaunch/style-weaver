@@ -179,7 +179,7 @@ ACCESSORIES — they are NOT optional decoration; they are what takes the look f
 7. OCCASION OVERLAY — Tailor accessories to the occasion. Casual = lightweight & functional (cap, crossbody, sneakers, watch). Work = minimal & polished (stud earrings, structured bag, classic watch, thin belt). Evening/Event = one bold statement (clutch, sculptural earrings, heeled boot). Travel = hands-free, comfortable, security-friendly.
 
 CATEGORIES TO ROTATE THROUGH (do not always pick the same): footwear (loafer / mary jane / ballet flat / western boot / chelsea / mule / sneaker / heel / sandal), bag (tote / crossbody / clutch / top-handle / bucket / sling / hobo), belt (waist or hip — one of the single biggest outfit upgraders), jewelry (watch, earrings from studs to statement, necklace from delicate to chunky, layered chains, rings, bracelet/cuff), hat (cap, beret, bucket, wide-brim, beanie), scarf (silk neckerchief, oversized wool, bandana), sunglasses, hair accessory (silk scrunchie, claw clip, headband), gloves in cold weather.
-${skinToneContext}${seasonContext}${occasionContext}
+${skinToneContext}${seasonContext}${tempContext}${occasionContext}
 
 Return ONLY valid JSON with this exact structure (no markdown, no backticks):
 {
