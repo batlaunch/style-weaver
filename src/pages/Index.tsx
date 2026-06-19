@@ -493,11 +493,13 @@ const Index = () => {
               skinTone={selectedSkinTone}
               season={selectedSeason}
               occasion={selectedOccasion}
+              temperatureF={temperatureF}
               onStyleChange={setSelectedStyle}
               onGenderChange={setSelectedGender}
               onSkinToneChange={setSelectedSkinTone}
               onSeasonChange={setSelectedSeason}
               onOccasionChange={setSelectedOccasion}
+              onTemperatureChange={setTemperatureF}
             />
           </div>
 
