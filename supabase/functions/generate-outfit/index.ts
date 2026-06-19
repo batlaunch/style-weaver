@@ -321,7 +321,8 @@ IMPORTANT RULES:
     // Season consistency check: catch winter outerwear in summer, summer fabrics in winter, etc.
     const SEASON_BANS: Record<string, { banned: RegExp; reason: string }> = {
       summer: {
-        banned: /\b(wool|cashmere|shearling|fur|fleece|puffer|parka|peacoat|overcoat|topcoat|trench(?!\s*shorts)|tweed|corduroy|cable[- ]?knit|chunky knit|thermal|flannel|turtleneck|beanie|knit hat|scarf|gloves|tights|knee[- ]?high boot|lug[- ]?sole boot|combat boot|snow boot|ugg|down jacket|quilted jacket|leather jacket|moto jacket)\b/i,
+        // Catch heavy wool / sweater wool, but allow "tropical wool", "lightweight wool", "fresco wool", "hopsack wool", "fine merino"
+        banned: /\b((?<!tropical |lightweight |light[- ]weight |fresco |hopsack |summer[- ]weight |fine[- ]gauge |fine )wool(?! blend| trouser| trousers)|cashmere sweater|shearling|fur coat|fleece|puffer|parka|peacoat|wool overcoat|wool topcoat|wool coat|tweed|corduroy|cable[- ]?knit|chunky knit|thermal|flannel(?!ette)|turtleneck|beanie|knit hat|wool scarf|wool gloves|leather gloves|knee[- ]?high boot|lug[- ]?sole boot|combat boot|snow boot|ugg|down jacket|quilted jacket|heavy leather jacket|moto jacket)\b/i,
         reason: "winter/cold-weather fabrics or outerwear are inappropriate for summer",
       },
       winter: {
@@ -329,7 +330,7 @@ IMPORTANT RULES:
         reason: "summer/warm-weather fabrics, bare skin, or open footwear are inappropriate for winter",
       },
       spring: {
-        banned: /\b(shearling|fur|puffer|parka|peacoat|heavy overcoat|down jacket|thermal|chunky cable[- ]?knit|snow boot|ugg|knee[- ]?high winter boot)\b/i,
+        banned: /\b(shearling|fur coat|puffer|parka|peacoat|heavy overcoat|wool overcoat|wool topcoat|down jacket|thermal|chunky cable[- ]?knit|snow boot|ugg|knee[- ]?high winter boot)\b/i,
         reason: "heavy winter outerwear is inappropriate for spring",
       },
       fall: {
@@ -340,7 +341,8 @@ IMPORTANT RULES:
 
     const lockedLabels = new Set((lockedItems || []).map((i: any) => i?.label));
     const uploadedDesc = (outfit?.uploadedPiece?.description || "").toLowerCase();
-    const seasonBan = seasonKey !== "any" ? SEASON_BANS[seasonKey] : undefined;
+    // Skip the season ban regex when an explicit temperature is set — the temperature guidance leads.
+    const seasonBan = (seasonKey !== "any" && tempNum === null) ? SEASON_BANS[seasonKey] : undefined;
 
     const findViolations = (items: any[]) =>
       (items || [])
