@@ -287,6 +287,24 @@ const StylePreferences = ({ style, gender, skinTone, season, occasion, temperatu
             </button>
           ))}
         </div>
+        <div className="mt-3">
+          <label className="block font-display text-[10px] uppercase tracking-[0.18em] text-muted-foreground mb-1.5">
+            Outside Temperature (°F) — optional
+          </label>
+          <input
+            type="number"
+            inputMode="numeric"
+            min={-20}
+            max={130}
+            value={temperatureF}
+            onChange={(e) => onTemperatureChange(e.target.value)}
+            placeholder="e.g. 72"
+            className="flex h-10 w-full items-center rounded-md border border-border bg-card px-3 py-2 font-body text-sm text-foreground placeholder:text-muted-foreground ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+          />
+          <p className="text-[10px] text-muted-foreground mt-1.5 leading-snug">
+            If set, temperature overrides season for fabric & layering decisions.
+          </p>
+        </div>
       </div>
 
       {/* Occasion Selection */}
