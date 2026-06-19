@@ -99,7 +99,7 @@ const OCCASIONS: { value: OccasionType; label: string; emoji: string }[] = [
   { value: "travel", label: "Travel", emoji: "✈️" },
 ];
 
-const StylePreferences = ({ style, gender, skinTone, season, occasion, onStyleChange, onGenderChange, onSkinToneChange, onSeasonChange, onOccasionChange }: StylePreferencesProps) => {
+const StylePreferences = ({ style, gender, skinTone, season, occasion, temperatureF, onStyleChange, onGenderChange, onSkinToneChange, onSeasonChange, onOccasionChange, onTemperatureChange }: StylePreferencesProps) => {
   const [styleOpen, setStyleOpen] = useState(false);
   const baseStyles = gender === "male" ? MALE_STYLES : FEMALE_STYLES;
   const usage = getStyleUsage();
