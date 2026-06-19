@@ -30,6 +30,7 @@ type PersistedState = {
   selectedSkinTone: SkinTone;
   selectedSeason: SeasonType;
   selectedOccasion: string;
+  temperatureF: string;
   resolvedStyle: string;
   itemDescription: string;
 };
