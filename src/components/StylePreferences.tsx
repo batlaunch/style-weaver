@@ -17,11 +17,13 @@ interface StylePreferencesProps {
   skinTone: SkinTone;
   season: SeasonType;
   occasion: OccasionType;
+  temperatureF: string;
   onStyleChange: (style: StyleType) => void;
   onGenderChange: (gender: GenderType) => void;
   onSkinToneChange: (tone: SkinTone) => void;
   onSeasonChange: (season: SeasonType) => void;
   onOccasionChange: (occasion: OccasionType) => void;
+  onTemperatureChange: (tempF: string) => void;
 }
 
 const MALE_STYLES: { value: StyleType; label: string; emoji: string }[] = [
