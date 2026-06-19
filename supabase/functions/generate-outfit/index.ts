@@ -92,9 +92,15 @@ serve(async (req) => {
       "winter": "WINTER: Cold weather — outerwear and layering are MANDATORY. Fabrics: heavy wool, cashmere, shearling, faux fur, thick knit, melton, tweed, leather with lining, corduroy, flannel. ALWAYS include a substantial coat or jacket (wool overcoat, puffer, shearling, peacoat, teddy, parka, long wool coat) unless the user explicitly uploaded a winter outerwear piece. Include warm accessories where they fit the style: wool scarf, beanie or felt hat, leather gloves, tights under skirts/dresses. Colors: deep, moody, rich — black, charcoal, ivory, cream, camel, chocolate, burgundy, forest, navy, plum, with metallic or jewel-tone accents. NO linen, NO bare sandals, NO sheer summer fabrics, NO short-sleeve-only looks. Footwear: knee-high boots, lug-sole boots, chelsea boots, shearling-lined boots, leather sneakers — closed and warm.",
       "any": "",
     };
+    const SEASON_BAN_WORDS: Record<string, string> = {
+      spring: "shearling, fur, puffer, parka, peacoat, heavy overcoat, down jacket, thermal, chunky cable-knit, snow boots, Ugg, knee-high winter boots",
+      summer: "wool, cashmere, shearling, fur, fleece, puffer, parka, peacoat, overcoat, topcoat, trench coat, tweed, corduroy, cable-knit, chunky knit, thermal, flannel, turtleneck, beanie, knit hat, scarf, gloves, tights, knee-high boots, lug-sole boots, combat boots, snow boots, Ugg, down jacket, quilted jacket, leather jacket, moto jacket",
+      fall: "linen, seersucker, sundresses, flip-flops, espadrilles, tank tops, spaghetti straps",
+      winter: "linen, seersucker, voile, chiffon, mesh, sleeveless tops, tank tops, spaghetti straps, sundresses, short-sleeve-only looks, sandals, espadrilles, flip-flops, slides, open-toe shoes, sheer fabrics",
+    };
     const seasonKey = season && SEASON_GUIDANCE[season] !== undefined ? season : "any";
     const seasonContext = seasonKey !== "any" && SEASON_GUIDANCE[seasonKey]
-      ? `\n\nSEASON — this is a HARD constraint and must shape fabrics, layers, colors, AND footwear. Do not produce a look that would be uncomfortable or visually wrong for this season:\n${SEASON_GUIDANCE[seasonKey]}`
+      ? `\n\nSEASON — this is a HARD constraint and must shape fabrics, layers, colors, AND footwear. Do not produce a look that would be uncomfortable or visually wrong for this season:\n${SEASON_GUIDANCE[seasonKey]}\n\nABSOLUTELY FORBIDDEN for ${seasonKey} — do NOT mention any of these words in any item's description (not even as a fabric blend, lining, or trim): ${SEASON_BAN_WORDS[seasonKey]}. If the user's UPLOADED piece happens to contain one of these (e.g. they uploaded a wool coat in summer), keep it but do NOT add any other forbidden items around it.`
       : "";
 
     const OCCASION_GUIDANCE: Record<string, string> = {
