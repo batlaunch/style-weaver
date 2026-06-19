@@ -324,23 +324,38 @@ IMPORTANT RULES:
     };
 
     const lockedLabels = new Set((lockedItems || []).map((i: any) => i?.label));
+    const uploadedDesc = (outfit?.uploadedPiece?.description || "").toLowerCase();
     const seasonBan = seasonKey !== "any" ? SEASON_BANS[seasonKey] : undefined;
 
-    if (seasonBan && Array.isArray(outfit?.items)) {
-      const violations = outfit.items
+    const findViolations = (items: any[]) =>
+      (items || [])
         .filter((it: any) => it && !lockedLabels.has(it.label))
+        // Skip the uploaded piece itself — user uploaded it, we don't override it
+        .filter((it: any) => {
+          const d = (it.description || "").toLowerCase();
+          return !(uploadedDesc && d && uploadedDesc.includes(d.slice(0, 20)));
+        })
         .map((it: any) => {
           const text = `${it.colorName || ""} ${it.description || ""} ${it.label || ""}`;
-          const m = text.match(seasonBan.banned);
+          const m = text.match(seasonBan!.banned);
           return m ? { label: it.label, description: it.description, match: m[0] } : null;
         })
         .filter(Boolean) as Array<{ label: string; description: string; match: string }>;
 
-      if (violations.length > 0) {
-        console.log("Season violations detected, retrying:", seasonKey, violations);
-        const fixNote = `\n\nSEASON VIOLATION — your previous response included items that do NOT fit ${seasonKey}: ${violations
+    if (seasonBan && Array.isArray(outfit?.items)) {
+      let lastContent = content;
+      let attempt = 0;
+      const MAX_RETRIES = 2;
+
+      while (attempt < MAX_RETRIES) {
+        const violations = findViolations(outfit.items);
+        if (violations.length === 0) break;
+        attempt++;
+        console.log(`Season violations (attempt ${attempt}/${MAX_RETRIES}):`, seasonKey, violations);
+
+        const fixNote = `\n\nSEASON VIOLATION (attempt ${attempt}) — your response STILL includes items that do NOT fit ${seasonKey}: ${violations
           .map((v) => `"${v.label}: ${v.description}" (offending term: "${v.match}")`)
-          .join("; ")}. ${seasonBan.reason}. Regenerate the FULL outfit JSON now, replacing those items with season-appropriate alternatives that still respect the style, harmony, and 60/30/10 split. Keep locked items unchanged.`;
+          .join("; ")}. ${seasonBan.reason}. FORBIDDEN WORDS for ${seasonKey}: ${SEASON_BAN_WORDS[seasonKey]}. Regenerate the FULL outfit JSON now. Replace those items with TRULY season-appropriate alternatives. Do not just rename — change the actual fabric and garment type. Keep locked items and the uploaded piece unchanged.`;
 
         const retryResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
           method: "POST",
@@ -349,29 +364,45 @@ IMPORTANT RULES:
             model: "google/gemini-2.5-flash",
             messages: [
               ...messages,
-              { role: "assistant", content },
+              { role: "assistant", content: lastContent },
               { role: "user", content: fixNote },
             ],
-            temperature: 0.7,
+            temperature: 0.5,
           }),
         });
 
-        if (retryResponse.ok) {
-          const retryData = await retryResponse.json();
-          const retryContent = retryData.choices?.[0]?.message?.content;
-          if (retryContent) {
-            let retryCleaned = retryContent.trim();
-            if (retryCleaned.startsWith("```")) {
-              retryCleaned = retryCleaned.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "");
-            }
-            try {
-              const retried = JSON.parse(retryCleaned);
-              if (retried?.items?.length) outfit = retried;
-            } catch (e) {
-              console.error("Retry parse failed, keeping original:", e);
-            }
-          }
+        if (!retryResponse.ok) break;
+        const retryData = await retryResponse.json();
+        const retryContent = retryData.choices?.[0]?.message?.content;
+        if (!retryContent) break;
+        lastContent = retryContent;
+        let retryCleaned = retryContent.trim();
+        if (retryCleaned.startsWith("```")) {
+          retryCleaned = retryCleaned.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "");
         }
+        try {
+          const retried = JSON.parse(retryCleaned);
+          if (retried?.items?.length) outfit = retried;
+        } catch (e) {
+          console.error("Retry parse failed:", e);
+          break;
+        }
+      }
+
+      // Final fallback: drop offending OPTIONAL items (Outerwear, Scarf, Hat, Jewelry, Sunglasses, Bag, Belt, Accessory)
+      const remaining = findViolations(outfit.items || []);
+      if (remaining.length > 0) {
+        const OPTIONAL_LABELS = new Set(["Outerwear", "Scarf", "Hat", "Jewelry", "Sunglasses", "Bag", "Belt", "Accessory"]);
+        const violatingDescs = new Set(remaining.map((v) => v.description));
+        const filtered = outfit.items.filter((it: any) => {
+          if (!violatingDescs.has(it?.description)) return true;
+          if (OPTIONAL_LABELS.has(it?.label)) {
+            console.log("Dropping unfixable optional item:", it.label, it.description);
+            return false;
+          }
+          return true; // keep essentials even if violating — better than empty slot
+        });
+        outfit.items = filtered;
       }
     }
 
