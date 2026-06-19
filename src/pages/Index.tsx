@@ -30,6 +30,7 @@ type PersistedState = {
   selectedSkinTone: SkinTone;
   selectedSeason: SeasonType;
   selectedOccasion: string;
+  temperatureF: string;
   resolvedStyle: string;
   itemDescription: string;
 };
@@ -57,6 +58,7 @@ const Index = () => {
   const [itemDescription, setItemDescription] = useState(persisted.itemDescription ?? "");
   const [selectedSeason, setSelectedSeason] = useState<SeasonType>(persisted.selectedSeason ?? "spring");
   const [selectedOccasion, setSelectedOccasion] = useState<string>(persisted.selectedOccasion ?? "any");
+  const [temperatureF, setTemperatureF] = useState<string>(persisted.temperatureF ?? "");
   const { saveOutfit } = useSavedOutfits();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
@@ -73,6 +75,7 @@ const Index = () => {
         selectedSkinTone,
         selectedSeason,
         selectedOccasion,
+        temperatureF,
         resolvedStyle,
         itemDescription,
       };
@@ -80,7 +83,7 @@ const Index = () => {
     } catch {
       // sessionStorage may be full (large base64 image) — ignore
     }
-  }, [uploadedImage, currentOutfit, outfitImageUrl, selectedStyle, selectedGender, selectedSkinTone, selectedSeason, selectedOccasion, resolvedStyle, itemDescription]);
+  }, [uploadedImage, currentOutfit, outfitImageUrl, selectedStyle, selectedGender, selectedSkinTone, selectedSeason, selectedOccasion, temperatureF, resolvedStyle, itemDescription]);
 
   const handleImageUpload = useCallback((_file: File, preview: string) => {
     setUploadedImage(preview);
@@ -142,6 +145,7 @@ const Index = () => {
           skinTone: selectedSkinTone,
           season: selectedSeason,
           occasion: selectedOccasion,
+          temperatureF: temperatureF.trim() ? Number(temperatureF) : undefined,
           itemDescription: itemDescription.trim() || undefined,
           lockedItems: lockedItems.length > 0 ? lockedItems : undefined,
         },
@@ -169,7 +173,7 @@ const Index = () => {
     } finally {
       setIsGenerating(false);
     }
-  }, [uploadedImage, selectedStyle, selectedGender, selectedSkinTone, selectedSeason, selectedOccasion, itemDescription, currentOutfit, lockedLabels]);
+  }, [uploadedImage, selectedStyle, selectedGender, selectedSkinTone, selectedSeason, selectedOccasion, temperatureF, itemDescription, currentOutfit, lockedLabels]);
 
 
   const regenerateSingleItem = useCallback(async (index: number) => {
@@ -189,6 +193,7 @@ const Index = () => {
           skinTone: selectedSkinTone,
           season: selectedSeason,
           occasion: selectedOccasion,
+          temperatureF: temperatureF.trim() ? Number(temperatureF) : undefined,
           itemDescription: itemDescription.trim() || undefined,
           lockedItems: keptItems,
           regenerateSlot: previousItem.label,
@@ -221,7 +226,7 @@ const Index = () => {
     } finally {
       setRegeneratingIndex(null);
     }
-  }, [uploadedImage, currentOutfit, selectedStyle, selectedGender, selectedSkinTone, selectedSeason, selectedOccasion, itemDescription]);
+  }, [uploadedImage, currentOutfit, selectedStyle, selectedGender, selectedSkinTone, selectedSeason, selectedOccasion, temperatureF, itemDescription]);
 
   const addAnotherPiece = useCallback(async () => {
     if (!uploadedImage || !currentOutfit) return;
@@ -248,6 +253,7 @@ const Index = () => {
           skinTone: selectedSkinTone,
           season: selectedSeason,
           occasion: selectedOccasion,
+          temperatureF: temperatureF.trim() ? Number(temperatureF) : undefined,
           itemDescription: itemDescription.trim() || undefined,
           lockedItems: currentOutfit.items,
           addPiece: true,
@@ -287,7 +293,7 @@ const Index = () => {
     } finally {
       setIsAddingPiece(false);
     }
-  }, [uploadedImage, currentOutfit, selectedStyle, selectedGender, selectedSkinTone, selectedSeason, selectedOccasion, itemDescription, addPieceRequest]);
+  }, [uploadedImage, currentOutfit, selectedStyle, selectedGender, selectedSkinTone, selectedSeason, selectedOccasion, temperatureF, itemDescription, addPieceRequest]);
 
   const generateOutfitImage = useCallback(async () => {
     if (!currentOutfit) return;
@@ -487,11 +493,13 @@ const Index = () => {
               skinTone={selectedSkinTone}
               season={selectedSeason}
               occasion={selectedOccasion}
+              temperatureF={temperatureF}
               onStyleChange={setSelectedStyle}
               onGenderChange={setSelectedGender}
               onSkinToneChange={setSelectedSkinTone}
               onSeasonChange={setSelectedSeason}
               onOccasionChange={setSelectedOccasion}
+              onTemperatureChange={setTemperatureF}
             />
           </div>
 

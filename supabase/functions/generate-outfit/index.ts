@@ -37,7 +37,7 @@ serve(async (req) => {
     let body: any;
     try { body = JSON.parse(raw); } catch { return json(400, { error: "Invalid JSON" }); }
 
-    let { imageBase64, style, gender, skinTone, season, occasion, itemDescription, lockedItems, regenerateSlot, avoidItem, regenerationSeed, addPiece, addPieceRequest, addPieceRequests } = body ?? {};
+    let { imageBase64, style, gender, skinTone, season, occasion, temperatureF, itemDescription, lockedItems, regenerateSlot, avoidItem, regenerationSeed, addPiece, addPieceRequest, addPieceRequests } = body ?? {};
 
     // 3. Validate / clamp inputs
     if (typeof imageBase64 !== "string" || !/^data:image\/(png|jpe?g|webp);base64,/.test(imageBase64)) {
@@ -86,22 +86,37 @@ serve(async (req) => {
       : "";
 
     const SEASON_GUIDANCE: Record<string, string> = {
-      "spring": "SPRING: Mild, transitional weather. Fabrics: lightweight cotton, poplin, chambray, fine knit, light denim, trench-weight cotton, silk. Layers: a light jacket (trench, denim, utility, cropped blazer, cardigan) is often appropriate — NOT heavy coats. Colors: fresh and slightly desaturated — soft pastels (butter yellow, sage, dusty pink, sky blue, lavender), cream, stone, light olive, light denim, with one brighter accent. NO heavy wool coats, NO chunky cable knits, NO shearling, NO thick lug boots, NO winter beanies. Footwear: loafers, ballet flats, low boots, clean sneakers, mary janes, lightweight ankle boots.",
-      "summer": "SUMMER: Hot weather. Fabrics: linen, lightweight cotton, seersucker, voile, silk, jersey, breathable knits. Silhouettes: short sleeves, sleeveless, midi/maxi dresses, shorts, wide-leg linen trousers, slip dresses, camp shirts, light unstructured blazers ONLY if the outfit truly needs one. Colors: bright and saturated OR crisp whites/creams/tans — white, cream, ecru, sand, sky blue, coral, citrus, terracotta, faded denim, bright accents. NO outerwear like trench/wool/leather jackets unless the user uploaded one, NO heavy knits, NO tall boots, NO scarves, NO beanies, NO tights. Footwear: sandals, mules, espadrilles, slides, sneakers, ballet flats, loafers worn sockless.",
+      "spring": "SPRING: Mild, transitional, often unpredictable weather. THREE rules from menswear stylists: (1) Swap to spring fabrics — cotton, linen, silk, chambray, cotton sweaters, fine merino, light-wash denim, cotton trousers, summer-weight/unlined/partially-lined garments. Box up the wool topcoats, parkas, flannel shirts, chunky cable knits, and thick brushed fabrics. (2) Go LIGHTER, not BRIGHTER — instead of school-bus yellow or kelly green, shift the core neutrals one shade lighter (washed indigo, light-wash denim, lighter olive, lighter brown, lighter grey, washed navy). (3) Layer for chilly mornings — Mac coat (lightweight raincoat-trench) instead of parka, Harrington jacket instead of bomber, unstructured/unlined sport coat instead of flannel sport coat, cotton or fine-merino sweater instead of chunky cable knit, chambray or poplin button-down instead of flannel. Footwear: penny loafer, suede chukka boot, grey or white sneaker, low boot. NO heavy wool overcoats, NO shearling, NO puffer/parka, NO chunky cable-knits, NO snow boots, NO winter beanies.",
+      "summer": "SUMMER: Hot weather. Three keys: breathable fabrics, lighter-and-brighter colors, relaxed (not skin-tight) fit. Fabrics: cotton is king (Pima/Supima for tees, poplin for shirts, cotton chinos/shorts), linen is queen (open weave, embrace the wrinkles), Tencel/lyocell blends, lightweight tropical/hopsack wool (PERMITTED for unlined summer sport coats, suits, and trousers — these are designed for heat), chambray, seersucker. AVOID heavy/winter wool (wool overcoats, wool sweaters, flannel, tweed, brushed wool, cable-knit, chunky knit), shearling, fur, puffer/parka/peacoat, fleece, thermal, turtleneck. Pieces to reach for: camp-collar shirt, polo (Supima cotton or linen blend — avoid grainy pique), short-sleeve button-down, t-shirt, chambray shirt with sleeves rolled, summer shorts, cotton or linen chinos, summer suit, UNLINED chore jacket or unstructured sport coat (for AC or evenings only — not as a heat layer). Colors: use the 'lighter and brighter' trick — shift core neutrals lighter (washed blue, light olive, light brown, light grey) and optionally add ONE brighter accent. Footwear: penny loafer (often sockless or with no-show socks), espadrille, driver, boat shoe, huarache, white/grey/canvas sneaker, leather sandal. NO scarves, NO beanies, NO gloves, NO tights, NO heavy leather/moto jackets, NO knee-high or lug-sole winter boots.",
       "fall": "FALL: Cool, layered weather. Fabrics: wool, tweed, corduroy, suede, leather, flannel, mid-weight knits, denim, gabardine. Layers: outerwear is almost always appropriate — trench, leather jacket, blazer, chore coat, overshirt, longline cardigan, moto, field jacket. Colors: rich, warm, earthy — camel, rust, burgundy, forest green, mustard, chocolate, olive, oxblood, cream, charcoal, deep navy. Footwear: chelsea boots, ankle boots, loafers, lug-sole boots, leather sneakers, mary janes with tights. Scarves and hats start to make sense.",
       "winter": "WINTER: Cold weather — outerwear and layering are MANDATORY. Fabrics: heavy wool, cashmere, shearling, faux fur, thick knit, melton, tweed, leather with lining, corduroy, flannel. ALWAYS include a substantial coat or jacket (wool overcoat, puffer, shearling, peacoat, teddy, parka, long wool coat) unless the user explicitly uploaded a winter outerwear piece. Include warm accessories where they fit the style: wool scarf, beanie or felt hat, leather gloves, tights under skirts/dresses. Colors: deep, moody, rich — black, charcoal, ivory, cream, camel, chocolate, burgundy, forest, navy, plum, with metallic or jewel-tone accents. NO linen, NO bare sandals, NO sheer summer fabrics, NO short-sleeve-only looks. Footwear: knee-high boots, lug-sole boots, chelsea boots, shearling-lined boots, leather sneakers — closed and warm.",
       "any": "",
     };
     const SEASON_BAN_WORDS: Record<string, string> = {
-      spring: "shearling, fur, puffer, parka, peacoat, heavy overcoat, down jacket, thermal, chunky cable-knit, snow boots, Ugg, knee-high winter boots",
-      summer: "wool, cashmere, shearling, fur, fleece, puffer, parka, peacoat, overcoat, topcoat, trench coat, tweed, corduroy, cable-knit, chunky knit, thermal, flannel, turtleneck, beanie, knit hat, scarf, gloves, tights, knee-high boots, lug-sole boots, combat boots, snow boots, Ugg, down jacket, quilted jacket, leather jacket, moto jacket",
+      spring: "shearling, fur, puffer, parka, peacoat, heavy wool overcoat, down jacket, thermal underwear, chunky cable-knit, snow boots, Ugg, knee-high winter boots, wool topcoat, flannel shirt",
+      summer: "heavy wool, wool coat, wool overcoat, wool topcoat, wool sweater, cashmere sweater, shearling, fur, fleece, puffer, parka, peacoat, overcoat, topcoat, tweed, corduroy, cable-knit, chunky knit, thermal, flannel, turtleneck, beanie, knit hat, scarf, gloves, tights, knee-high boots, lug-sole boots, combat boots, snow boots, Ugg, down jacket, quilted jacket, heavy leather jacket, moto jacket (NOTE: lightweight tropical wool, hopsack wool, fine-gauge cotton knit and unlined linen blazers ARE allowed in summer)",
       fall: "linen, seersucker, sundresses, flip-flops, espadrilles, tank tops, spaghetti straps",
       winter: "linen, seersucker, voile, chiffon, mesh, sleeveless tops, tank tops, spaghetti straps, sundresses, short-sleeve-only looks, sandals, espadrilles, flip-flops, slides, open-toe shoes, sheer fabrics",
     };
     const seasonKey = season && SEASON_GUIDANCE[season] !== undefined ? season : "any";
     const seasonContext = seasonKey !== "any" && SEASON_GUIDANCE[seasonKey]
-      ? `\n\nSEASON — this is a HARD constraint and must shape fabrics, layers, colors, AND footwear. Do not produce a look that would be uncomfortable or visually wrong for this season:\n${SEASON_GUIDANCE[seasonKey]}\n\nABSOLUTELY FORBIDDEN for ${seasonKey} — do NOT mention any of these words in any item's description (not even as a fabric blend, lining, or trim): ${SEASON_BAN_WORDS[seasonKey]}. If the user's UPLOADED piece happens to contain one of these (e.g. they uploaded a wool coat in summer), keep it but do NOT add any other forbidden items around it.`
+      ? `\n\nSEASON — this is a HARD constraint and must shape fabrics, layers, colors, AND footwear. Do not produce a look that would be uncomfortable or visually wrong for this season:\n${SEASON_GUIDANCE[seasonKey]}\n\nABSOLUTELY FORBIDDEN for ${seasonKey} — do NOT mention any of these in any item's description (not even as a fabric blend, lining, or trim): ${SEASON_BAN_WORDS[seasonKey]}. If the user's UPLOADED piece happens to contain one of these (e.g. they uploaded a wool coat in summer), keep it but do NOT add any other forbidden items around it.`
       : "";
+
+    // Optional explicit temperature override (Fahrenheit). Takes precedence over season stereotypes.
+    const tempNum = typeof temperatureF === "number" && Number.isFinite(temperatureF) ? temperatureF : null;
+    let tempContext = "";
+    if (tempNum !== null) {
+      let band = "";
+      if (tempNum >= 90) band = `EXTREME HEAT (${tempNum}°F / ~${Math.round((tempNum - 32) * 5 / 9)}°C): The wearer will be visibly hot. NO outerwear, NO long sleeves unless very lightweight linen/cotton, NO closed/heavy shoes. Lean on linen, cotton voile, seersucker, breathable knits. Short sleeves, sleeveless, shorts, breezy dresses, sandals/espadrilles/huaraches. Skip scarves, hats only as sun protection (straw, panama, baseball cap).`;
+      else if (tempNum >= 78) band = `HOT (${tempNum}°F / ~${Math.round((tempNum - 32) * 5 / 9)}°C): Light, breathable, relaxed-fit pieces. Cotton/linen short sleeves, polos, chinos or shorts, summer dresses. Add an UNLINED sport coat or chore jacket ONLY if formality requires it. No heavy knits, no real outerwear, no boots.`;
+      else if (tempNum >= 65) band = `WARM (${tempNum}°F / ~${Math.round((tempNum - 32) * 5 / 9)}°C): Comfortable in a single layer. T-shirt, polo, button-down, light dress, jeans or chinos. A light layer (denim/chore/Harrington jacket, unstructured blazer, cardigan) is optional, not required. Sneakers, loafers, low boots.`;
+      else if (tempNum >= 55) band = `MILD / COOL (${tempNum}°F / ~${Math.round((tempNum - 32) * 5 / 9)}°C): Light outerwear is appropriate — Harrington jacket, Mac coat, light trench, denim jacket, unlined sport coat, cardigan, fine-knit sweater. Long sleeves. Loafers, chelsea boots, sneakers. Avoid heavy wool coats and chunky knits — overkill.`;
+      else if (tempNum >= 42) band = `CHILLY (${tempNum}°F / ~${Math.round((tempNum - 32) * 5 / 9)}°C): Real outerwear required — trench, mac, leather jacket, wool sport coat, mid-weight wool overcoat, field jacket. Knit sweater or cotton/merino crewneck under it. Closed boots, leather sneakers. A light scarf is appropriate.`;
+      else if (tempNum >= 28) band = `COLD (${tempNum}°F / ~${Math.round((tempNum - 32) * 5 / 9)}°C): Heavy coat required — wool overcoat, peacoat, puffer, shearling, parka. Layer a knit (wool, cashmere, chunky knit) under it. Wool scarf, beanie or felt hat, lug-sole or chelsea boots, tights under skirts/dresses.`;
+      else band = `FREEZING (${tempNum}°F / ~${Math.round((tempNum - 32) * 5 / 9)}°C): Maximum warmth. Heavy down/wool/shearling coat, thick knit layer, thermal base, wool scarf, beanie, leather gloves, insulated/snow boots. No bare skin where avoidable. Layer aggressively.`;
+      tempContext = `\n\nOUTSIDE TEMPERATURE — this overrides any season stereotype. The wearer told us the actual outside temperature is ${tempNum}°F. Build the outfit for THIS temperature, not for an abstract idea of the season. ${band}`;
+    }
 
     const OCCASION_GUIDANCE: Record<string, string> = {
       "work": "WORK / OFFICE: Lean polished and professional. Silhouettes: tailored trouser, pencil or A-line skirt, blazer, button-down, fine knit, midi dress. Textures: wool, twill, fine cotton, leather. Accessories must read minimal and refined — structured top-handle or tote bag, classic watch, stud or small-hoop earrings, delicate necklace, thin leather belt, loafers/pointed flats/low block heel/clean ankle boot. No loud logos, no party-bright accents, no sneakers unless the style is athleisure.",
@@ -164,7 +179,7 @@ ACCESSORIES — they are NOT optional decoration; they are what takes the look f
 7. OCCASION OVERLAY — Tailor accessories to the occasion. Casual = lightweight & functional (cap, crossbody, sneakers, watch). Work = minimal & polished (stud earrings, structured bag, classic watch, thin belt). Evening/Event = one bold statement (clutch, sculptural earrings, heeled boot). Travel = hands-free, comfortable, security-friendly.
 
 CATEGORIES TO ROTATE THROUGH (do not always pick the same): footwear (loafer / mary jane / ballet flat / western boot / chelsea / mule / sneaker / heel / sandal), bag (tote / crossbody / clutch / top-handle / bucket / sling / hobo), belt (waist or hip — one of the single biggest outfit upgraders), jewelry (watch, earrings from studs to statement, necklace from delicate to chunky, layered chains, rings, bracelet/cuff), hat (cap, beret, bucket, wide-brim, beanie), scarf (silk neckerchief, oversized wool, bandana), sunglasses, hair accessory (silk scrunchie, claw clip, headband), gloves in cold weather.
-${skinToneContext}${seasonContext}${occasionContext}
+${skinToneContext}${seasonContext}${tempContext}${occasionContext}
 
 Return ONLY valid JSON with this exact structure (no markdown, no backticks):
 {
@@ -306,7 +321,8 @@ IMPORTANT RULES:
     // Season consistency check: catch winter outerwear in summer, summer fabrics in winter, etc.
     const SEASON_BANS: Record<string, { banned: RegExp; reason: string }> = {
       summer: {
-        banned: /\b(wool|cashmere|shearling|fur|fleece|puffer|parka|peacoat|overcoat|topcoat|trench(?!\s*shorts)|tweed|corduroy|cable[- ]?knit|chunky knit|thermal|flannel|turtleneck|beanie|knit hat|scarf|gloves|tights|knee[- ]?high boot|lug[- ]?sole boot|combat boot|snow boot|ugg|down jacket|quilted jacket|leather jacket|moto jacket)\b/i,
+        // Catch heavy wool / sweater wool, but allow "tropical wool", "lightweight wool", "fresco wool", "hopsack wool", "fine merino"
+        banned: /\b((?<!tropical |lightweight |light[- ]weight |fresco |hopsack |summer[- ]weight |fine[- ]gauge |fine )wool(?! blend| trouser| trousers)|cashmere sweater|shearling|fur coat|fleece|puffer|parka|peacoat|wool overcoat|wool topcoat|wool coat|tweed|corduroy|cable[- ]?knit|chunky knit|thermal|flannel(?!ette)|turtleneck|beanie|knit hat|wool scarf|wool gloves|leather gloves|knee[- ]?high boot|lug[- ]?sole boot|combat boot|snow boot|ugg|down jacket|quilted jacket|heavy leather jacket|moto jacket)\b/i,
         reason: "winter/cold-weather fabrics or outerwear are inappropriate for summer",
       },
       winter: {
@@ -314,7 +330,7 @@ IMPORTANT RULES:
         reason: "summer/warm-weather fabrics, bare skin, or open footwear are inappropriate for winter",
       },
       spring: {
-        banned: /\b(shearling|fur|puffer|parka|peacoat|heavy overcoat|down jacket|thermal|chunky cable[- ]?knit|snow boot|ugg|knee[- ]?high winter boot)\b/i,
+        banned: /\b(shearling|fur coat|puffer|parka|peacoat|heavy overcoat|wool overcoat|wool topcoat|down jacket|thermal|chunky cable[- ]?knit|snow boot|ugg|knee[- ]?high winter boot)\b/i,
         reason: "heavy winter outerwear is inappropriate for spring",
       },
       fall: {
@@ -325,7 +341,8 @@ IMPORTANT RULES:
 
     const lockedLabels = new Set((lockedItems || []).map((i: any) => i?.label));
     const uploadedDesc = (outfit?.uploadedPiece?.description || "").toLowerCase();
-    const seasonBan = seasonKey !== "any" ? SEASON_BANS[seasonKey] : undefined;
+    // Skip the season ban regex when an explicit temperature is set — the temperature guidance leads.
+    const seasonBan = (seasonKey !== "any" && tempNum === null) ? SEASON_BANS[seasonKey] : undefined;
 
     const findViolations = (items: any[]) =>
       (items || [])
