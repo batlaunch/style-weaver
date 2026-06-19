@@ -92,9 +92,15 @@ serve(async (req) => {
       "winter": "WINTER: Cold weather — outerwear and layering are MANDATORY. Fabrics: heavy wool, cashmere, shearling, faux fur, thick knit, melton, tweed, leather with lining, corduroy, flannel. ALWAYS include a substantial coat or jacket (wool overcoat, puffer, shearling, peacoat, teddy, parka, long wool coat) unless the user explicitly uploaded a winter outerwear piece. Include warm accessories where they fit the style: wool scarf, beanie or felt hat, leather gloves, tights under skirts/dresses. Colors: deep, moody, rich — black, charcoal, ivory, cream, camel, chocolate, burgundy, forest, navy, plum, with metallic or jewel-tone accents. NO linen, NO bare sandals, NO sheer summer fabrics, NO short-sleeve-only looks. Footwear: knee-high boots, lug-sole boots, chelsea boots, shearling-lined boots, leather sneakers — closed and warm.",
       "any": "",
     };
+    const SEASON_BAN_WORDS: Record<string, string> = {
+      spring: "shearling, fur, puffer, parka, peacoat, heavy overcoat, down jacket, thermal, chunky cable-knit, snow boots, Ugg, knee-high winter boots",
+      summer: "wool, cashmere, shearling, fur, fleece, puffer, parka, peacoat, overcoat, topcoat, trench coat, tweed, corduroy, cable-knit, chunky knit, thermal, flannel, turtleneck, beanie, knit hat, scarf, gloves, tights, knee-high boots, lug-sole boots, combat boots, snow boots, Ugg, down jacket, quilted jacket, leather jacket, moto jacket",
+      fall: "linen, seersucker, sundresses, flip-flops, espadrilles, tank tops, spaghetti straps",
+      winter: "linen, seersucker, voile, chiffon, mesh, sleeveless tops, tank tops, spaghetti straps, sundresses, short-sleeve-only looks, sandals, espadrilles, flip-flops, slides, open-toe shoes, sheer fabrics",
+    };
     const seasonKey = season && SEASON_GUIDANCE[season] !== undefined ? season : "any";
     const seasonContext = seasonKey !== "any" && SEASON_GUIDANCE[seasonKey]
-      ? `\n\nSEASON — this is a HARD constraint and must shape fabrics, layers, colors, AND footwear. Do not produce a look that would be uncomfortable or visually wrong for this season:\n${SEASON_GUIDANCE[seasonKey]}`
+      ? `\n\nSEASON — this is a HARD constraint and must shape fabrics, layers, colors, AND footwear. Do not produce a look that would be uncomfortable or visually wrong for this season:\n${SEASON_GUIDANCE[seasonKey]}\n\nABSOLUTELY FORBIDDEN for ${seasonKey} — do NOT mention any of these words in any item's description (not even as a fabric blend, lining, or trim): ${SEASON_BAN_WORDS[seasonKey]}. If the user's UPLOADED piece happens to contain one of these (e.g. they uploaded a wool coat in summer), keep it but do NOT add any other forbidden items around it.`
       : "";
 
     const OCCASION_GUIDANCE: Record<string, string> = {
@@ -318,23 +324,38 @@ IMPORTANT RULES:
     };
 
     const lockedLabels = new Set((lockedItems || []).map((i: any) => i?.label));
+    const uploadedDesc = (outfit?.uploadedPiece?.description || "").toLowerCase();
     const seasonBan = seasonKey !== "any" ? SEASON_BANS[seasonKey] : undefined;
 
-    if (seasonBan && Array.isArray(outfit?.items)) {
-      const violations = outfit.items
+    const findViolations = (items: any[]) =>
+      (items || [])
         .filter((it: any) => it && !lockedLabels.has(it.label))
+        // Skip the uploaded piece itself — user uploaded it, we don't override it
+        .filter((it: any) => {
+          const d = (it.description || "").toLowerCase();
+          return !(uploadedDesc && d && uploadedDesc.includes(d.slice(0, 20)));
+        })
         .map((it: any) => {
           const text = `${it.colorName || ""} ${it.description || ""} ${it.label || ""}`;
-          const m = text.match(seasonBan.banned);
+          const m = text.match(seasonBan!.banned);
           return m ? { label: it.label, description: it.description, match: m[0] } : null;
         })
         .filter(Boolean) as Array<{ label: string; description: string; match: string }>;
 
-      if (violations.length > 0) {
-        console.log("Season violations detected, retrying:", seasonKey, violations);
-        const fixNote = `\n\nSEASON VIOLATION — your previous response included items that do NOT fit ${seasonKey}: ${violations
+    if (seasonBan && Array.isArray(outfit?.items)) {
+      let lastContent = content;
+      let attempt = 0;
+      const MAX_RETRIES = 2;
+
+      while (attempt < MAX_RETRIES) {
+        const violations = findViolations(outfit.items);
+        if (violations.length === 0) break;
+        attempt++;
+        console.log(`Season violations (attempt ${attempt}/${MAX_RETRIES}):`, seasonKey, violations);
+
+        const fixNote = `\n\nSEASON VIOLATION (attempt ${attempt}) — your response STILL includes items that do NOT fit ${seasonKey}: ${violations
           .map((v) => `"${v.label}: ${v.description}" (offending term: "${v.match}")`)
-          .join("; ")}. ${seasonBan.reason}. Regenerate the FULL outfit JSON now, replacing those items with season-appropriate alternatives that still respect the style, harmony, and 60/30/10 split. Keep locked items unchanged.`;
+          .join("; ")}. ${seasonBan.reason}. FORBIDDEN WORDS for ${seasonKey}: ${SEASON_BAN_WORDS[seasonKey]}. Regenerate the FULL outfit JSON now. Replace those items with TRULY season-appropriate alternatives. Do not just rename — change the actual fabric and garment type. Keep locked items and the uploaded piece unchanged.`;
 
         const retryResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
           method: "POST",
@@ -343,29 +364,45 @@ IMPORTANT RULES:
             model: "google/gemini-2.5-flash",
             messages: [
               ...messages,
-              { role: "assistant", content },
+              { role: "assistant", content: lastContent },
               { role: "user", content: fixNote },
             ],
-            temperature: 0.7,
+            temperature: 0.5,
           }),
         });
 
-        if (retryResponse.ok) {
-          const retryData = await retryResponse.json();
-          const retryContent = retryData.choices?.[0]?.message?.content;
-          if (retryContent) {
-            let retryCleaned = retryContent.trim();
-            if (retryCleaned.startsWith("```")) {
-              retryCleaned = retryCleaned.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "");
-            }
-            try {
-              const retried = JSON.parse(retryCleaned);
-              if (retried?.items?.length) outfit = retried;
-            } catch (e) {
-              console.error("Retry parse failed, keeping original:", e);
-            }
-          }
+        if (!retryResponse.ok) break;
+        const retryData = await retryResponse.json();
+        const retryContent = retryData.choices?.[0]?.message?.content;
+        if (!retryContent) break;
+        lastContent = retryContent;
+        let retryCleaned = retryContent.trim();
+        if (retryCleaned.startsWith("```")) {
+          retryCleaned = retryCleaned.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "");
         }
+        try {
+          const retried = JSON.parse(retryCleaned);
+          if (retried?.items?.length) outfit = retried;
+        } catch (e) {
+          console.error("Retry parse failed:", e);
+          break;
+        }
+      }
+
+      // Final fallback: drop offending OPTIONAL items (Outerwear, Scarf, Hat, Jewelry, Sunglasses, Bag, Belt, Accessory)
+      const remaining = findViolations(outfit.items || []);
+      if (remaining.length > 0) {
+        const OPTIONAL_LABELS = new Set(["Outerwear", "Scarf", "Hat", "Jewelry", "Sunglasses", "Bag", "Belt", "Accessory"]);
+        const violatingDescs = new Set(remaining.map((v) => v.description));
+        const filtered = outfit.items.filter((it: any) => {
+          if (!violatingDescs.has(it?.description)) return true;
+          if (OPTIONAL_LABELS.has(it?.label)) {
+            console.log("Dropping unfixable optional item:", it.label, it.description);
+            return false;
+          }
+          return true; // keep essentials even if violating — better than empty slot
+        });
+        outfit.items = filtered;
       }
     }
 
