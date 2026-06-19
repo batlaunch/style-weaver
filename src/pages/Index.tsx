@@ -75,6 +75,7 @@ const Index = () => {
         selectedSkinTone,
         selectedSeason,
         selectedOccasion,
+        temperatureF,
         resolvedStyle,
         itemDescription,
       };
