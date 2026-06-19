@@ -295,7 +295,79 @@ IMPORTANT RULES:
       cleaned = cleaned.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "");
     }
 
-    const outfit = JSON.parse(cleaned);
+    let outfit = JSON.parse(cleaned);
+
+    // Season consistency check: catch winter outerwear in summer, summer fabrics in winter, etc.
+    const SEASON_BANS: Record<string, { banned: RegExp; reason: string }> = {
+      summer: {
+        banned: /\b(wool|cashmere|shearling|fur|fleece|puffer|parka|peacoat|overcoat|topcoat|trench(?!\s*shorts)|tweed|corduroy|cable[- ]?knit|chunky knit|thermal|flannel|turtleneck|beanie|knit hat|scarf|gloves|tights|knee[- ]?high boot|lug[- ]?sole boot|combat boot|snow boot|ugg|down jacket|quilted jacket|leather jacket|moto jacket)\b/i,
+        reason: "winter/cold-weather fabrics or outerwear are inappropriate for summer",
+      },
+      winter: {
+        banned: /\b(linen|seersucker|voile|chiffon|mesh|sleeveless|tank top|spaghetti strap|sundress|short sleeve|shorts(?!\s*suit)|sandal|espadrille|flip[- ]?flop|slide|open[- ]?toe|sheer)\b/i,
+        reason: "summer/warm-weather fabrics, bare skin, or open footwear are inappropriate for winter",
+      },
+      spring: {
+        banned: /\b(shearling|fur|puffer|parka|peacoat|heavy overcoat|down jacket|thermal|chunky cable[- ]?knit|snow boot|ugg|knee[- ]?high winter boot)\b/i,
+        reason: "heavy winter outerwear is inappropriate for spring",
+      },
+      fall: {
+        banned: /\b(linen|seersucker|sundress|flip[- ]?flop|espadrille|tank top|spaghetti strap)\b/i,
+        reason: "high-summer fabrics and footwear are inappropriate for fall",
+      },
+    };
+
+    const lockedLabels = new Set((lockedItems || []).map((i: any) => i?.label));
+    const seasonBan = seasonKey !== "any" ? SEASON_BANS[seasonKey] : undefined;
+
+    if (seasonBan && Array.isArray(outfit?.items)) {
+      const violations = outfit.items
+        .filter((it: any) => it && !lockedLabels.has(it.label))
+        .map((it: any) => {
+          const text = `${it.colorName || ""} ${it.description || ""} ${it.label || ""}`;
+          const m = text.match(seasonBan.banned);
+          return m ? { label: it.label, description: it.description, match: m[0] } : null;
+        })
+        .filter(Boolean) as Array<{ label: string; description: string; match: string }>;
+
+      if (violations.length > 0) {
+        console.log("Season violations detected, retrying:", seasonKey, violations);
+        const fixNote = `\n\nSEASON VIOLATION — your previous response included items that do NOT fit ${seasonKey}: ${violations
+          .map((v) => `"${v.label}: ${v.description}" (offending term: "${v.match}")`)
+          .join("; ")}. ${seasonBan.reason}. Regenerate the FULL outfit JSON now, replacing those items with season-appropriate alternatives that still respect the style, harmony, and 60/30/10 split. Keep locked items unchanged.`;
+
+        const retryResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: "google/gemini-2.5-flash",
+            messages: [
+              ...messages,
+              { role: "assistant", content },
+              { role: "user", content: fixNote },
+            ],
+            temperature: 0.7,
+          }),
+        });
+
+        if (retryResponse.ok) {
+          const retryData = await retryResponse.json();
+          const retryContent = retryData.choices?.[0]?.message?.content;
+          if (retryContent) {
+            let retryCleaned = retryContent.trim();
+            if (retryCleaned.startsWith("```")) {
+              retryCleaned = retryCleaned.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "");
+            }
+            try {
+              const retried = JSON.parse(retryCleaned);
+              if (retried?.items?.length) outfit = retried;
+            } catch (e) {
+              console.error("Retry parse failed, keeping original:", e);
+            }
+          }
+        }
+      }
+    }
 
     return new Response(JSON.stringify(outfit), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
