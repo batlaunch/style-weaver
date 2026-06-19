@@ -85,8 +85,16 @@ serve(async (req) => {
       ? `\nThe user has a ${skinTone} skin tone. Choose colors that complement and flatter this skin tone. Avoid colors that wash out or clash with ${skinTone} skin.`
       : "";
 
-    const seasonContext = season
-      ? `\nThe outfit is for ${season}. Choose fabrics, layers, and colors appropriate for ${season} weather. For example: lighter fabrics and brighter colors for spring/summer, heavier layers and richer tones for fall/winter.`
+    const SEASON_GUIDANCE: Record<string, string> = {
+      "spring": "SPRING: Mild, transitional weather. Fabrics: lightweight cotton, poplin, chambray, fine knit, light denim, trench-weight cotton, silk. Layers: a light jacket (trench, denim, utility, cropped blazer, cardigan) is often appropriate — NOT heavy coats. Colors: fresh and slightly desaturated — soft pastels (butter yellow, sage, dusty pink, sky blue, lavender), cream, stone, light olive, light denim, with one brighter accent. NO heavy wool coats, NO chunky cable knits, NO shearling, NO thick lug boots, NO winter beanies. Footwear: loafers, ballet flats, low boots, clean sneakers, mary janes, lightweight ankle boots.",
+      "summer": "SUMMER: Hot weather. Fabrics: linen, lightweight cotton, seersucker, voile, silk, jersey, breathable knits. Silhouettes: short sleeves, sleeveless, midi/maxi dresses, shorts, wide-leg linen trousers, slip dresses, camp shirts, light unstructured blazers ONLY if the outfit truly needs one. Colors: bright and saturated OR crisp whites/creams/tans — white, cream, ecru, sand, sky blue, coral, citrus, terracotta, faded denim, bright accents. NO outerwear like trench/wool/leather jackets unless the user uploaded one, NO heavy knits, NO tall boots, NO scarves, NO beanies, NO tights. Footwear: sandals, mules, espadrilles, slides, sneakers, ballet flats, loafers worn sockless.",
+      "fall": "FALL: Cool, layered weather. Fabrics: wool, tweed, corduroy, suede, leather, flannel, mid-weight knits, denim, gabardine. Layers: outerwear is almost always appropriate — trench, leather jacket, blazer, chore coat, overshirt, longline cardigan, moto, field jacket. Colors: rich, warm, earthy — camel, rust, burgundy, forest green, mustard, chocolate, olive, oxblood, cream, charcoal, deep navy. Footwear: chelsea boots, ankle boots, loafers, lug-sole boots, leather sneakers, mary janes with tights. Scarves and hats start to make sense.",
+      "winter": "WINTER: Cold weather — outerwear and layering are MANDATORY. Fabrics: heavy wool, cashmere, shearling, faux fur, thick knit, melton, tweed, leather with lining, corduroy, flannel. ALWAYS include a substantial coat or jacket (wool overcoat, puffer, shearling, peacoat, teddy, parka, long wool coat) unless the user explicitly uploaded a winter outerwear piece. Include warm accessories where they fit the style: wool scarf, beanie or felt hat, leather gloves, tights under skirts/dresses. Colors: deep, moody, rich — black, charcoal, ivory, cream, camel, chocolate, burgundy, forest, navy, plum, with metallic or jewel-tone accents. NO linen, NO bare sandals, NO sheer summer fabrics, NO short-sleeve-only looks. Footwear: knee-high boots, lug-sole boots, chelsea boots, shearling-lined boots, leather sneakers — closed and warm.",
+      "any": "",
+    };
+    const seasonKey = season && SEASON_GUIDANCE[season] !== undefined ? season : "any";
+    const seasonContext = seasonKey !== "any" && SEASON_GUIDANCE[seasonKey]
+      ? `\n\nSEASON — this is a HARD constraint and must shape fabrics, layers, colors, AND footwear. Do not produce a look that would be uncomfortable or visually wrong for this season:\n${SEASON_GUIDANCE[seasonKey]}`
       : "";
 
     const OCCASION_GUIDANCE: Record<string, string> = {
