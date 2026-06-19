@@ -58,6 +58,7 @@ const Index = () => {
   const [itemDescription, setItemDescription] = useState(persisted.itemDescription ?? "");
   const [selectedSeason, setSelectedSeason] = useState<SeasonType>(persisted.selectedSeason ?? "spring");
   const [selectedOccasion, setSelectedOccasion] = useState<string>(persisted.selectedOccasion ?? "any");
+  const [temperatureF, setTemperatureF] = useState<string>(persisted.temperatureF ?? "");
   const { saveOutfit } = useSavedOutfits();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
