@@ -37,7 +37,7 @@ serve(async (req) => {
     let body: any;
     try { body = JSON.parse(raw); } catch { return json(400, { error: "Invalid JSON" }); }
 
-    let { imageBase64, style, gender, skinTone, season, occasion, itemDescription, lockedItems, regenerateSlot, avoidItem, regenerationSeed, addPiece, addPieceRequest, addPieceRequests } = body ?? {};
+    let { imageBase64, style, gender, skinTone, season, occasion, temperatureF, itemDescription, lockedItems, regenerateSlot, avoidItem, regenerationSeed, addPiece, addPieceRequest, addPieceRequests } = body ?? {};
 
     // 3. Validate / clamp inputs
     if (typeof imageBase64 !== "string" || !/^data:image\/(png|jpe?g|webp);base64,/.test(imageBase64)) {
