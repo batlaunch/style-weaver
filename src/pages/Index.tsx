@@ -501,6 +501,12 @@ const Index = () => {
               onOccasionChange={setSelectedOccasion}
               onTemperatureChange={setTemperatureF}
             />
+
+            <MannequinDisplay
+              isGenerating={isGenerating || isGeneratingImage}
+              hasOutfit={!!currentOutfit}
+              outfitImageUrl={outfitImageUrl}
+            />
           </div>
 
           {/* Right: Controls + Outfit */}
@@ -708,12 +714,6 @@ const Index = () => {
                 </ul>
               </motion.div>
             )}
-
-            <MannequinDisplay
-              isGenerating={isGenerating || isGeneratingImage}
-              hasOutfit={!!currentOutfit}
-              outfitImageUrl={outfitImageUrl}
-            />
           </div>
         </div>
       </main>
