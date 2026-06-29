@@ -501,6 +501,12 @@ const Index = () => {
               onOccasionChange={setSelectedOccasion}
               onTemperatureChange={setTemperatureF}
             />
+
+            <MannequinDisplay
+              isGenerating={isGenerating || isGeneratingImage}
+              hasOutfit={!!currentOutfit}
+              outfitImageUrl={outfitImageUrl}
+            />
           </div>
 
           {/* Right: Controls + Outfit */}
