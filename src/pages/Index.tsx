@@ -713,6 +713,7 @@ const Index = () => {
                   </li>
                 </ul>
               </motion.div>
+            )}
           </div>
         </div>
       </main>
