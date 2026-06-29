@@ -713,8 +713,11 @@ const Index = () => {
                   </li>
                 </ul>
               </motion.div>
-            )}
-
+          </div>
+        </div>
+      </main>
+    </div>
+  );
 };
 
 export default Index;
