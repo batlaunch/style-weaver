@@ -709,16 +709,6 @@ const Index = () => {
               </motion.div>
             )}
 
-            <MannequinDisplay
-              isGenerating={isGenerating || isGeneratingImage}
-              hasOutfit={!!currentOutfit}
-              outfitImageUrl={outfitImageUrl}
-            />
-          </div>
-        </div>
-      </main>
-    </div>
-  );
 };
 
 export default Index;
