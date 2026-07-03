@@ -1,5 +1,4 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -22,6 +21,17 @@ const MAX_ADD_REQ_LIST = 12;
 const clampText = (v: unknown, n: number) =>
   typeof v === "string" ? v.replace(/[\u0000-\u001f\u007f]/g, " ").trim().slice(0, n) : "";
 
+// Gemini API model + endpoint (called directly instead of via Lovable's AI gateway)
+const GEMINI_MODEL = "gemini-2.5-flash";
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
+
+// Pulls a Gemini candidate's text parts back into a single string
+function extractText(data: any): string {
+  const parts = data?.candidates?.[0]?.content?.parts;
+  if (!Array.isArray(parts)) return "";
+  return parts.map((p: any) => (typeof p?.text === "string" ? p.text : "")).join("");
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -29,7 +39,6 @@ serve(async (req) => {
 
   try {
     // Auth is optional — anonymous users may generate outfits.
-
 
     // 2. Read + size-limit body
     const raw = await req.text();
@@ -44,6 +53,12 @@ serve(async (req) => {
       return json(400, { error: "Invalid image" });
     }
     if (imageBase64.length > MAX_IMAGE_B64) return json(413, { error: "Image too large" });
+
+    // Split the data URL into the pieces Gemini's inlineData wants
+    const imgMatch = imageBase64.match(/^data:(image\/(?:png|jpe?g|webp));base64,(.+)$/);
+    if (!imgMatch) return json(400, { error: "Invalid image" });
+    const imgMimeType = imgMatch[1];
+    const imgData = imgMatch[2];
 
     style = clampText(style, 40) || "any";
     gender = gender === "male" ? "male" : "female";
@@ -72,8 +87,8 @@ serve(async (req) => {
       lockedItems = undefined;
     }
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+    const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
+    if (!GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is not configured");
 
     // Build locked items context if any
     const hasLockedItems = lockedItems && lockedItems.length > 0;
@@ -262,51 +277,47 @@ IMPORTANT RULES:
     const descriptionHint = itemDescription ? ` The user describes this item as: "${itemDescription}". Use this description to identify the item accurately.` : "";
     const userPrompt = `Here is a clothing item I own.${descriptionHint} Please build a complete ${style === "any" ? "stylish" : style} outfit for a ${gender} around this piece.${style === "any" ? " Pick whatever style you think works best with this piece." : ""}${lockedNote}${regenerateNote}${addPieceNote}`;
 
-    const messages: any[] = [
-      { role: "system", content: systemPrompt },
+    // Gemini's request shape: systemInstruction is separate from the conversational `contents`.
+    // The first user turn carries both the text prompt and the inline image data.
+    const contents: any[] = [
       {
         role: "user",
-        content: [
-          { type: "text", text: userPrompt },
-          {
-            type: "image_url",
-            image_url: { url: imageBase64 },
-          },
+        parts: [
+          { text: userPrompt },
+          { inlineData: { mimeType: imgMimeType, data: imgData } },
         ],
       },
     ];
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages,
-        temperature: regenerateSlot ? 1.1 : 0.9,
-      }),
-    });
+    const callGemini = async (turns: any[], temperature: number) => {
+      const res = await fetch(`${GEMINI_URL}?key=${GEMINI_API_KEY}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: systemPrompt }] },
+          contents: turns,
+          generationConfig: { temperature },
+        }),
+      });
+      return res;
+    };
+
+    const response = await callGemini(contents, regenerateSlot ? 1.1 : 0.9);
 
     if (!response.ok) {
       if (response.status === 429) {
-        return new Response(JSON.stringify({ error: "Rate limited, please try again in a moment." }), {
-          status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+        return json(429, { error: "Rate limited, please try again in a moment." });
       }
-      if (response.status === 402) {
-        return new Response(JSON.stringify({ error: "AI credits exhausted. Add funds in Settings > Workspace > Usage." }), {
-          status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+      if (response.status === 403) {
+        return json(402, { error: "Gemini API quota or billing issue — check your Google AI Studio account." });
       }
       const errorText = await response.text();
-      console.error("AI gateway error:", response.status, errorText);
-      throw new Error(`AI gateway error: ${response.status}`);
+      console.error("Gemini API error:", response.status, errorText);
+      throw new Error(`Gemini API error: ${response.status}`);
     }
 
     const data = await response.json();
-    const content = data.choices?.[0]?.message?.content;
+    const content = extractText(data);
 
     if (!content) throw new Error("No response from AI");
 
@@ -321,7 +332,6 @@ IMPORTANT RULES:
     // Season consistency check: catch winter outerwear in summer, summer fabrics in winter, etc.
     const SEASON_BANS: Record<string, { banned: RegExp; reason: string }> = {
       summer: {
-        // Catch heavy wool / sweater wool, but allow "tropical wool", "lightweight wool", "fresco wool", "hopsack wool", "fine merino"
         banned: /\b((?<!tropical |lightweight |light[- ]weight |fresco |hopsack |summer[- ]weight |fine[- ]gauge |fine )wool(?! blend| trouser| trousers)|cashmere sweater|shearling|fur coat|fleece|puffer|parka|peacoat|wool overcoat|wool topcoat|wool coat|tweed|corduroy|cable[- ]?knit|chunky knit|thermal|flannel(?!ette)|turtleneck|beanie|knit hat|wool scarf|wool gloves|leather gloves|knee[- ]?high boot|lug[- ]?sole boot|combat boot|snow boot|ugg|down jacket|quilted jacket|heavy leather jacket|moto jacket)\b/i,
         reason: "winter/cold-weather fabrics or outerwear are inappropriate for summer",
       },
@@ -363,6 +373,8 @@ IMPORTANT RULES:
       let lastContent = content;
       let attempt = 0;
       const MAX_RETRIES = 2;
+      // Gemini uses "model" (not "assistant") for the model's own turn in conversation history
+      let runningTurns = contents;
 
       while (attempt < MAX_RETRIES) {
         const violations = findViolations(outfit.items);
@@ -374,23 +386,17 @@ IMPORTANT RULES:
           .map((v) => `"${v.label}: ${v.description}" (offending term: "${v.match}")`)
           .join("; ")}. ${seasonBan.reason}. FORBIDDEN WORDS for ${seasonKey}: ${SEASON_BAN_WORDS[seasonKey]}. Regenerate the FULL outfit JSON now. Replace those items with TRULY season-appropriate alternatives. Do not just rename — change the actual fabric and garment type. Keep locked items and the uploaded piece unchanged.`;
 
-        const retryResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-          method: "POST",
-          headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
-          body: JSON.stringify({
-            model: "google/gemini-2.5-flash",
-            messages: [
-              ...messages,
-              { role: "assistant", content: lastContent },
-              { role: "user", content: fixNote },
-            ],
-            temperature: 0.5,
-          }),
-        });
+        runningTurns = [
+          ...runningTurns,
+          { role: "model", parts: [{ text: lastContent }] },
+          { role: "user", parts: [{ text: fixNote }] },
+        ];
+
+        const retryResponse = await callGemini(runningTurns, 0.5);
 
         if (!retryResponse.ok) break;
         const retryData = await retryResponse.json();
-        const retryContent = retryData.choices?.[0]?.message?.content;
+        const retryContent = extractText(retryData);
         if (!retryContent) break;
         lastContent = retryContent;
         let retryCleaned = retryContent.trim();
