@@ -17,12 +17,10 @@ const MAX_STR = 200;
 const clamp = (v: unknown, n = MAX_STR) =>
   typeof v === "string" ? v.replace(/[\u0000-\u001f\u007f]/g, " ").slice(0, n) : "";
 
-// Gemini's image-generation model, called directly instead of via Lovable's AI gateway.
-// Verify this exact model string in Google AI Studio before deploying — Lovable's gateway
-// used the alias "google/gemini-2.5-flash-image"; the native Gemini API id may differ
-// slightly (e.g. a "-preview" suffix) depending on what's currently released.
-const GEMINI_IMAGE_MODEL = "gemini-2.5-flash-image";
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_IMAGE_MODEL}:generateContent`;
+// Cloudflare Workers AI — FLUX-1-schnell (fast text-to-image).
+// Called via Cloudflare's REST API from this Deno edge function.
+// Free tier: 10,000 neurons/day; requests beyond the limit FAIL (no billing) on the free plan.
+const CF_MODEL = "@cf/black-forest-labs/flux-1-schnell";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -32,7 +30,7 @@ serve(async (req) => {
   try {
     // Auth is optional — anonymous users may generate outfit images.
 
-    // 2. Size-limit the body
+    // Size-limit the body
     const raw = await req.text();
     if (raw.length > MAX_BODY_BYTES) {
       return json(413, { error: "Payload too large" });
@@ -45,8 +43,10 @@ serve(async (req) => {
       return json(400, { error: "Invalid items" });
     }
 
-    const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
-    if (!GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is not configured");
+    const CF_ACCOUNT_ID = Deno.env.get("CLOUDFLARE_ACCOUNT_ID");
+    const CF_API_TOKEN = Deno.env.get("CLOUDFLARE_API_TOKEN");
+    if (!CF_ACCOUNT_ID) throw new Error("CLOUDFLARE_ACCOUNT_ID is not configured");
+    if (!CF_API_TOKEN) throw new Error("CLOUDFLARE_API_TOKEN is not configured");
 
     const itemDescriptions = items
       .map((item: any) => `${clamp(item?.label, 40)}: ${clamp(item?.colorName, 40)} ${clamp(item?.description, 120)}`)
@@ -54,37 +54,64 @@ serve(async (req) => {
     const genderDesc = gender === "male" ? "male" : "female";
     const safeStyle = clamp(style, 40);
 
-    const prompt = `A rough, loose fashion sketch of a ${genderDesc} mannequin wearing: ${itemDescriptions}. Style cue: ${safeStyle}. Quick gestural drawing style, watercolor-like washes of color suggesting the outfit, minimal detail, artistic and abstract. White background, full body pose. Focus on overall silhouette and color blocking rather than exact garment details. No text, no labels.`;
+    // FLUX responds well to comma-separated style keywords more than long prose,
+    // so the prompt is slightly restructured versus the old Gemini version.
+    const prompt = `Loose watercolor fashion illustration sketch of a ${genderDesc} mannequin wearing: ${itemDescriptions}. Style: ${safeStyle}. Gestural quick-sketch linework, soft watercolor washes, minimal detail, elegant fashion-designer croquis, white background, full body pose, focus on silhouette and color blocking. No text, no labels, no watermark.`;
 
-    console.log("Generating outfit image");
+    console.log("Generating outfit image via Cloudflare Workers AI");
 
-    const response = await fetch(`${GEMINI_URL}?key=${GEMINI_API_KEY}`, {
+    const cfUrl = `https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/ai/run/${CF_MODEL}`;
+    const response = await fetch(cfUrl, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        Authorization: `Bearer ${CF_API_TOKEN}`,
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
-        contents: [{ role: "user", parts: [{ text: prompt }] }],
-        generationConfig: {
-          responseModalities: ["TEXT", "IMAGE"],
-        },
+        prompt,
+        steps: 6, // FLUX-schnell is designed for low step counts (4-8); 6 balances speed and quality
       }),
     });
 
     if (!response.ok) {
-      if (response.status === 429) return json(429, { error: "Rate limited, please try again in a moment." });
-      if (response.status === 403) return json(402, { error: "Gemini API quota or billing issue — check your Google AI Studio account." });
       const errorText = await response.text();
-      console.error("Gemini API error:", response.status, errorText);
-      throw new Error(`Gemini API error: ${response.status}`);
+      console.error("Cloudflare AI error:", response.status, errorText);
+      if (response.status === 429) {
+        return json(429, { error: "Daily free image quota reached — try again tomorrow." });
+      }
+      if (response.status === 401 || response.status === 403) {
+        return json(500, { error: "Cloudflare credentials invalid — check CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN secrets." });
+      }
+      throw new Error(`Cloudflare AI error: ${response.status}`);
     }
 
-    const data = await response.json();
-    const parts = data?.candidates?.[0]?.content?.parts;
-    const imagePart = Array.isArray(parts) ? parts.find((p: any) => p?.inlineData?.data) : undefined;
+    // FLUX-1-schnell returns JSON: { result: { image: "<base64>" }, success: true }
+    // Some other CF image models return raw binary instead — handle both shapes.
+    const contentType = response.headers.get("content-type") || "";
+    let base64Image: string | undefined;
+    let mimeType = "image/jpeg"; // FLUX-schnell outputs JPEG
 
-    if (!imagePart) throw new Error("No image generated");
+    if (contentType.includes("application/json")) {
+      const data = await response.json();
+      base64Image = data?.result?.image;
+      if (!data?.success && !base64Image) {
+        console.error("Cloudflare AI unexpected JSON:", JSON.stringify(data).slice(0, 500));
+      }
+    } else {
+      // Binary image body (e.g. if the model is swapped to SDXL later): convert to base64
+      mimeType = contentType.includes("png") ? "image/png" : "image/jpeg";
+      const buf = new Uint8Array(await response.arrayBuffer());
+      let binary = "";
+      const CHUNK = 0x8000;
+      for (let i = 0; i < buf.length; i += CHUNK) {
+        binary += String.fromCharCode(...buf.subarray(i, i + CHUNK));
+      }
+      base64Image = btoa(binary);
+    }
 
-    const mimeType = imagePart.inlineData.mimeType || "image/png";
-    const imageUrl = `data:${mimeType};base64,${imagePart.inlineData.data}`;
+    if (!base64Image) throw new Error("No image generated");
+
+    const imageUrl = `data:${mimeType};base64,${base64Image}`;
 
     return json(200, { imageUrl });
   } catch (error) {

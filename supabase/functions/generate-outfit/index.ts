@@ -22,7 +22,7 @@ const clampText = (v: unknown, n: number) =>
   typeof v === "string" ? v.replace(/[\u0000-\u001f\u007f]/g, " ").trim().slice(0, n) : "";
 
 // Gemini API model + endpoint (called directly instead of via Lovable's AI gateway)
-const GEMINI_MODEL = "gemini-2.5-flash";
+const GEMINI_MODEL = "gemini-3.1-flash-lite";
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
 // Pulls a Gemini candidate's text parts back into a single string
