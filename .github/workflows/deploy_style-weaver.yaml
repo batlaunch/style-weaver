@@ -27,9 +27,9 @@ jobs:
         env:
           # Publishable client-side values (shipped in the JS bundle);
           # .env is untracked so CI must provide them at build time.
-          VITE_SUPABASE_PROJECT_ID: yibcvetoxzsrquberqwn
-          VITE_SUPABASE_URL: https://yibcvetoxzsrquberqwn.supabase.co
-          VITE_SUPABASE_PUBLISHABLE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlpYmN2ZXRveHpzcnF1YmVycXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5NTg0NDEsImV4cCI6MjA4OTUzNDQ0MX0.M8Ww7XnyqvCcSZlRRGqLV-oCumBJqYdWnWXDmdbCTxU
+          VITE_SUPABASE_PROJECT_ID: gtbqdjxexakslajosgja
+          VITE_SUPABASE_URL: https://gtbqdjxexakslajosgja.supabase.co
+          VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_ttNXGo5NuoXcnZlDiRgidQ_vcu8ePx0
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
