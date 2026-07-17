@@ -16,7 +16,15 @@ const MAX_STR = 200;
 
 const clamp = (v: unknown, n = MAX_STR) =>
   typeof v === "string" ? v.replace(/[\u0000-\u001f\u007f]/g, " ").slice(0, n) : "";
-
+// Fashion terms that trip image-model NSFW filters despite being innocent.
+const sanitizeFashion = (s: string) =>
+  s.replace(/\bnude\b/gi, "beige")
+   .replace(/\bsheer\b/gi, "lightweight")
+   .replace(/\bbackless\b/gi, "open-back")
+   .replace(/\bstrapless\b/gi, "off-shoulder")
+   .replace(/\bplunge\b/gi, "deep-v")
+   .replace(/\bbodysuit\b/gi, "fitted top")
+   .replace(/\bbare\b/gi, "uncovered");
 // Cloudflare Workers AI — FLUX-1-schnell (fast text-to-image).
 // Called via Cloudflare's REST API from this Deno edge function.
 // Free tier: 10,000 neurons/day; requests beyond the limit FAIL (no billing) on the free plan.
@@ -61,17 +69,31 @@ serve(async (req) => {
     console.log("Generating outfit image via Cloudflare Workers AI");
 
     const cfUrl = `https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/ai/run/${CF_MODEL}`;
-    const response = await fetch(cfUrl, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${CF_API_TOKEN}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        prompt,
-        steps: 6, // FLUX-schnell is designed for low step counts (4-8); 6 balances speed and quality
-      }),
-    });
+   const callCF = (p: string) =>
+      fetch(cfUrl, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${CF_API_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prompt: sanitizeFashion(p).slice(0, 2000), steps: 6 }),
+      });
+
+    let response = await callCF(prompt);
+
+    // If the content filter still objects (code 3030), retry once with a minimal prompt.
+    if (!response.ok && response.status === 400) {
+      const errText = await response.text();
+      console.error("Cloudflare AI 400:", errText);
+      if (errText.includes("3030") || errText.toLowerCase().includes("nsfw")) {
+        const minimalItems = items
+          .map((item: any) => `${clamp(item?.colorName, 40)} ${clamp(item?.label, 40)}`)
+          .join(", ");
+        const minimalPrompt = `Loose watercolor fashion illustration of a ${genderDesc} mannequin wearing: ${minimalItems}. Gestural sketch, soft watercolor washes, white background, full body.`;
+        console.log("Retrying with minimal prompt after NSFW flag");
+        response = await callCF(minimalPrompt);
+      }
+    }
 
     if (!response.ok) {
       const errorText = await response.text();
