@@ -7,7 +7,7 @@ on:
       - 'supabase/config.toml'
 
 env:
-  SUPABASE_PROJECT_REF: yibcvetoxzsrquberqwn
+  SUPABASE_PROJECT_REF: gtbqdjxexakslajosgja
 
 jobs:
   deploy-functions:
